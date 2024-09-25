@@ -1,0 +1,51 @@
+{
+  "employees": [
+    {
+      "firstName": "Juan",
+      "lastName": "Pérez",
+      "employeeType": "Admin",
+      "docType": "DNI",
+      "docNumber": "12345678123",
+      "hiringDate": "2021-01-01",
+      "entryTime": "09:00",
+      "exitTime": "17:00",
+      "salary": 50000,
+      "state": "Active",
+      "id": 1
+    },
+    {
+      "firstName": "Mateo",
+      "lastName": "xdxdxd",
+      "employeeType": "Technician",
+      "docType": null,
+      "docNumber": "asdasdad",
+      "hiringDate": "2024-09-04",
+      "entryTime": "18:30",
+      "exitTime": "18:30",
+      "salary": 123123123,
+      "state": "Active",
+      "id": 2
+    }
+  ],
+  "suppliers": [
+    {
+      "name": "SOLER GINO LEONEL",
+      "serviceType": "Maintenance",
+      "contact": "123123",
+      "address": "pascual de rogatis 3793, Barrio Los Platanos",
+      "details": "42151251251252135",
+      "state": "Inactive",
+      "id": 2
+    }
+  ],
+  "inventory": [
+    {
+      "item": "puerta",
+      "type": "Raw Material",
+      "stock": 45,
+      "details": "asdasd",
+      "state": "Active",
+      "id": 2
+    }
+  ]
+}
