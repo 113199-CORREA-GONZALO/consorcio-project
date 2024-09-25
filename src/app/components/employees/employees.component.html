@@ -1,89 +1,107 @@
 <div class="container">
-    <h2>Gestión de Empleados</h2>
-    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="form-group">
-      <div class="row">
-        <div class="col-md-4">
-          <label for="firstName">Nombre</label>
-          <input id="firstName" formControlName="firstName" class="form-control" />
-        </div>
-        <div class="col-md-4">
-          <label for="lastName">Apellido</label>
-          <input id="lastName" formControlName="lastName" class="form-control" />
-        </div>
-        <div class="col-md-4">
-          <label for="employeeType">Tipo de Empleado</label>
-          <select id="employeeType" formControlName="employeeType" class="form-control">
-            <option *ngFor="let type of employeeTypes" [value]="type">{{ type }}</option>
-          </select>
-        </div>
+  <h2>Gestión de Empleados</h2>
+  <!-- Formulario para agregar o editar empleados -->
+  <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="form-group">
+    <div class="row">
+      <!-- Campo para el nombre del empleado -->
+      <div class="col-md-4">
+        <label for="firstName">Nombre</label>
+        <input id="firstName" formControlName="firstName" class="form-control" />
       </div>
-      <div class="row mt-3">
-        <div class="col-md-4">
-          <label for="docType">Tipo de Documento</label>
-          <select id="docType" formControlName="docType" class="form-control">
-            <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
-          </select>
-        </div>
-        <div class="col-md-4">
-          <label for="docNumber">Número de Documento</label>
-          <input id="docNumber" formControlName="docNumber" class="form-control" />
-        </div>
-        <div class="col-md-4">
-          <label for="hiringDate">Fecha de Contratación</label>
-          <input id="hiringDate" formControlName="hiringDate" type="date" class="form-control" />
-        </div>
+      <!-- Campo para el apellido del empleado -->
+      <div class="col-md-4">
+        <label for="lastName">Apellido</label>
+        <input id="lastName" formControlName="lastName" class="form-control" />
       </div>
-      <div class="row mt-3">
-        <div class="col-md-4">
-          <label for="entryTime">Hora de Entrada</label>
-          <input id="entryTime" formControlName="entryTime" type="time" class="form-control" />
-        </div>
-        <div class="col-md-4">
-          <label for="exitTime">Hora de Salida</label>
-          <input id="exitTime" formControlName="exitTime" type="time" class="form-control" />
-        </div>
-        <div class="col-md-4">
-          <label for="salary">Salario</label>
-          <input id="salary" formControlName="salary" type="number" class="form-control" />
-        </div>
+      <!-- Campo para seleccionar el tipo de empleado -->
+      <div class="col-md-4">
+        <label for="employeeType">Tipo de Empleado</label>
+        <select id="employeeType" formControlName="employeeType" class="form-control">
+          <!-- Opciones para el tipo de empleado -->
+          <option *ngFor="let type of employeeTypes" [value]="type">{{ type }}</option>
+        </select>
       </div>
-      <div class="row mt-3">
-        <div class="col-md-4">
-          <label for="state">Estado</label>
-          <select id="state" formControlName="state" class="form-control">
-            <option *ngFor="let state of statusTypes" [value]="state">{{ state }}</option>
-          </select>
-        </div>
+    </div>
+    <div class="row mt-3">
+      <!-- Campo para seleccionar el tipo de documento -->
+      <div class="col-md-4">
+        <label for="docType">Tipo de Documento</label>
+        <select id="docType" formControlName="docType" class="form-control">
+           <!-- Opciones para el tipo de documento -->
+          <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
+        </select>
       </div>
-      <button type="submit" class="btn btn-primary mt-3">{{ isEditMode ? 'Modificar' : 'Agregar' }}</button>
-      <button type="button" class="btn btn-secondary mt-3" (click)="cancelEdit()" *ngIf="isEditMode">Cancelar</button>
-    </form>
-  
-    <h3 class="mt-5">Lista de Empleados</h3>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Apellido</th>
-          <th>Tipo</th>
-          <th>Documento</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let employee of employees">
-          <td>{{ employee.firstName }}</td>
-          <td>{{ employee.lastName }}</td>
-          <td>{{ employee.employeeType }}</td>
-          <td>{{ employee.docNumber }}</td>
-          <td>{{ employee.state }}</td>
-          <td>
-            <button (click)="editEmployee(employee)" class="btn btn-warning btn-sm">Editar</button>
-            <button (click)="deleteEmployee(employee.id)" class="btn btn-danger btn-sm">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
+      <!-- Campo para el número de documento -->
+      <div class="col-md-4">
+        <label for="docNumber">Número de Documento</label>
+        <input id="docNumber" formControlName="docNumber" class="form-control" />
+      </div>
+      <!-- Campo para la fecha de contratación -->
+      <div class="col-md-4">
+        <label for="hiringDate">Fecha de Contratación</label>
+        <input id="hiringDate" formControlName="hiringDate" type="date" class="form-control" />
+      </div>
+    </div>
+    <div class="row mt-3">
+      <!-- Campo para la hora de entrada -->
+      <div class="col-md-4">
+        <label for="entryTime">Hora de Entrada</label>
+        <input id="entryTime" formControlName="entryTime" type="time" class="form-control" />
+      </div>
+      <!-- Campo para la hora de salida -->
+      <div class="col-md-4">
+        <label for="exitTime">Hora de Salida</label>
+        <input id="exitTime" formControlName="exitTime" type="time" class="form-control" />
+      </div>
+      <!-- Campo para el salario del empleado -->
+      <div class="col-md-4">
+        <label for="salary">Salario</label>
+        <input id="salary" formControlName="salary" type="number" class="form-control" />
+      </div>
+    </div>
+    <div class="row mt-3">
+      <!-- Campo para seleccionar el estado del empleado -->
+      <div class="col-md-4">
+        <label for="state">Estado</label>
+        <select id="state" formControlName="state" class="form-control">
+          <option *ngFor="let state of statusTypes" [value]="state">{{ state }}</option>
+        </select>
+      </div>
+    </div>
+    <!-- Botón para enviar el formulario -->
+    <button type="submit" class="btn btn-primary mt-3">{{ isEditMode ? 'Modificar' : 'Agregar' }}</button>
+     <!-- Botón para cancelar la edición, solo visible en modo de edición -->
+    <button type="button" class="btn btn-secondary mt-3" (click)="cancelEdit()" *ngIf="isEditMode">Cancelar</button>
+  </form>
+
+  <!-- Tabla para mostrar la lista de empleados -->
+  <h3 class="mt-5">Lista de Empleados</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Tipo</th>
+        <th>Documento</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Recorremos la lista de empleados y mostramos cada uno en una fila -->
+      <tr *ngFor="let employee of employees">
+        <td>{{ employee.firstName }}</td>
+        <td>{{ employee.lastName }}</td>
+        <td>{{ employee.employeeType }}</td>
+        <td>{{ employee.docNumber }}</td>
+        <td>{{ employee.state }}</td>
+        <td>
+          <!-- Botón para editar un empleado -->
+          <button (click)="editEmployee(employee)" class="btn btn-warning btn-sm">Editar</button>
+          <!-- Botón para eliminar un empleado -->
+          <button (click)="deleteEmployee(employee.id)" class="btn btn-danger btn-sm">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

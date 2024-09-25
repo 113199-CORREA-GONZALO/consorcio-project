@@ -1,6 +1,5 @@
 export enum DocumentType {
-    DNI = 'DNI',
-    PASSPORT = 'Passport',
-    LICENSE = 'License'
-  }
-  
+  DNI = 'DNI', // Documento Nacional de Identidad
+  PASSPORT = 'Passport', // Pasaporte
+  LICENSE = 'License' // Licencia de Conducir
+}

@@ -1,6 +1,5 @@
 export enum ServiceType {
-    CLEANING = 'Cleaning',
-    MAINTENANCE = 'Maintenance',
-    SECURITY = 'Security'
-  }
-  
+  CLEANING = 'Cleaning', // Limpieza
+  MAINTENANCE = 'Maintenance', // Mantenimiento
+  SECURITY = 'Security' // Seguridad
+}

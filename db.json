@@ -14,17 +14,17 @@
       "id": 1
     },
     {
-      "firstName": "Mateo",
-      "lastName": "xdxdxd",
+      "firstName": "Gino Leonel",
+      "lastName": "Soler",
       "employeeType": "Technician",
-      "docType": null,
-      "docNumber": "asdasdad",
-      "hiringDate": "2024-09-04",
-      "entryTime": "18:30",
-      "exitTime": "18:30",
-      "salary": 123123123,
+      "docType": "Passport",
+      "docNumber": "123123",
+      "hiringDate": "2024-09-11",
+      "entryTime": "15:07",
+      "exitTime": "17:08",
+      "salary": 6,
       "state": "Active",
-      "id": 2
+      "id": 3
     }
   ],
   "suppliers": [
@@ -36,6 +36,15 @@
       "details": "42151251251252135",
       "state": "Inactive",
       "id": 2
+    },
+    {
+      "name": "SOLER GINO LEONEL",
+      "serviceType": "Cleaning",
+      "contact": "123123",
+      "address": "pascual de rogatis",
+      "details": "edfc",
+      "state": "Active",
+      "id": 3
     }
   ],
   "inventory": [

@@ -1,6 +1,6 @@
 export enum EmployeeType {
-    ADMIN = 'Admin',
-    TECHNICIAN = 'Technician',
-    MANAGER = 'Manager'
-  }
+  ADMIN = 'Admin', // Administrador
+  TECHNICIAN = 'Technician', // Técnico
+  MANAGER = 'Manager' // Gerente
+}
   

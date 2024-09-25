@@ -1,5 +1,4 @@
 export enum InventoryType {
-    RAW_MATERIAL = 'Raw Material',
-    FINISHED_PRODUCT = 'Finished Product'
-  }
-  
+  RAW_MATERIAL = 'Raw Material', // Materia Prima
+  FINISHED_PRODUCT = 'Finished Product' // Producto Terminado
+}
