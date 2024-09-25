@@ -1,0 +1,63 @@
+<div class="container">
+    <h2>Gestión de Inventario</h2>
+    <form [formGroup]="inventoryForm" (ngSubmit)="onSubmit()" class="form-group">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="item">Ítem</label>
+          <input id="item" formControlName="item" class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label for="type">Tipo de Inventario</label>
+          <select id="type" formControlName="type" class="form-control">
+            <option *ngFor="let type of inventoryTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="stock">Stock</label>
+          <input id="stock" formControlName="stock" type="number" class="form-control" />
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <label for="details">Detalles</label>
+          <textarea id="details" formControlName="details" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <label for="state">Estado</label>
+          <select id="state" formControlName="state" class="form-control">
+            <option *ngFor="let state of statusTypes" [value]="state">{{ state }}</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">{{ isEditMode ? 'Modificar' : 'Agregar' }}</button>
+      <button type="button" class="btn btn-secondary mt-3" (click)="cancelEdit()" *ngIf="isEditMode">Cancelar</button>
+    </form>
+  
+    <h3 class="mt-5">Lista de Inventario</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Ítem</th>
+          <th>Tipo</th>
+          <th>Stock</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inventory of inventoryList">
+          <td>{{ inventory.item }}</td>
+          <td>{{ inventory.type }}</td>
+          <td>{{ inventory.stock }}</td>
+          <td>{{ inventory.state }}</td>
+          <td>
+            <button (click)="editInventory(inventory)" class="btn btn-warning btn-sm">Editar</button>
+            <button (click)="deleteInventory(inventory.id)" class="btn btn-danger btn-sm">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
