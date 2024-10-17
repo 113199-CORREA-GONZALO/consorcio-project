@@ -29,7 +29,6 @@ export class TransactionComponent implements OnInit {
       inventory_id: ['', Validators.required],
       quantity: [0, Validators.required],
       price: [0], // Solo para ingreso
-      location: ['', Validators.required],
       transaction_date: [{ value: new Date().toISOString().split('T')[0], disabled: true }] // Fecha autogenerada
     });
   }
@@ -248,7 +247,6 @@ export class TransactionComponent implements OnInit {
       inventory_id: '',
       quantity: 0,
       price: 0,
-      location: '',
       transaction_date: new Date().toISOString().split('T')[0]
     });
     this.isEditing = false;
