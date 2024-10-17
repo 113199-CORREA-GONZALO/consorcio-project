@@ -1,114 +1,100 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { provideHttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EmployeesService } from '../../services/employees.service';
-import { Employee } from '../../models/employee.model';
-import { EmployeeType } from '../../models/enums/employee-type.enum';
-import { StatusType } from '../../models/enums/status-type.enum';
-import { DocumentType } from '../../models/enums/document-type.enum';
+import { Employee, ShiftType } from '../../models/employee.model';
+import { EmployeeType, StatusType, DocumentType } from '../../models/employee.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-employees',// Nombre del selector para utilizar este componente en HTML.
-  standalone: true,// Indica que este componente es independiente y no necesita ser declarado en un módulo.
-  imports: [CommonModule, ReactiveFormsModule], // Módulos importados necesarios para el funcionamiento del componente.
-  templateUrl: './employees.component.html',// Ruta del archivo HTML de la vista del componente.
-  styleUrls: ['./employees.component.css'],// Rutas del archivo CSS para el estilo del componente.
-  providers: [EmployeesService]// Proveedores del servicio de empleados para este componente.
-
+  selector: 'app-employees',
+  standalone: true,
+  imports: [ReactiveFormsModule,CommonModule],
+  templateUrl: './employees.component.html',
+  styleUrls: ['./employees.component.css']
 })
-export class EmployeesComponent {
-
-  // Definición del formulario reactivo para manejar los datos de los empleados.
+export class EmployeesComponent implements OnInit {
   employeeForm: FormGroup;
-  // Lista para almacenar los empleados obtenidos de la API.
   employees: Employee[] = [];
-  // Variable para manejar el modo de edición de los empleados.
   isEditMode = false;
-  // Variable para almacenar el ID del empleado que se está editando.
   currentEmployeeId: number | null = null;
 
-  // Listas de opciones para los campos del formulario, utilizando los enums.
+  // Opciones para los select
   employeeTypes = Object.values(EmployeeType);
   documentTypes = Object.values(DocumentType);
   statusTypes = Object.values(StatusType);
+  shiftTypes = Object.values(ShiftType);
 
-  // Inyectamos el FormBuilder para construir el formulario y el servicio de empleados para realizar operaciones CRUD.
   constructor(private fb: FormBuilder, private employeesService: EmployeesService) {
- // Inicializamos el formulario reactivo con sus campos y validaciones.
     this.employeeForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       employeeType: ['', Validators.required],
-      docType: '',
+      docType: ['', Validators.required],
       docNumber: ['', Validators.required],
       hiringDate: ['', Validators.required],
-      entryTime: ['', Validators.required],
-      exitTime: ['', Validators.required],
       salary: ['', [Validators.required, Validators.min(0)]],
-      state: ['', Validators.required]
+      state: ['', Validators.required],
+      shifts: this.fb.group({
+        shifts: ['', Validators.required],
+        shiftType: ['', Validators.required]
+      })
     });
   }
-// Este método se ejecuta al iniciar el componente para cargar la lista de empleados.
+
   ngOnInit(): void {
     this.getEmployees();
   }
-// Método para obtener la lista de empleados desde la API.
+
   getEmployees(): void {
     this.employeesService.getEmployees().subscribe((employees) => {
       this.employees = employees;
     });
   }
- // Método que se ejecuta al enviar el formulario.
+
   onSubmit(): void {
-    if (this.employeeForm.valid) { // Verifica si el formulario es válido.
+    if (this.employeeForm.valid) {
       if (this.isEditMode) {
-        this.updateEmployee(); // Si estamos en modo de edición, actualiza el empleado.
+        this.updateEmployee();
       } else {
-        this.addEmployee(); // Si no, agrega un nuevo empleado.
+        this.addEmployee();
       }
     }
   }
 
-  // Método para agregar un nuevo empleado.
   addEmployee(): void {
     this.employeesService.addEmployee(this.employeeForm.value).subscribe(() => {
-      this.getEmployees();// Recarga la lista de empleados.
-      this.employeeForm.reset();// Resetea el formulario.
+      this.getEmployees();
+      this.employeeForm.reset();
     });
   }
 
-  // Método para actualizar un empleado existente.
   updateEmployee(): void {
-    if (this.currentEmployeeId !== null) {// Verifica que haya un empleado seleccionado.
+    if (this.currentEmployeeId !== null) {
       const updatedEmployee = { ...this.employeeForm.value, id: this.currentEmployeeId };
       this.employeesService.updateEmployee(updatedEmployee).subscribe(() => {
-        this.getEmployees(); // Recarga la lista de empleados.
-        this.employeeForm.reset(); // Resetea el formulario.
-        this.isEditMode = false; // Cambia el modo de edición a falso.
-        this.currentEmployeeId = null; // Reinicia el ID del empleado actual.
+        this.getEmployees();
+        this.employeeForm.reset();
+        this.isEditMode = false;
+        this.currentEmployeeId = null;
       });
     }
   }
 
-  // Método para seleccionar un empleado para edición.
   editEmployee(employee: Employee): void {
-    this.employeeForm.patchValue(employee); // Llena el formulario con los datos del empleado.
-    this.isEditMode = true; // Cambia a modo de edición.
-    this.currentEmployeeId = employee.id; // Guarda el ID del empleado que se está editando.
+    this.employeeForm.patchValue(employee);
+    this.isEditMode = true;
+    this.currentEmployeeId = employee.id;
   }
 
-  // Método para eliminar un empleado.
   deleteEmployee(id: number): void {
     this.employeesService.deleteEmployee(id).subscribe(() => {
-      this.getEmployees(); // Recarga la lista de empleados después de eliminar.
+      this.getEmployees();
     });
   }
 
-  // Método para cancelar la edición.
   cancelEdit(): void {
-    this.employeeForm.reset(); // Resetea el formulario.
-    this.isEditMode = false; // Cambia el modo de edición a falso.
-    this.currentEmployeeId = null; // Reinicia el ID del empleado actual.
+    this.employeeForm.reset();
+    this.isEditMode = false;
+    this.currentEmployeeId = null;
   }
 }

@@ -1,0 +1,90 @@
+<h2>Gestión de Ítems</h2>
+
+<form [formGroup]="itemForm" (ngSubmit)="addItem()">
+  <div class="form-group">
+    <label for="identifier">Identificador (obligatorio si es Registrable)</label>
+    <input id="identifier" formControlName="identifier" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="name">Nombre</label>
+    <input id="name" formControlName="name" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="description">Descripción</label>
+    <input id="description" formControlName="description" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="location">Ubicación</label>
+    <input id="location" formControlName="location" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="type">Tipo</label>
+    <select id="type" formControlName="type" class="form-control">
+      <option [value]="ItemType.REGISTRABLE">Registrable</option>
+      <option [value]="ItemType.NON_REGISTRABLE">No Registrable</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="status">Estado</label>
+    <select id="status" formControlName="status" class="form-control">
+      <option [value]="ItemStatus.FUNCTIONAL">Funcional</option>
+      <option [value]="ItemStatus.DEFECTIVE">Defectuoso</option>
+      <option [value]="ItemStatus.UNDER_REPAIR">En Reparación</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="category">Categoría</label>
+    <select id="category" formControlName="category" class="form-control">
+      <option [value]="ItemCategory.DURABLES">Durables</option>
+      <option [value]="ItemCategory.CONSUMABLES">Consumibles</option>
+      <option [value]="ItemCategory.MATERIALS_CONSTRUCTION">Materiales de Construcción</option>
+      <option [value]="ItemCategory.OTHERS">Otros</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="measurement_unit">Unidad de Medida</label>
+    <select id="measurement_unit" formControlName="measurement_unit" class="form-control">
+      <option [value]="MeasurementUnit.LITERS">Litros</option>
+      <option [value]="MeasurementUnit.KILOS">Kilos</option>
+      <option [value]="MeasurementUnit.UNITS">Unidades</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary mt-3">
+    {{ isEditing ? 'Modificar Ítem' : 'Agregar Ítem' }}
+  </button>
+  <button type="button" class="btn btn-secondary mt-3 ml-2" (click)="resetForm()" *ngIf="isEditing">
+    Cancelar
+  </button>
+</form>
+
+<h3>Lista de Ítems</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Identificador</th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Ubicación</th>
+      <th>Tipo</th>
+      <th>Categoría</th>
+      <th>Unidad de Medida</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of items">
+      <td>{{ item.identifier }}</td>
+      <td>{{ item.name }}</td>
+      <td>{{ item.description }}</td>
+      <td>{{ item.location }}</td>
+      <td>{{ item.type }}</td>
+      <td>{{ item.category }}</td>
+      <td>{{ item.measurement_unit }}</td>
+      <td>
+        <button (click)="editItem(item)" class="btn btn-warning btn-sm">Editar</button>
+        <button (click)="deleteItem(item.id!)" class="btn btn-danger btn-sm">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

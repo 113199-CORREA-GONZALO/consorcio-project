@@ -1,24 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { InventoryService } from '../../services/inventory.service';
-import { Inventory, StatusType} from '../../models/inventory.model';
-import { Item, Status } from '../../models/item.model';
-import { ItemComponent } from "../item/item/item.component";
+import { ArticleComponent } from '../inventory_article/inventory_article.component';
+import { Inventory, StatusType } from '../../../models/inventory.model';
+import { Article, Status } from '../../../models/article.model';
+import { InventoryService } from '../../../services/inventory.service';
+
+
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ItemComponent],
-  templateUrl: './inventory.component.html',
-  styleUrls: ['./inventory.component.css']
+  imports: [CommonModule, ReactiveFormsModule, ArticleComponent],
+  templateUrl: './inventory_inventories.component.html',
+  styleUrls: ['./inventory_inventories.component.css']
 })
 export class InventoryComponent implements OnInit {
   inventoryForm: FormGroup;
   inventories: Inventory[] = [];
-  items: Item[] = [];
-  activeItems: Item[] = []; // Solo los ítems activos
-  itemMap: { [key: number]: string } = {}; // Mapa para almacenar nombre de ítems con sus IDs
+  articles: Article[] = [];
+  activeArticles: Article[] = []; // Solo los ítems activos
+  articleMap: { [key: number]: string } = {}; // Mapa para almacenar nombre de ítems con sus IDs
   isEditing: boolean = false;
   editingInventoryId: any | null = null; // Para guardar el ID del inventario en edición
 
@@ -26,7 +28,7 @@ export class InventoryComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
     this.inventoryForm = this.fb.group({
-      item_id: ['', Validators.required],
+      article_id: ['', Validators.required],
       stock: [1, Validators.required], // Stock inicial es 1
       min_stock: [1],
       inventory_status: [StatusType.ACTIVE]
@@ -35,33 +37,33 @@ export class InventoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.getInventories();
-    this.getItems();
+    this.getArticles();
   }
 
   getInventories(): void {
-    this.inventoryService.getInventories().subscribe(inventories => {
+    this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
       this.inventories = inventories.filter(inventory => inventory.inventory_status === StatusType.ACTIVE);
     });
   }
 
-  buildItemMap(): void {
-    this.items.forEach(item => {
+  buildArticleMap(): void {
+    this.articles.forEach(article => {
       // Verificar que el ID y el nombre no sean undefined o nulos
-      if (item && item.id !== undefined && item.id !== null && item.name) {
-        this.itemMap[item.id] = item.name;
+      if (article && article.id !== undefined && article.id !== null && article.name) {
+        this.articleMap[article.id] = article.name;
       } else {
-        console.warn('Item inválido encontrado:', item);
+        console.warn('Article inválido encontrado:', article);
       }
     });
   }
-  
+
   // Método para obtener los ítems y filtrar solo los activos
 
-  getItems(): void {
-    this.inventoryService.getItems().subscribe(items => {
-      this.items = items;
-      this.activeItems = this.items.filter(item => item.item_status === Status.ACTIVE); // Usar ItemStatus.FUNCTIONAL
-      this.buildItemMap();
+  getArticles(): void {
+    this.inventoryService.getArticles().subscribe((articles: Article[]) => {
+      this.articles = articles;
+      this.activeArticles = this.articles.filter(article => article.article_status === Status.ACTIVE); // Usar ArticleStatus.FUNCTIONAL
+      this.buildArticleMap();
     });
   }
 
@@ -79,13 +81,13 @@ export class InventoryComponent implements OnInit {
     this.isEditing = true; // Activar el modo edición
     this.editingInventoryId = inventory.id; // Guardar el ID del inventario en edición
     this.inventoryForm.patchValue({
-      item_id: inventory.item_id,
+      article_id: inventory.article_id,
       stock: inventory.stock,
       min_stock: inventory.min_stock,
       inventory_status: inventory.inventory_status
     });
   }
-  
+
 
   updateInventory(): void {
     if (this.inventoryForm.valid) {
@@ -107,11 +109,11 @@ export class InventoryComponent implements OnInit {
     this.editingInventoryId = null; // Limpiar el ID del inventario en edición
     this.inventoryForm.reset({ stock: 1, min_stock: 1, inventory_status: 'Active' });
   }
-  
+
   saveInventory(): void {
     if (this.inventoryForm.valid) {
       const inventoryData = this.inventoryForm.value;
-  
+
       if (this.isEditing && this.editingInventoryId) {
         // Editar inventario existente
         const updatedInventory: Inventory = {
@@ -131,5 +133,5 @@ export class InventoryComponent implements OnInit {
       }
     }
   }
-  
+
 }

@@ -1,58 +1,170 @@
 {
-  "employees": [
+  "transactions": [
     {
-      "firstName": "Juan",
-      "lastName": "Pérez",
-      "employeeType": "Admin",
-      "docType": "DNI",
-      "docNumber": "12345678123",
-      "hiringDate": "2021-01-01",
-      "entryTime": "09:00",
-      "exitTime": "17:00",
-      "salary": 50000,
-      "state": "Active",
+      "id": 1,
+      "inventory_id": 1,
+      "quantity": 10,
+      "price": 150.5,
+      "transaction_date": "2024-10-13T12:34:56Z",
+      "transaction_type": "ENTRY"
+    },
+    {
+      "quantity": 1,
+      "price": 1,
+      "transaction_date": "2024-10-14T01:42:36.748Z",
+      "transaction_type": "ENTRY",
+      "id": 2
+    },
+    {
+      "quantity": 1,
+      "price": 1,
+      "transaction_date": "2024-10-14T01:44:46.615Z",
+      "transaction_type": "ENTRY",
+      "id": 3,
+      "transaction_status": "Inactive"
+    },
+    {
+      "inventory_id": "1",
+      "quantity": 1,
+      "price": 1,
+      "transaction_date": "2024-10-14T01:51:43.016Z",
+      "id": 4,
+      "transaction_status": "Inactive"
+    },
+    {
+      "inventory_id": "2",
+      "quantity": 110,
+      "price": 0,
+      "transaction_type": "ENTRY",
+      "transaction_date": "2024-10-14T16:20:50.254Z",
+      "id": 15,
+      "transaction_status": "Inactive"
+    }
+  ],
+  "articles": [
+    {
+      "identifier": "....",
+      "name": "Camaras",
+      "description": "Camaras para seguridad",
+      "location": "galpon",
+      "type": "NON_REGISTRABLE",
+      "status": "FUNCTIONAL",
+      "category": "DURABLES",
+      "measurement_unit": "UNITS",
+      "article_status": "ACTIVE",
       "id": 1
     },
     {
-      "firstName": "Gino Leonel",
-      "lastName": "Soler",
-      "employeeType": "Technician",
-      "docType": "Passport",
-      "docNumber": "123123",
-      "hiringDate": "2024-09-11",
-      "entryTime": "15:07",
-      "exitTime": "17:08",
-      "salary": 6,
-      "state": "Active",
+      "identifier": "asd123",
+      "name": "Camputadora",
+      "description": "una compu",
+      "location": "oficina",
+      "type": "REGISTRABLE",
+      "status": "FUNCTIONAL",
+      "category": "DURABLES",
+      "measurement_unit": "UNITS",
+      "article_status": "ACTIVE",
+      "id": 2
+    },
+    {
+      "identifier": "696969",
+      "name": "Moto",
+      "description": "Moto nueva",
+      "location": "galpon",
+      "type": "REGISTRABLE",
+      "status": "FUNCTIONAL",
+      "category": "DURABLES",
+      "measurement_unit": "UNITS",
+      "article_status": "ACTIVE",
       "id": 3
+    }
+  ],
+  "inventories": [
+    {
+      "article_id": "1",
+      "stock": 2,
+      "min_stock": 1,
+      "inventory_status": "Active",
+      "id": 1
+    },
+    {
+      "article_id": "2",
+      "stock": 222,
+      "min_stock": 1,
+      "inventory_status": "Active",
+      "id": 2
+    },
+    {
+      "article_id": "1",
+      "stock": 1,
+      "min_stock": 1,
+      "inventory_status": "Active",
+      "id": 3
+    }
+  ],
+  "employees": [
+    {
+      "id": 1,
+      "firstName": "Juan",
+      "lastName": "Pérez",
+      "employeeType": "ADMIN",
+      "docType": "DNI",
+      "docNumber": "12345678",
+      "hiringDate": "2024-10-11T20:01:08.409Z",
+      "salary": 50000,
+      "state": "ACTIVE",
+      "shifts": {
+        "shiftType": "DAY",
+        "shifts": [
+          "Monday",
+          "Wednesday",
+          "Friday"
+        ]
+      }
+    },
+    {
+      "firstName": "Mariaa",
+      "lastName": "Gomez",
+      "employeeType": "TECHNICIAN",
+      "docType": "PASSPORT",
+      "docNumber": "A1234567",
+      "hiringDate": "2024-09-15T08:30:00.000Z",
+      "salary": 45000,
+      "state": "ACTIVE",
+      "shifts": {
+        "shifts": [
+          "Tuesday",
+          "Thursday",
+          "Saturday"
+        ],
+        "shiftType": "NIGHT"
+      },
+      "id": 2
+    }
+  ],
+  "payments": [
+    {
+      "id": 1,
+      "employeeId": 1,
+      "paymentDate": "2024-10-01",
+      "paymentAmount": 50000,
+      "paymentDetail": "Salary for September 2024"
+    },
+    {
+      "id": 2,
+      "employeeId": 2,
+      "paymentDate": "2024-10-01",
+      "paymentAmount": 45000,
+      "paymentDetail": "Salary for September 2024"
     }
   ],
   "suppliers": [
     {
       "name": "SOLER GINO LEONEL",
       "serviceType": "Maintenance",
-      "contact": "123123",
+      "contact": "351-8077324",
       "address": "pascual de rogatis 3793, Barrio Los Platanos",
       "details": "42151251251252135",
-      "state": "Inactive",
-      "id": 2
-    },
-    {
-      "name": "SOLER GINO LEONEL",
-      "serviceType": "Cleaning",
-      "contact": "123123",
-      "address": "pascual de rogatis",
-      "details": "edfc",
-      "state": "Active",
-      "id": 3
-    }
-  ],
-  "inventory": [
-    {
-      "item": "puerta",
-      "type": "Raw Material",
-      "stock": 45,
-      "details": "asdasd",
       "state": "Active",
       "id": 2
     }
