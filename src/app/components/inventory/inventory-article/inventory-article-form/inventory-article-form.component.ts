@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { InventoryService } from '../../../services/inventory.service';
-import { Article, ArticleCategory, ArticleType, ArticleCondition, MeasurementUnit,Status } from '../../../models/article.model';
-import { ServiceType } from '../../../models/enums/service-tpye.enum';
+import { InventoryService } from '../../../../services/inventory.service';
+import { Article, ArticleCategory, ArticleType, ArticleCondition, MeasurementUnit,Status } from '../../../../models/article.model';
+import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.service';
 
 @Component({
   selector: 'app-article',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule], // Agrega ReactiveFormsModule aquí
-  templateUrl: './inventory_article.component.html',
-  styleUrls: ['./inventory_article.component.css']
+  templateUrl: './inventory-article-form.component.html',
+  styleUrls: ['./inventory-article-form.component.css']
 })
 export class ArticleComponent implements OnInit {
+
+  private mapperService = inject(MapperService);
   articleForm: FormGroup;
   articles: Article[] = [];
   isEditing: boolean = false; // Variable para controlar el estado de edición
@@ -29,12 +31,14 @@ export class ArticleComponent implements OnInit {
       identifier: [''],
       name: ['', Validators.required],
       description: [''],
-      location: [''],
-      type: [ArticleType.NON_REGISTRABLE, Validators.required],
-      status: [ArticleCondition.FUNCTIONAL, Validators.required],
-      category: [ArticleCategory.DURABLES, Validators.required],
-      measurement_unit: [MeasurementUnit.UNITS, Validators.required],
-      article_status: [Status.ACTIVE]
+      // Cambia 'type' a 'articleType'
+      articleType: [ArticleType.NON_REGISTRABLE, Validators.required],
+      // Cambia 'status' a 'articleCondition'
+      articleCondition: [ArticleCondition.FUNCTIONAL, Validators.required],
+      // Cambia 'category' a 'articleCategory'
+      articleCategory: [ArticleCategory.DURABLES, Validators.required],
+      measurementUnit: [MeasurementUnit.UNITS, Validators.required],
+      // article_status: [Status.ACTIVE]
     });
   }
 
@@ -44,8 +48,7 @@ export class ArticleComponent implements OnInit {
 
   getArticles(): void {
     this.inventoryService.getArticles().subscribe(articles => {
-      this.articles = articles; //filter(article => article.article_status === Status.ACTIVE); // Mostrar solo ítems activos
-      console.log(this.articles);
+      this.articles = articles;
     });
   }
 
@@ -53,10 +56,13 @@ export class ArticleComponent implements OnInit {
     if (this.articleForm.valid) {
       const newArticle = this.articleForm.value;
 
+      // Convierte el artículo a snake_case antes de enviarlo
+      const newArticleFormatted = this.mapperService.toSnakeCase(newArticle);
+
       if (this.isEditing) {
-        this.updateArticle(newArticle); // Llama a updateArticle si estamos editando
+        this.updateArticle(newArticleFormatted); // Llama a updateArticle si estamos editando
       } else {
-        this.inventoryService.addArticle(newArticle).subscribe(() => {
+        this.inventoryService.addArticle(newArticleFormatted).subscribe(() => {
           this.getArticles(); // Recargar la lista
           this.resetForm(); // Limpiar el formulario
         });

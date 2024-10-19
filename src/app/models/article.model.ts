@@ -39,3 +39,13 @@ export enum ArticleCategory {
     measurement_unit: MeasurementUnit;
     article_status: Status; // Baja lógica
   }
+
+  export interface ArticlePost {
+    identifier?: string; 
+    name: string;
+    description?: string;
+    articleCondition: ArticleCondition;
+    articleCategory: ArticleCategory;
+    articleType: ArticleType;
+    measurementUnit: MeasurementUnit;
+  }
