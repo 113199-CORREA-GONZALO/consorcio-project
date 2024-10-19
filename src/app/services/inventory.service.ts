@@ -1,13 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Article } from '../models/article.model';
+import { Article, ArticlePost } from '../models/article.model';
 import { Inventory, Transaction } from '../models/inventory.model';
+import { MapperService } from './MapperCamelToSnake/mapper.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InventoryService {
+  private mapperService = inject(MapperService);
+
   //private apiArticlesUrl = 'http://localhost:3000/articles'; // URL de la API para los ítems
   private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
   private apiInventoriesUrl = 'http://localhost:3000/inventories'; // URL de la API para los inventarios
@@ -20,8 +23,9 @@ export class InventoryService {
     return this.http.get<Article[]>(this.apiArticlesUrl);
   }
 
-  addArticle(article: Article): Observable<Article> {
-    return this.http.post<Article>(this.apiArticlesUrl, article);
+  addArticle(article: ArticlePost): Observable<ArticlePost> {
+    console.log(article);
+    return this.http.post<ArticlePost>(this.apiArticlesUrl, article);
   }
 
   updateArticle(articleId: number, article: Article): Observable<Article> {

@@ -13,28 +13,28 @@
     <label for="description">Descripción</label>
     <input id="description" formControlName="description" class="form-control" />
   </div>
-  <div class="form-group">
+  <!-- <div class="form-group">
     <label for="location">Ubicación</label>
     <input id="location" formControlName="location" class="form-control" />
-  </div>
+  </div> -->
   <div class="form-group">
-    <label for="type">Tipo</label>
-    <select id="type" formControlName="type" class="form-control">
+    <label for="articleType">Tipo</label>
+    <select id="articleType" formControlName="articleType" class="form-control">
       <option [value]="ArticleType.REGISTRABLE">Registrable</option>
       <option [value]="ArticleType.NON_REGISTRABLE">No Registrable</option>
     </select>
   </div>
   <div class="form-group">
-    <label for="status">Estado</label>
-    <select id="status" formControlName="status" class="form-control">
+    <label for="articleCondition">Estado</label>
+    <select id="articleCondition" formControlName="articleCondition" class="form-control">
       <option [value]="ArticleStatus.FUNCTIONAL">Funcional</option>
       <option [value]="ArticleStatus.DEFECTIVE">Defectuoso</option>
       <option [value]="ArticleStatus.UNDER_REPAIR">En Reparación</option>
     </select>
   </div>
   <div class="form-group">
-    <label for="category">Categoría</label>
-    <select id="category" formControlName="category" class="form-control">
+    <label for="articleCategory">Categoría</label>
+    <select id="articleCategory" formControlName="articleCategory" class="form-control">
       <option [value]="ArticleCategory.DURABLES">Durables</option>
       <option [value]="ArticleCategory.CONSUMABLES">Consumibles</option>
       <option [value]="ArticleCategory.MATERIALS_CONSTRUCTION">Materiales de Construcción</option>
@@ -42,8 +42,8 @@
     </select>
   </div>
   <div class="form-group">
-    <label for="measurement_unit">Unidad de Medida</label>
-    <select id="measurement_unit" formControlName="measurement_unit" class="form-control">
+    <label for="measurementUnit">Unidad de Medida</label>
+    <select id="measurementUnit" formControlName="measurementUnit" class="form-control">
       <option [value]="MeasurementUnit.LITERS">Litros</option>
       <option [value]="MeasurementUnit.KILOS">Kilos</option>
       <option [value]="MeasurementUnit.UNITS">Unidades</option>
