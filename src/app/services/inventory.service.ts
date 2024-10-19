@@ -11,8 +11,8 @@ import { MapperService } from './MapperCamelToSnake/mapper.service';
 export class InventoryService {
   private mapperService = inject(MapperService);
 
-  //private apiArticlesUrl = 'http://localhost:3000/articles'; // URL de la API para los ítems
-  private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
+  private apiArticlesUrl = 'http://localhost:3000/articles'; // URL de la API para los ítems
+  //private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
   private apiInventoriesUrl = 'http://localhost:3000/inventories'; // URL de la API para los inventarios
   private apiTransactionsUrl = 'http://localhost:3000/transactions'; // URL de la API para las transacciones
 
