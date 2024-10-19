@@ -60,7 +60,7 @@ export class ArticleComponent implements OnInit {
       const newArticleFormatted = this.mapperService.toSnakeCase(newArticle);
 
       if (this.isEditing) {
-        this.updateArticle(newArticleFormatted); // Llama a updateArticle si estamos editando
+        //this.updateArticle(newArticleFormatted); // Llama a updateArticle si estamos editando
       } else {
         this.inventoryService.addArticle(newArticleFormatted).subscribe(() => {
           this.getArticles(); // Recargar la lista
@@ -70,27 +70,6 @@ export class ArticleComponent implements OnInit {
     }
   }
 
-  editArticle(article: Article): void {
-    this.isEditing = true; // Cambia el estado a edición
-    this.currentArticleId = article.id; // Guarda el ID del ítem actual
-    this.articleForm.patchValue(article); // Llena el formulario con los datos del ítem a editar
-  }
-
-  updateArticle(article: Article): void {
-    if (this.currentArticleId) {
-      // Actualiza el ítem con el ID actual
-      this.inventoryService.updateArticle(this.currentArticleId, article).subscribe(() => {
-        this.getArticles(); // Recarga la lista de ítems
-        this.resetForm(); // Resetea el formulario después de actualizar
-      });
-    }
-  }
-
-  deleteArticle(article_id: number): void {
-    this.inventoryService.deleteArticle(article_id).subscribe(() => {
-      this.getArticles();
-    });
-  }
   resetForm(): void {
     this.articleForm.reset({
       identifier: '',
