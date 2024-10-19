@@ -44,7 +44,8 @@ export class ArticleComponent implements OnInit {
 
   getArticles(): void {
     this.inventoryService.getArticles().subscribe(articles => {
-      this.articles = articles.filter(article => article.article_status === Status.ACTIVE); // Mostrar solo ítems activos
+      this.articles = articles; //filter(article => article.article_status === Status.ACTIVE); // Mostrar solo ítems activos
+      console.log(this.articles);
     });
   }
 
