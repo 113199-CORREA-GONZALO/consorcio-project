@@ -28,7 +28,7 @@ export class ArticleComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
     this.articleForm = this.fb.group({
-      identifier: [''],
+      identifier: [{value:'', disabled: true}],
       name: ['', Validators.required],
       description: [''],
       // Cambia 'type' a 'articleType'
@@ -44,6 +44,15 @@ export class ArticleComponent implements OnInit {
 
   ngOnInit(): void {
     this.getArticles();
+
+    this.articleForm.get('articleType')?.valueChanges.subscribe((value) => {
+      if(value === ArticleType.REGISTRABLE) {
+        this.articleForm.get('identifier')?.enable();  // Habilita si es REGISTRABLE
+      } else {
+        this.articleForm.get('identifier')?.disable(); // Deshabilita si no lo es
+        this.articleForm.get('identifier')?.reset(); // Limpia el valor
+      }
+    });
   }
 
   getArticles(): void {
