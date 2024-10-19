@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ArticleComponent } from '../inventory_article/inventory_article.component';
+import { ArticleComponent } from '../inventory-article/inventory-article-form/inventory-article-form.component';
 import { Inventory, StatusType } from '../../../models/inventory.model';
 import { Article, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
