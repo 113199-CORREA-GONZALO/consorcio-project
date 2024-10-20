@@ -1,7 +1,7 @@
 {
   "transactions": [
     {
-      "id": 1,
+      "id": "1",
       "inventory_id": 1,
       "quantity": 10,
       "price": 150.5,
@@ -13,14 +13,14 @@
       "price": 1,
       "transaction_date": "2024-10-14T01:42:36.748Z",
       "transaction_type": "ENTRY",
-      "id": 2
+      "id": "2"
     },
     {
       "quantity": 1,
       "price": 1,
       "transaction_date": "2024-10-14T01:44:46.615Z",
       "transaction_type": "ENTRY",
-      "id": 3,
+      "id": "3",
       "transaction_status": "Inactive"
     },
     {
@@ -28,7 +28,7 @@
       "quantity": 1,
       "price": 1,
       "transaction_date": "2024-10-14T01:51:43.016Z",
-      "id": 4,
+      "id": "4",
       "transaction_status": "Inactive"
     },
     {
@@ -37,7 +37,7 @@
       "price": 0,
       "transaction_type": "ENTRY",
       "transaction_date": "2024-10-14T16:20:50.254Z",
-      "id": 15,
+      "id": "15",
       "transaction_status": "Inactive"
     }
   ],
@@ -52,7 +52,7 @@
       "category": "DURABLES",
       "measurement_unit": "UNITS",
       "article_status": "ACTIVE",
-      "id": 1
+      "id": "1"
     },
     {
       "identifier": "asd123",
@@ -64,7 +64,7 @@
       "category": "DURABLES",
       "measurement_unit": "UNITS",
       "article_status": "ACTIVE",
-      "id": 2
+      "id": "2"
     },
     {
       "identifier": "696969",
@@ -76,7 +76,7 @@
       "category": "DURABLES",
       "measurement_unit": "UNITS",
       "article_status": "ACTIVE",
-      "id": 3
+      "id": "3"
     }
   ],
   "inventories": [
@@ -85,26 +85,26 @@
       "stock": 2,
       "min_stock": 1,
       "inventory_status": "Active",
-      "id": 1
+      "id": "1"
     },
     {
       "article_id": "2",
       "stock": 222,
       "min_stock": 1,
       "inventory_status": "Active",
-      "id": 2
+      "id": "2"
     },
     {
       "article_id": "1",
       "stock": 1,
       "min_stock": 1,
       "inventory_status": "Active",
-      "id": 3
+      "id": "3"
     }
   ],
   "employees": [
     {
-      "id": 1,
+      "id": "1",
       "firstName": "Juan",
       "lastName": "Pérez",
       "employeeType": "ADMIN",
@@ -139,19 +139,19 @@
         ],
         "shiftType": "NIGHT"
       },
-      "id": 2
+      "id": "2"
     }
   ],
   "payments": [
     {
-      "id": 1,
+      "id": "1",
       "employeeId": 1,
       "paymentDate": "2024-10-01",
       "paymentAmount": 50000,
       "paymentDetail": "Salary for September 2024"
     },
     {
-      "id": 2,
+      "id": "2",
       "employeeId": 2,
       "paymentDate": "2024-10-01",
       "paymentAmount": 45000,
@@ -161,12 +161,39 @@
   "suppliers": [
     {
       "name": "SOLER GINO LEONEL",
-      "serviceType": "Maintenance",
+      "serviceType": "Cleaning",
       "contact": "351-8077324",
       "address": "pascual de rogatis 3793, Barrio Los Platanos",
       "details": "42151251251252135",
       "state": "Active",
-      "id": 2
+      "id": "2"
+    },
+    {
+      "id": "3",
+      "name": "Nicolas Nievas",
+      "serviceType": "Cleaning",
+      "contact": "351-282-6271",
+      "address": "Tandil",
+      "details": "algo hace",
+      "state": "Active"
+    },
+    {
+      "name": "Santoro",
+      "serviceType": "Security",
+      "contact": "351-8077324",
+      "address": "por ahi",
+      "details": "te grita mucho.",
+      "state": "Active",
+      "id": "17"
+    },
+    {
+      "id": "9e34",
+      "name": "Santoro Killer",
+      "serviceType": "Security",
+      "contact": "351 223231",
+      "address": "nose",
+      "details": "xD",
+      "state": "Active"
     }
   ]
 }

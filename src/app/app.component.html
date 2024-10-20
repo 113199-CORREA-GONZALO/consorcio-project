@@ -1,8 +1,34 @@
-<nav>
-  <a routerLink="/employees">Empleados</a> |
-  <a routerLink="/providers">Proveedores</a> |
-  <a routerLink="/article">Gestion Article</a>|
-  <a routerLink="/inventory">Inventario</a>|
-  <a routerLink="/transaction">Transaccion</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Consorcio</a>
+    <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/employees">Empleados</a>
+        </li>
+        <li class="nav-item" ngbDropdown>
+          <a class="nav-link" id="navbarDropdown" role="button" ngbDropdownToggle>
+            Proveedores
+          </a>
+          <div ngbDropdownMenu aria-labelledby="navbarDropdown">
+            <a ngbDropdownItem routerLink="/providers/list">Listado</a>
+            <a ngbDropdownItem routerLink="/providers/form">Formulario</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/article">Gestion Article</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/inventory">Inventario</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/transaction">Transaccion</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>
 <router-outlet></router-outlet>
