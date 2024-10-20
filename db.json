@@ -178,15 +178,6 @@
       "state": "Active"
     },
     {
-      "name": "Santoro",
-      "serviceType": "Security",
-      "contact": "351-8077324",
-      "address": "por ahi",
-      "details": "te grita mucho.",
-      "state": "Active",
-      "id": "17"
-    },
-    {
       "id": "9e34",
       "name": "Santoro Killer",
       "serviceType": "Security",
