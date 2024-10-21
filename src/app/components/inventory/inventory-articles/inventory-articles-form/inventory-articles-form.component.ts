@@ -1,3 +1,4 @@
+import { ArticlePost } from './../../../../models/article.model';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -9,8 +10,8 @@ import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.se
   selector: 'app-article',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule], // Agrega ReactiveFormsModule aquí
-  templateUrl: './inventory-article-form.component.html',
-  styleUrls: ['./inventory-article-form.component.css']
+  templateUrl: './inventory-articles-form.component.html',
+  styleUrls: ['./inventory-articles-form.component.css']
 })
 export class ArticleComponent implements OnInit {
 
@@ -38,21 +39,26 @@ export class ArticleComponent implements OnInit {
       // Cambia 'category' a 'articleCategory'
       articleCategory: [ArticleCategory.DURABLES, Validators.required],
       measurementUnit: [MeasurementUnit.UNITS, Validators.required],
-      // article_status: [Status.ACTIVE]
+      location: [''],
+      stock: [''],
+      stockMin: ['']
     });
   }
 
   ngOnInit(): void {
     this.getArticles();
+    this.articleForm.get('articleType')?.valueChanges.subscribe(this.handleArticleTypeChange.bind(this));
+  }
 
-    this.articleForm.get('articleType')?.valueChanges.subscribe((value) => {
-      if(value === ArticleType.REGISTRABLE) {
-        this.articleForm.get('identifier')?.enable();  // Habilita si es REGISTRABLE
-      } else {
-        this.articleForm.get('identifier')?.disable(); // Deshabilita si no lo es
-        this.articleForm.get('identifier')?.reset(); // Limpia el valor
-      }
-    });
+  handleArticleTypeChange(value: ArticleType): void {
+    if(value === ArticleType.REGISTRABLE) {
+      this.articleForm.get('identifier')?.enable();
+      this.articleForm.get('measurementUnit')?.disable();
+    } else {
+      this.articleForm.get('identifier')?.disable();
+      this.articleForm.get('measurementUnit')?.enable();
+      this.articleForm.get('identifier')?.reset();
+    }
   }
 
   getArticles(): void {
@@ -63,9 +69,7 @@ export class ArticleComponent implements OnInit {
 
   addArticle(): void {
     if (this.articleForm.valid) {
-      const newArticle = this.articleForm.value;
-
-      // Convierte el artículo a snake_case antes de enviarlo
+      const newArticle: ArticlePost = this.articleForm.value as ArticlePost;
       const newArticleFormatted = this.mapperService.toSnakeCase(newArticle);
 
       if (this.isEditing) {
@@ -85,11 +89,10 @@ export class ArticleComponent implements OnInit {
       name: '',
       description: '',
       location: '',
-      type: ArticleType.REGISTRABLE, // Valor por defecto
-      status: ArticleCondition.FUNCTIONAL, // Valor por defecto
-      category: ArticleCategory.DURABLES, // Valor por defecto
-      measurement_unit: MeasurementUnit.UNITS // Valor por defecto
-
+      articleType: ArticleType.REGISTRABLE, // Valor por defecto
+      articleCondition: ArticleCondition.FUNCTIONAL, // Valor por defecto
+      articleCategory: ArticleCategory.DURABLES, // Valor por defecto
+      measurementUnit: MeasurementUnit.UNITS // Valor por defecto
     });
     this.isEditing = false; // Cambia el estado a no edición
     this.currentArticleId = undefined; // Limpia el ID del ítem actual

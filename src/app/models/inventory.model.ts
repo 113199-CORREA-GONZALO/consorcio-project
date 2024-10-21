@@ -1,3 +1,5 @@
+import { Article } from "./article.model";
+
 // Agregar nuevo modelo para las transacciones
 export interface Transaction {
   id?: number;
@@ -18,10 +20,19 @@ export enum TransactionType {
   OUTPUT = 'OUTPUT' // Egreso de inventario
 }
 
+// export interface Inventory {
+//   id?: number;
+//   article_id: number; // Relación con el ítem
+//   stock: number;
+//   min_stock?: number; // Puede ser null
+//   inventory_status: StatusType; // Baja lógica
+// }
+
 export interface Inventory {
   id?: number;
-  article_id: number; // Relación con el ítem
-  stock: number;
-  min_stock?: number; // Puede ser null
-  inventory_status: StatusType; // Baja lógica
+  article: Article;     // Información del artículo
+  stock: number;           // Cantidad en stock
+  minStock: number;       // Stock mínimo
+  location: string | null; // Ubicación del artículo, puede ser null
+  transactions: Transaction[]; // Lista de transacciones asociadas
 }

@@ -9,7 +9,7 @@ import { Inventory, Transaction } from '../models/inventory.model';
 })
 export class InventoryService {
   private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
-  private apiInventoriesUrl = 'http://localhost:3000/inventories'; // URL de la API para los inventarios
+  private apiInventoriesUrl = 'http://localhost:8080/inventories'; // URL de la API para los inventarios
   private apiTransactionsUrl = 'http://localhost:3000/transactions'; // URL de la API para las transacciones
 
   constructor(private http: HttpClient) {}
@@ -34,7 +34,7 @@ export class InventoryService {
 
   // CRUD para Inventarios
   getInventories(): Observable<Inventory[]> {
-    return this.http.get<Inventory[]>(this.apiInventoriesUrl);
+      return this.http.get<Inventory[]>(this.apiInventoriesUrl);
   }
 
   addInventory(inventory: Inventory): Observable<Inventory> {

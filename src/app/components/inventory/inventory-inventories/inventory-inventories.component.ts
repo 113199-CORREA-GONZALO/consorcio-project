@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ArticleComponent } from '../inventory-article/inventory-article-form/inventory-article-form.component';
 import { Inventory, StatusType } from '../../../models/inventory.model';
 import { Article, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
+import { ArticleComponent } from '../inventory-articles/inventory-articles-form/inventory-articles-form.component';
 
 
 
@@ -12,8 +12,8 @@ import { InventoryService } from '../../../services/inventory.service';
   selector: 'app-inventory',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ArticleComponent],
-  templateUrl: './inventory_inventories.component.html',
-  styleUrls: ['./inventory_inventories.component.css']
+  templateUrl: './inventory-inventories.component.html',
+  styleUrls: ['./inventory-inventories.component.css']
 })
 export class InventoryComponent implements OnInit {
   inventoryForm: FormGroup;
@@ -37,12 +37,13 @@ export class InventoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.getInventories();
-    this.getArticles();
+    // this.getArticles();
   }
 
   getInventories(): void {
     this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
-      this.inventories = inventories.filter(inventory => inventory.inventory_status === StatusType.ACTIVE);
+      this.inventories = inventories;//.filter(inventory => inventory.inventory_status === StatusType.ACTIVE);
+      console.log(inventories);
     });
   }
 
