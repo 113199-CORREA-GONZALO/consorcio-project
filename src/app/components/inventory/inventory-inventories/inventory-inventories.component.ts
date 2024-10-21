@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Inventory, StatusType } from '../../../models/inventory.model';
-import { Article, Status } from '../../../models/article.model';
+import { Article, MeasurementUnit, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
 import { ArticleComponent } from '../inventory-articles/inventory-articles-form/inventory-articles-form.component';
+import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 
 
 
@@ -16,6 +17,15 @@ import { ArticleComponent } from '../inventory-articles/inventory-articles-form/
   styleUrls: ['./inventory-inventories.component.css']
 })
 export class InventoryComponent implements OnInit {
+transactionInventory(_t17: Inventory) {
+throw new Error('Method not implemented.');
+}
+viewInventory(_t17: Inventory) {
+throw new Error('Method not implemented.');
+}
+
+  private mapperService = inject(MapperService);
+
   inventoryForm: FormGroup;
   inventories: Inventory[] = [];
   articles: Article[] = [];
@@ -41,11 +51,32 @@ export class InventoryComponent implements OnInit {
   }
 
   getInventories(): void {
-    this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
-      this.inventories = inventories;//.filter(inventory => inventory.inventory_status === StatusType.ACTIVE);
-      console.log(inventories);
+    this.inventoryService.getInventories().subscribe((inventories: any[]) => {
+      this.inventories = inventories.map(inventory => ({
+        ...this.mapperService.toCamelCase(inventory), // Convertir todo el inventario a camelCase
+        article: this.mapperService.toCamelCase(inventory.article) // Convertir el artículo a camelCase
+        //transactions: inventory.transactions.map(transaction => this.mapperService.toCamelCase(transaction)) // Convertir las transacciones a camelCase
+      }));
+
+      console.log(this.inventories); // Para verificar que la conversión se realizó correctamente
     });
   }
+
+ // Método para convertir la unidad de medida a una representación amigable
+getDisplayUnit(unit: MeasurementUnit): string {
+  switch (unit) {
+      case MeasurementUnit.LITERS:
+          return 'Lts.';
+      case MeasurementUnit.KILOS:
+          return 'Kg.';
+      case MeasurementUnit.UNITS:
+          return 'Ud.';
+      default:
+          return unit; // Retorna el valor original si no coincide
+  }
+}
+
+
 
   buildArticleMap(): void {
     this.articles.forEach(article => {
