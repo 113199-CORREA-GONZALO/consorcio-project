@@ -63,7 +63,7 @@ export class InventoryComponent implements OnInit {
   getArticles(): void {
     this.inventoryService.getArticles().subscribe((articles: Article[]) => {
       this.articles = articles;
-      this.activeArticles = this.articles.filter(article => article.article_status === Status.ACTIVE); // Usar ArticleStatus.FUNCTIONAL
+      this.activeArticles = this.articles;//.filter(article => article.article_status === Status.ACTIVE); // Usar ArticleStatus.FUNCTIONAL
       this.buildArticleMap();
     });
   }
