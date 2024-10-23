@@ -87,7 +87,7 @@ export class TransactionComponent implements OnInit {
 
   getInventories(): void {
     this.inventoryService.getInventories().subscribe(inventories => {
-      this.inventories = inventories.filter(inventory => inventory.inventory_status == "Active");
+      this.inventories = inventories//.filter(inventory => inventory.inventory_status == "Active");
       this.buildInventoryMap(); // Construimos el mapa después de cargar los inventarios
       console.log('Inventarios cargados:', this.inventories); // Verificar los inventarios cargados
     });

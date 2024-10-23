@@ -29,13 +29,21 @@ export enum ArticleCategory {
 
   export interface Article {
     id?: number;
-    identifier?: string; // Identificador único para ítems registrables
+    identifier?: string;
     name: string;
-    description?: string; // Puede ser null
-    location?: string; // Puede ser null
-    type: ArticleType;
-    status: ArticleCondition;
-    category: ArticleCategory;
-    measurement_unit: MeasurementUnit;
-    article_status: Status; // Baja lógica
+    description?: string;
+    articleCondition: ArticleCondition;
+    articleCategory: ArticleCategory;
+    articleType: ArticleType;
+    measurementUnit: MeasurementUnit;
+  }
+
+  export interface ArticlePost {
+    identifier?: string;
+    name: string;
+    description?: string;
+    articleCondition: ArticleCondition;
+    articleCategory: ArticleCategory;
+    articleType: ArticleType;
+    measurementUnit: MeasurementUnit;
   }

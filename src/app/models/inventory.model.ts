@@ -1,3 +1,5 @@
+import { Article } from "./article.model";
+
 // Agregar nuevo modelo para las transacciones
 export interface Transaction {
   id?: number;
@@ -24,4 +26,13 @@ export interface Inventory {
   stock: number;
   min_stock?: number; // Puede ser null
   inventory_status: StatusType; // Baja lógica
+}
+
+export interface Inventory {
+  id?: number;
+  article: Article;     // Información del artículo
+  stock: number;           // Cantidad en stock
+  minStock: number;       // Stock mínimo
+  location: string | null; // Ubicación del artículo, puede ser null
+  transactions: Transaction[]; // Lista de transacciones asociadas
 }
