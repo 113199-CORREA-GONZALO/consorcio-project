@@ -107,30 +107,32 @@
       "id": "1",
       "firstName": "Juan",
       "lastName": "Pérez",
-      "employeeType": "ADMIN",
+      "employeeType": "Admin",
       "docType": "DNI",
       "docNumber": "12345678",
       "hiringDate": "2024-10-11T20:01:08.409Z",
       "salary": 50000,
       "state": "ACTIVE",
       "shifts": {
-        "shiftType": "DAY",
         "shifts": [
           "Monday",
           "Wednesday",
-          "Friday"
-        ]
+          "Friday",
+          "Sunday"
+        ],
+        "shiftType": "DAY"
       }
     },
     {
-      "firstName": "Mariaa",
-      "lastName": "Gomez",
-      "employeeType": "TECHNICIAN",
+      "id": "2",
+      "firstName": "Maria",
+      "lastName": "Gómez",
+      "employeeType": "Technician",
       "docType": "PASSPORT",
       "docNumber": "A1234567",
       "hiringDate": "2024-09-15T08:30:00.000Z",
       "salary": 45000,
-      "state": "ACTIVE",
+      "state": "INACTIVE",
       "shifts": {
         "shifts": [
           "Tuesday",
@@ -138,8 +140,7 @@
           "Saturday"
         ],
         "shiftType": "NIGHT"
-      },
-      "id": "2"
+      }
     }
   ],
   "payments": [

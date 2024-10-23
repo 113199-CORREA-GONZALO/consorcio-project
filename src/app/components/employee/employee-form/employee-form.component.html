@@ -1,0 +1,83 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h3 class="text-center">{{ isEditMode ? 'Editar Empleado' : 'Agregar Nuevo Empleado' }}</h3>
+        <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="form-group">
+          <div class="row">
+            <div class="col-md-4">
+              <label for="firstName">Nombre</label>
+              <input id="firstName" formControlName="firstName" class="form-control" 
+                     [ngClass]="{'is-invalid': employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched, 
+                               'is-valid': employeeForm.get('firstName')?.valid && employeeForm.get('firstName')?.touched}" />
+              @if (employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched) {
+                <div class="invalid-feedback">
+                  El nombre es requerido.
+                </div>
+              }
+            </div>
+            <div class="col-md-4">
+              <label for="lastName">Apellido</label>
+              <input id="lastName" formControlName="lastName" class="form-control"
+                     [ngClass]="{'is-invalid': employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched,
+                               'is-valid': employeeForm.get('lastName')?.valid && employeeForm.get('lastName')?.touched}" />
+              @if (employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched) {
+                <div class="invalid-feedback">
+                  El apellido es requerido.
+                </div>
+              }
+            </div>
+            <div class="col-md-4">
+              <label for="employeeType">Tipo de Empleado</label>
+              <select id="employeeType" formControlName="employeeType" class="form-control"
+                      [ngClass]="{'is-invalid': employeeForm.get('employeeType')?.invalid && employeeForm.get('employeeType')?.touched,
+                                'is-valid': employeeForm.get('employeeType')?.valid && employeeForm.get('employeeType')?.touched}">
+                <option *ngFor="let type of employeeTypes" [value]="type">{{ type }}</option>
+              </select>
+              @if (employeeForm.get('employeeType')?.invalid && employeeForm.get('employeeType')?.touched) {
+                <div class="invalid-feedback">
+                  El tipo de empleado es requerido.
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="row mt-3" formGroupName="shifts">
+            <div class="col-md-6">
+              <label for="shifts">Turnos</label>
+              <input id="shifts" formControlName="shifts" class="form-control"
+                     [ngClass]="{'is-invalid': employeeForm.get('shifts.shifts')?.invalid && employeeForm.get('shifts.shifts')?.touched,
+                               'is-valid': employeeForm.get('shifts.shifts')?.valid && employeeForm.get('shifts.shifts')?.touched}" />
+              @if (employeeForm.get('shifts.shifts')?.invalid && employeeForm.get('shifts.shifts')?.touched) {
+                <div class="invalid-feedback">
+                  Los turnos son requeridos.
+                </div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label for="shiftType">Tipo de Turno</label>
+              <select id="shiftType" formControlName="shiftType" class="form-control"
+                      [ngClass]="{'is-invalid': employeeForm.get('shifts.shiftType')?.invalid && employeeForm.get('shifts.shiftType')?.touched,
+                                'is-valid': employeeForm.get('shifts.shiftType')?.valid && employeeForm.get('shifts.shiftType')?.touched}">
+                <option value="">Seleccione un tipo de turno</option>
+                <option *ngFor="let type of shiftTypes" [value]="type">{{ type }}</option>
+              </select>
+              @if (employeeForm.get('shifts.shiftType')?.invalid && employeeForm.get('shifts.shiftType')?.touched) {
+                <div class="invalid-feedback">
+                  El tipo de turno es requerido.
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-12 text-end">
+              <button type="button" class="btn btn-secondary me-2" (click)="resetForm()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="employeeForm.invalid">
+                {{ isEditMode ? 'Actualizar' : 'Guardar' }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

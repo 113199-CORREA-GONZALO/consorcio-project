@@ -7,6 +7,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ServiceType } from '../../../models/enums/service-tpye.enum';
 import { CommonModule } from '@angular/common';
 import { StatusType } from '../../../models/inventory.model';
+
+//exportar a pdf y excel
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
