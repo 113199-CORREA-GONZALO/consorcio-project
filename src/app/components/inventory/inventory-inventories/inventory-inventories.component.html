@@ -1,5 +1,5 @@
 <div class="container">
-  <h3>Inventarios</h3>
+  <h3>Tabla de Inventarios</h3>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -14,54 +14,59 @@
       </tr>
     </thead>
     <tbody>
+
       <tr *ngFor="let inventory of inventories">
-        <td class="text-center">{{ inventory.article?.identifier || '-' }}</td>
+        <td class="text-center">{{ inventory.article.identifier || '-' }}</td>
         <td>{{ inventory.article.name }}</td>
         <td>{{ inventory.article.description }}</td>
         <td class="text-center">{{ inventory.stock }}</td>
-        <td>{{getDisplayUnit(inventory.article.measurementUnit) }}</td>
+        <td>{{ getDisplayUnit(inventory.article.measurementUnit) }}</td>
         <td class="text-center">{{ inventory.minStock || '-' }}</td>
-
         <td [ngClass]="{'text-center': !inventory.location}">
-          {{ inventory.location || '-'}}</td>
+          {{ inventory.location || '-' }}</td>
           <td>
+            <!-- Botón para ver transacciones, llama a la función viewInventory -->
             <button
-            (click)="viewInventory(inventory)"
-            class="btn btn-info btn-sm"
-            title="Ver transacciones"
-            data-toggle="tooltip"
-            data-placement="top">
-            <i class="bi bi-eye"></i>
-          </button>
-          <button
-          (click)="transactionInventory(inventory)"
-          class="btn btn-primary btn-sm"
-          title="Realizar transacción"
-          data-toggle="tooltip"
-          data-placement="top">
-          <i class="bi bi-plus-circle"></i>
-        </button>
-        <button
-            (click)="editInventory(inventory)"
-            class="btn btn-success btn-sm"
-            title="Editar"
-            data-toggle="tooltip"
-            data-placement="top">
-            <i class="bi bi-pencil"></i>
-        </button>
-        <button
-        (click)="deleteInventory(inventory.id!)"
-        class="btn btn-danger btn-sm"
-        title="Eliminar"
-        data-toggle="tooltip"
-        data-placement="top">
-        <i class="bi bi-trash"></i>
-      </button>
-        </td>
+              (click)="viewInventory(inventory)"
+              class="btn btn-info btn-sm"
+              title="Ver transacciones"
+              data-toggle="tooltip"
+              data-placement="top">
+              <i class="bi bi-eye"></i>
+            </button>
+            <!-- Botón para realizar transacción, llama a la función transactionInventory -->
+            <button
+              [routerLink]="['/transaction', inventory.id]"
+              class="btn btn-primary btn-sm"
+              title="Realizar transacción"
+              data-toggle="tooltip"
+              data-placement="top">
+              <i class="bi bi-plus-circle"></i>
+            </button>
+            <!-- Botón para editar el inventario, llama a la función editInventory -->
+            <button
+              (click)="editInventory(inventory)"
+              class="btn btn-success btn-sm"
+              title="Editar"
+              data-toggle="tooltip"
+              data-placement="top">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <!-- Botón para eliminar el inventario, llama a la función deleteInventory -->
+            <button
+              (click)="deleteInventory(inventory.id!)"
+              class="btn btn-danger btn-sm"
+              title="Eliminar"
+              data-toggle="tooltip"
+              data-placement="top">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
       </tr>
     </tbody>
   </table>
 </div>
+
 
 
 <!-- <form [formGroup]="inventoryForm" (ngSubmit)="saveInventory()">

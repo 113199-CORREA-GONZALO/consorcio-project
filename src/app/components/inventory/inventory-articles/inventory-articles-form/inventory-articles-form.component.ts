@@ -1,4 +1,4 @@
-import { ArticlePost } from './../../../../models/article.model';
+import { ArticleInventoryPost, ArticlePost } from './../../../../models/article.model';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,7 @@ import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.se
 export class ArticleComponent implements OnInit {
 
   private mapperService = inject(MapperService);
-  
+
   articleForm: FormGroup;
   articles: Article[] = [];
   isEditing: boolean = false; // Variable para controlar el estado de edición
@@ -33,16 +33,14 @@ export class ArticleComponent implements OnInit {
       identifier: [{value:'', disabled: true}],
       name: ['', Validators.required],
       description: [''],
-      // Cambia 'type' a 'articleType'
       articleType: [ArticleType.NON_REGISTRABLE, Validators.required],
-      // Cambia 'status' a 'articleCondition'
       articleCondition: [ArticleCondition.FUNCTIONAL, Validators.required],
-      // Cambia 'category' a 'articleCategory'
       articleCategory: [ArticleCategory.DURABLES, Validators.required],
       measurementUnit: [MeasurementUnit.UNITS, Validators.required],
-      location: [''],
-      stock: [''],
-      stockMin: ['']
+      location: ['', Validators.required], // Campo ubicación del inventario
+      stock: ['', Validators.required],    // Campo stock del inventario
+      stockMin: ['', Validators.required], // Campo stock mínimo del inventario
+      price: ['', Validators.required]     // Campo precio para la transacción inicial
     });
   }
 
@@ -69,18 +67,32 @@ export class ArticleComponent implements OnInit {
   }
 
   addArticle(): void {
+    console.log(this.articleForm.value); // Loguear el estado actual del formulario
     if (this.articleForm.valid) {
-      const newArticle: ArticlePost = this.articleForm.value as ArticlePost;
-      const newArticleFormatted = this.mapperService.toSnakeCase(newArticle);
+      const article: ArticlePost = {
+        identifier: this.articleForm.get('identifier')?.value ?? null,
+        name: this.articleForm.get('name')?.value,
+        description: this.articleForm.get('description')?.value ?? null,
+        articleCondition: this.articleForm.get('articleCondition')?.value,
+        articleCategory: this.articleForm.get('articleCategory')?.value,
+        articleType: this.articleForm.get('articleType')?.value,
+        measurementUnit: this.articleForm.get('measurementUnit')?.value
+      };
 
-      if (this.isEditing) {
-        //this.updateArticle(newArticleFormatted); // Llama a updateArticle si estamos editando
-      } else {
-        this.inventoryService.addArticle(newArticleFormatted).subscribe(() => {
-          this.getArticles(); // Recargar la lista
-          this.resetForm(); // Limpiar el formulario
-        });
-      }
+      const articleInventory: ArticleInventoryPost = {
+        article,
+        stock: this.articleForm.get('stock')?.value,
+        minStock: this.articleForm.get('stockMin')?.value ?? null,
+        location: this.articleForm.get('location')?.value ?? null,
+        price: this.articleForm.get('price')?.value ?? null
+      };
+
+      const articleInventoryFormatted = this.mapperService.toSnakeCase(articleInventory);
+
+      this.inventoryService.addInventoryArticle(articleInventoryFormatted).subscribe(() => {
+        this.getArticles();
+        this.resetForm();
+      });
     }
   }
 

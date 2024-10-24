@@ -6,13 +6,14 @@ import { Article, MeasurementUnit, Status } from '../../../models/article.model'
 import { InventoryService } from '../../../services/inventory.service';
 import { ArticleComponent } from '../inventory-articles/inventory-articles-form/inventory-articles-form.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
+import { RouterModule } from '@angular/router';
 
 
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ArticleComponent],
+  imports: [CommonModule, ReactiveFormsModule, ArticleComponent, RouterModule],
   templateUrl: './inventory-inventories.component.html',
   styleUrls: ['./inventory-inventories.component.css']
 })
