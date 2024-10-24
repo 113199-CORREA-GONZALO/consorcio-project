@@ -25,27 +25,14 @@ export class EmployeesService {
   }
 
   addEmployee(employee: Employee): Observable<Employee> {
-    // Convertir a snake_case antes de enviar
-    const snakeCaseEmployee = this.mapperService.toSnakeCase({
-      ...employee,
-      hiringDate: new Date(employee.hiringDate.setHours(employee.hiringDate.getHours() + 5))
-    });
-    
-    return this.http.post<any>(this.apiUrl, snakeCaseEmployee).pipe(
-      map(response => this.mapperService.toCamelCase(response))
-    );
+    // Assuming employee.hiringDate is a Date object
+    employee.hiringDate.setHours(employee.hiringDate.getHours() + 5);
+    return this.http.post<Employee>(this.apiUrl, employee);
   }
-
+  // Actualizar un empleado existente
   updateEmployee(employee: Employee): Observable<Employee> {
-    // Convertir a snake_case antes de enviar
-    const snakeCaseEmployee = this.mapperService.toSnakeCase({
-      ...employee,
-      hiringDate: new Date(employee.hiringDate.setHours(employee.hiringDate.getHours() + 5))
-    });
-    
-    return this.http.put<any>(`${this.apiUrl}/${employee.id}`, snakeCaseEmployee).pipe(
-      map(response => this.mapperService.toCamelCase(response))
-    );
+    employee.hiringDate.setHours(employee.hiringDate.getHours() + 5);
+    return this.http.put<Employee>(`${this.apiUrl}/${employee.id}`, employee);
   }
 
   deleteEmployee(id: number): Observable<void> {
@@ -53,15 +40,11 @@ export class EmployeesService {
   }
 
   getEmployeePayments(employeeId: number): Observable<EmployeePayment[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/${employeeId}/payments`).pipe(
-      map(payments => this.mapperService.toCamelCase(payments))
-    );
+    return this.http.get<EmployeePayment[]>(`${this.apiUrl}/${employeeId}/payments`);
   }
 
-  getEmployee(id: number): Observable<Employee> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
-      map(employee => this.mapperService.toCamelCase(employee))
-    );
+  getEmployee(id:number):Observable<Employee>{
+    return this.http.get<Employee>(this.apiUrl+"/"+id);
   }
 
   searchEmployees(filter: EmployeeFilter): Observable<Employee[]> {

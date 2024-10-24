@@ -141,6 +141,17 @@
         ],
         "shiftType": "NIGHT"
       }
+    },
+    {
+      "id": 0,
+      "firstName": "John",
+      "lastName": "Doe",
+      "employeeType": "ADMIN",
+      "documentType": "DNI",
+      "docNumber": "1214",
+      "hiringDate": "2024-10-24T00:00:00.000Z",
+      "salary": 100,
+      "state": "IN_SERVICE"
     }
   ],
   "payments": [
