@@ -47,3 +47,11 @@ export enum ArticleCategory {
     articleType: ArticleType;
     measurementUnit: MeasurementUnit;
   }
+
+  export interface ArticleInventoryPost {
+    article: ArticlePost;
+    stock: number;
+    minStock: number;
+    location: string;
+    price: number;
+  }

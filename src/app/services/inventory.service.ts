@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Article, ArticlePost } from '../models/article.model';
+import { Article, ArticleInventoryPost, ArticlePost } from '../models/article.model';
 import { Inventory, Transaction } from '../models/inventory.model';
 
 @Injectable({
@@ -41,6 +41,9 @@ export class InventoryService {
     return this.http.post<Inventory>(this.apiInventoriesUrl, inventory);
   }
 
+  addInventoryArticle(articleInventory: ArticleInventoryPost): Observable<ArticleInventoryPost> {
+    return this.http.post<ArticleInventoryPost>(this.apiInventoriesUrl+'/newArticle', articleInventory);
+  }
   updateInventory(inventory: Inventory): Observable<Inventory> {
     return this.http.put<Inventory>(`${this.apiInventoriesUrl}/${inventory.id}`, inventory);
   }

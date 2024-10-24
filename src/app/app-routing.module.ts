@@ -20,5 +20,6 @@ export const routes: Routes = [
   { path: 'article', component: ArticleComponent },
   { path: 'inventory', component: InventoryComponent },
   { path: 'transaction', component: TransactionComponent },
+  { path: 'transaction/:id', component: TransactionComponent },
   { path: '', redirectTo: '/employees', pathMatch: 'full' }
 ];
