@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Employee, EmployeePayment } from '../models/employee.model';
@@ -7,9 +7,8 @@ import { Employee, EmployeePayment } from '../models/employee.model';
   providedIn: 'root'
 })
 export class EmployeesService {
-  private apiUrl = 'http://localhost:3000/employees'; // URL de la API para empleados
-
-  constructor(private http: HttpClient) {}
+  private apiUrl = 'http://localhost:8063/employees'; // URL de la API para empleados
+  private http = inject(HttpClient);
 
   // Obtener empleados
   getEmployees(): Observable<Employee[]> {
@@ -38,5 +37,9 @@ export class EmployeesService {
   // Obtener pagos de un empleado
   getEmployeePayments(employeeId: number): Observable<EmployeePayment[]> {
     return this.http.get<EmployeePayment[]>(`${this.apiUrl}/${employeeId}/payments`);
+  }
+
+  getEmployee(id:number):Observable<Employee>{
+    return this.http.get<Employee>(this.apiUrl+"/"+id);
   }
 }

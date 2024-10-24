@@ -1,4 +1,4 @@
 export enum StatusType {
-  ACTIVE = 'Active', // Activo
-  INACTIVE = 'Inactive' // Inactivo
+  ACTIVE = 'IN_SERVICE', // Activo
+  INACTIVE = 'DOWN' // Inactivo
 }

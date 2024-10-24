@@ -83,7 +83,6 @@ exportToPDF() {
       employee.firstName,
       employee.lastName,
       employee.employeeType,
-      employee.shifts.shiftType,
       employee.state
     ];
     tableRows.push(employeeData);
@@ -107,7 +106,6 @@ exportToExcel() {
     Nombre: employee.firstName,
     Apellido: employee.lastName,
     Tipo: employee.employeeType,
-    Turnos: employee.shifts.shiftType,
     Estado: employee.state
   }));
 

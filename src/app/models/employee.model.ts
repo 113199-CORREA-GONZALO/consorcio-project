@@ -1,18 +1,18 @@
 export enum StatusType {
-  ACTIVE = 'Active', // Activo
-  INACTIVE = 'Inactive' // Inactivo
+  ACTIVE = 'IN_SERVICE', // Activo
+  INACTIVE = 'DOWN' // Inactivo
 }
 
 export enum EmployeeType {
-  ADMIN = 'Admin', // Administrador
-  TECHNICIAN = 'Technician', // Técnico
-  MANAGER = 'Manager' // Gerente
+  ADMIN = 'ADMIN', // Administrador
+  SECURITY = 'SECURITY'
 }
 
 export enum DocumentType {
   DNI = 'DNI', // Documento Nacional de Identidad
-  PASSPORT = 'Passport', // Pasaporte
-  LICENSE = 'License' // Licencia de Conducir
+  PASSPORT = 'PASSPORT', // Pasaporte
+  CUIT = 'CUIT',
+  CUIL= 'CUIL'
 }
 
 export enum ShiftType {
@@ -30,17 +30,17 @@ export interface EmployeeShifts {
   shiftType: ShiftType; // Tipo de turno (día, noche)
 }
 
+// Definimos la interfaz Employee para representar un empleado en el sistema.
 export interface Employee {
-  id: number; // ID del empleado
-  firstName: string; // Nombre
-  lastName: string; // Apellido
-  employeeType: EmployeeType; // Tipo de empleado (ADMIN, etc.)
-  docType: DocumentType; // Tipo de documento (DNI, Pasaporte, etc.)
-  docNumber: string; // Número de documento
-  hiringDate: string; // Fecha de contratación
-  salary: number; // Salario
-  state: StatusType; // Estado (Activo, Inactivo)
-  shifts: EmployeeShifts; // Turnos y horarios asignados
+  id: number; // Identificador único del empleado.
+  firstName: string; // Primer nombre del empleado.
+  lastName: string; // Apellido del empleado.
+  employeeType: EmployeeType; // Tipo de empleado (ej. Admin, Técnico, etc.).
+  documentType: DocumentType; // Tipo de documento (DNI, Pasaporte, etc.).
+  docNumber: string; // Número del documento del empleado.
+  hiringDate: Date; // Fecha de contratación del empleado.
+  salary: number; // Salario del empleado.
+  state: StatusType; // Estado del empleado (Activo o Inactivo).
 }
 
 export interface EmployeePayment {
