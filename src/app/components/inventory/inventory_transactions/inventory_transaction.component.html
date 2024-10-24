@@ -26,17 +26,17 @@
 
     <!-- Segunda fila - Dos columnas -->
     <div class="row">
-      <!-- Precio -->
-      <div class="col-md-6 d-flex align-items-center mb-3" *ngIf="transactionForm.get('transactionType')?.value === 'ENTRY'">
-        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="price">Precio:</label>
-        <input id="price" formControlName="price" type="text" class="form-control" />
-      </div>
+    <!-- Precio -->
+  <div class="col-md-6 d-flex align-items-center mb-3">
+    <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="price">Precio:</label>
+    <input id="price" formControlName="price" type="text" class="form-control"/>
+  </div>
       <!-- Fecha -->
       <div class="col-md-6 d-flex align-items-center mb-3">
-        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="transaction_date">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="transactionDate">
           Fecha <span style="color: red; margin-left: 2px;">*</span>:
         </label>
-        <input id="transaction_date" formControlName="transaction_date" type="date" class="form-control" />
+        <input id="transactionDate" formControlName="transactionDate" type="date" class="form-control" />
       </div>
     </div>
   <!-- Botones -->
