@@ -6,11 +6,12 @@ import { StatusType } from '../../../models/employee.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeesService } from '../../../services/employees.service';
 import { Employee } from '../../../models/employee.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-employee-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './employee-form.component.html',
 })
 export class EmployeeFormComponent implements OnInit {

@@ -5,7 +5,7 @@
             <form [formGroup]="providerForm" (ngSubmit)="onSubmit()" class="form-group">
                 <div class="row">
                     <div class="col-md-6">
-                        <label for="name">Nombre</label>
+                        <label for="name"class="form-label">Nombre</label>
                         <input id="name" formControlName="name" class="form-control" 
                                [ngClass]="{'is-invalid': providerForm.get('name')?.invalid && providerForm.get('name')?.touched, 
                                            'is-valid': providerForm.get('name')?.valid && providerForm.get('name')?.touched}" />
@@ -16,7 +16,7 @@
                         }
                     </div>
                     <div class="col-md-6">
-                        <label for="serviceType">Tipo de Servicio</label>
+                        <label for="serviceType" class="form-label">Tipo de Servicio</label>
                         <select id="serviceType" formControlName="serviceType" class="form-control" 
                                 [ngClass]="{'is-invalid': providerForm.get('serviceType')?.invalid && providerForm.get('serviceType')?.touched, 
                                             'is-valid': providerForm.get('serviceType')?.valid && providerForm.get('serviceType')?.touched}">
@@ -33,7 +33,7 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-md-6">
-                        <label for="contact">Contacto</label>
+                        <label for="contact" class="form-label">Contacto</label>
                         <input id="contact" formControlName="contact" class="form-control" 
                                [ngClass]="{'is-invalid': providerForm.get('contact')?.invalid && providerForm.get('contact')?.touched, 
                                            'is-valid': providerForm.get('contact')?.valid && providerForm.get('contact')?.touched}" />
@@ -44,7 +44,7 @@
                         }
                     </div>
                     <div class="col-md-6">
-                        <label for="address">Dirección</label>
+                        <label for="address" class="form-label">Dirección</label>
                         <input id="address" formControlName="address" class="form-control" 
                                [ngClass]="{'is-invalid': providerForm.get('address')?.invalid && providerForm.get('address')?.touched, 
                                            'is-valid': providerForm.get('address')?.valid && providerForm.get('address')?.touched}" />
@@ -57,7 +57,7 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-md-12">
-                        <label for="details">Detalles</label>
+                        <label for="details" class="form-label">Detalles</label>
                         <textarea id="details" formControlName="details" class="form-control" 
                                   [ngClass]="{'is-invalid': providerForm.get('details')?.invalid && providerForm.get('details')?.touched, 
                                               'is-valid': providerForm.get('details')?.valid && providerForm.get('details')?.touched}">
@@ -71,7 +71,7 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-md-6">
-                        <label for="state">Estado</label>
+                        <label for="state" class="form-label">Estado</label>
                         <select id="state" formControlName="state" class="form-control" 
                                 [ngClass]="{'is-invalid': providerForm.get('state')?.invalid && providerForm.get('state')?.touched, 
                                             'is-valid': providerForm.get('state')?.valid && providerForm.get('state')?.touched}">

@@ -10,13 +10,27 @@
           <div class="col-md-6">
               <div class="d-flex justify-content-between align-items-center">
                   <label for="firstName" class="form-label">Nombre:</label>
-                  <input type="text" formControlName="firstName" class="form-control" id="firstName" placeholder="Ingrese el nombre">
+                  <input type="text" formControlName="firstName" class="form-control" id="firstName" placeholder="Ingrese el nombre"
+                  [ngClass]="{'is-invalid': employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched, 
+                               'is-valid': employeeForm.get('firstName')?.valid && employeeForm.get('firstName')?.touched}">
+                  @if (employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched) {
+                    <div class="invalid-feedback">
+                        El nombre es requerido.
+                    </div>
+                  }
               </div>
           </div>
           <div class="col-md-6">
               <div class="d-flex justify-content-between align-items-center">
                   <label for="lastName" class="form-label">Apellido:</label>
-                  <input type="text" formControlName="lastName" class="form-control" id="lastName" placeholder="Ingrese el apellido">
+                  <input type="text" formControlName="lastName" class="form-control" id="lastName" placeholder="Ingrese el apellido"
+                  [ngClass]="{'is-invalid': employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched,
+                               'is-valid': employeeForm.get('lastName')?.valid && employeeForm.get('lastName')?.touched}">
+                    @if (employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched) {
+                        <div class="invalid-feedback">
+                          El apellido es requerido.
+                        </div>
+                    }
               </div>
           </div>
       </div>
@@ -24,17 +38,31 @@
           <div class="col-md-6">
               <div class="d-flex justify-content-between align-items-center">
                   <label for="employeeType" class="form-label">Tipo:</label>
-                  <select formControlName="employeeType" class="form-select" id="employeeType">
+                  <select formControlName="employeeType" class="form-select" id="employeeType"
+                  [ngClass]="{'is-invalid': employeeForm.get('employeeType')?.invalid && employeeForm.get('employeeType')?.touched,
+                                'is-valid': employeeForm.get('employeeType')?.valid && employeeForm.get('employeeType')?.touched}">
                       @for (type of employeeTypes; track $index) {
                           <option value="{{type}}">{{type}}</option>
                       }
                   </select>
+                  @if (employeeForm.get('employeeType')?.invalid && employeeForm.get('employeeType')?.touched) {
+                    <div class="invalid-feedback">
+                      El tipo de empleado es requerido.
+                    </div>
+                  }
               </div>
           </div>
           <div class="col-md-6">
               <div class="d-flex justify-content-between align-items-center">
                   <label for="hiringDate" class="form-label">Fecha de Contratación:</label>
-                  <input formControlName="hiringDate" type="date" class="form-control" id="hiringDate" />
+                  <input formControlName="hiringDate" type="date" class="form-control" id="hiringDate" 
+                  [ngClass]="{'is-invalid': employeeForm.get('hiringDate')?.invalid && employeeForm.get('hiringDate')?.touched,
+                                'is-valid': employeeForm.get('hiringDate')?.valid && employeeForm.get('hiringDate')?.touched}"/>
+                  @if (employeeForm.get('hiringDate')?.invalid && employeeForm.get('hiringDate')?.touched) {
+                    <div class="invalid-feedback">
+                      La fecha de contratación es requerida.
+                    </div>
+                  }
               </div>
           </div>
       </div>
@@ -42,17 +70,31 @@
           <div class="col-md-6">
               <div class="d-flex justify-content-between align-items-center">
                   <label for="documentType" class="form-label">Tipo de Documento:</label>
-                  <select formControlName="documentType" class="form-select" id="documentType">
+                  <select formControlName="documentType" class="form-select" id="documentType"
+                  [ngClass]="{'is-invalid': employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched,
+                                'is-valid': employeeForm.get('documentType')?.valid && employeeForm.get('documentType')?.touched}">
                       @for (type of documentTypes; track $index) {
                           <option value="{{type}}">{{type}}</option>
                       }
                   </select>
+                  @if (employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched) {
+                    <div class="invalid-feedback">
+                      El tipo de documento es requerido.
+                    </div>
+                  }
               </div>
           </div>
           <div class="col-md-6">
               <div class="d-flex justify-content-between align-items-center">
                   <label for="docNumber" class="form-label">Documento:</label>
-                  <input type="text" formControlName="docNumber" class="form-control" id="docNumber" placeholder="Ingrese el número de documento">
+                  <input type="text" formControlName="docNumber" class="form-control" id="docNumber" placeholder="Ingrese el número de documento"
+                  [ngClass]="{'is-invalid': employeeForm.get('docNumber')?.invalid && employeeForm.get('docNumber')?.touched,
+                                'is-valid': employeeForm.get('docNumber')?.valid && employeeForm.get('docNumber')?.touched}">
+                  @if (employeeForm.get('docNumber')?.invalid && employeeForm.get('docNumber')?.touched) {
+                    <div class="invalid-feedback">
+                      El tipo de documento es requerido.
+                    </div>
+                  }
               </div>
           </div>
       </div>
@@ -62,13 +104,20 @@
                   <label for="salary" class="form-label">Salario:</label>
                   <div class="input-group ms-2">
                       <span class="input-group-text">$</span>
-                      <input type="number" formControlName="salary" class="form-control" id="salary" placeholder="Ingrese el salario">
+                      <input type="number" formControlName="salary" class="form-control" id="salary" placeholder="Ingrese el salario"
+                      [ngClass]="{'is-invalid': employeeForm.get('salary')?.invalid && employeeForm.get('salary')?.touched,
+                                'is-valid': employeeForm.get('salary')?.valid && employeeForm.get('salary')?.touched}"> 
+                        @if (employeeForm.get('salary')?.invalid && employeeForm.get('salary')?.touched) {
+                            <div class="invalid-feedback">
+                              El salario es requerido.
+                            </div>
+                        }
                   </div>
               </div>
           </div>
       </div>
-      <div class="d-flex justify-content-between">
-          <button type="button" class="btn btn-secondary" (click)="return()">Cancelar</button>
+      <div class=" justify-content-between col-md-12 text-end ">
+          <button type="button" class="btn btn-secondary me-2" (click)="return()">Cancelar</button>
           @if(employeeForm.valid){
               <button type="submit" class="btn btn-primary">Guardar</button>
           }
