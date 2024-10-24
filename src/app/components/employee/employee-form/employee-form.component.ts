@@ -99,6 +99,7 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   updateEmployee(employee: Employee) {
+    console.log(employee);
     this.employeeService.updateEmployee(employee).subscribe((data) => {
       console.log(data);
       // Navigate or show success message
@@ -106,6 +107,6 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   return() {
-    this.router.navigate(['employees']);
+    this.router.navigate(['employees/list']);
   }
 }
