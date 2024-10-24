@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Article, ArticleInventoryPost, ArticlePost } from '../models/article.model';
-import { Inventory, Transaction } from '../models/inventory.model';
+import { Inventory, Transaction, TransactionPost } from '../models/inventory.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ import { Inventory, Transaction } from '../models/inventory.model';
 export class InventoryService {
   private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
   private apiInventoriesUrl = 'http://localhost:8080/inventories'; // URL de la API para los inventarios
-  private apiTransactionsUrl = 'http://localhost:3000/transactions'; // URL de la API para las transacciones
+  private apiTransactionsUrl = 'http://localhost:8080/transactions'; // URL de la API para las transacciones
 
   constructor(private http: HttpClient) {}
 
@@ -56,15 +56,12 @@ export class InventoryService {
   getTransactions(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(this.apiTransactionsUrl);
   }
-
-// inventory.service.ts
-addTransaction(transaction: Transaction): Observable<Transaction> {
-  return this.http.post<Transaction>(this.apiTransactionsUrl, transaction);
-}
-updateTransaction(transactionId: number, transaction: Transaction): Observable<Transaction> {
-  return this.http.put<Transaction>(`${this.apiTransactionsUrl}/${transactionId}`, transaction);
-}
-
+  addTransaction(transaction: TransactionPost, inventoryId: string): Observable<Transaction> {
+    return this.http.post<Transaction>(`${this.apiTransactionsUrl}/${inventoryId}`, transaction);
+  }
+  updateTransaction(transactionId: number, transaction: Transaction): Observable<Transaction> {
+    return this.http.put<Transaction>(`${this.apiTransactionsUrl}/${transactionId}`, transaction);
+  }
   deleteTransaction(transaction_id: number): Observable<void> {
     return this.http.patch<void>(`${this.apiTransactionsUrl}/${transaction_id}`, { transaction_status: 'Inactive' });
   }

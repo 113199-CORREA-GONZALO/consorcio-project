@@ -10,6 +10,13 @@ export interface Transaction {
   transaction_type: TransactionType; // Tipo de transacción (ingreso o egreso)
 }
 
+export interface TransactionPost {
+  transactionType: TransactionType; // Tipo de transacción (ingreso o egreso)
+  quantity: number; // Cantidad de la transacción
+  price?: number; // Precio, puede ser null
+  transactionDate?: string; // Fecha de la transacción (será manejada por el backend)
+}
+
 export enum StatusType {
   ACTIVE = 'Active', // Activo
   INACTIVE = 'Inactive' // Inactivo
