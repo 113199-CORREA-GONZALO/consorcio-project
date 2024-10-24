@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Employee } from '../../../models/employee.model';
+import { Employee, EmployeeFilter, EmployeeType, StatusType, DocumentType } from '../../../models/employee.model';
 import { EmployeesService } from '../../../services/employees.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -11,23 +11,78 @@ import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
 import { auto } from '@popperjs/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })
 export class EmployeeListComponent implements OnInit{
   employeeList: Employee[] = [];
 
+  filterForm: FormGroup;
+  employeeTypes = Object.values(EmployeeType);
+  documentTypes = Object.values(DocumentType);
+  statusTypes = Object.values(StatusType);
+
   private employeeService = inject(EmployeesService);
   private router = inject(Router);
+  private fb = inject(FormBuilder);
+
+  constructor() {
+    this.filterForm = this.fb.group({
+      firstName: [''],
+      lastName: [''],
+      employeeType: [''],
+      docType: [''],
+      docNumber: [''],
+      hiringDate: [''],
+      salary: [''],
+      state: [''],
+      enabled: [true]
+    });
+  }
 
   ngOnInit(): void {
-      this.getEmployees();
+    this.setupFilterSubscription();
+    this.applyFilter();
+    this.getEmployees();
   }
+
+  private setupFilterSubscription(): void {
+    this.filterForm.valueChanges.pipe(
+      debounceTime(300), // Esperar 300ms después del último cambio
+      distinctUntilChanged() // Solo emitir si el valor ha cambiado
+    ).subscribe(() => {
+      this.applyFilter();
+    });
+  }
+
+  applyFilter(): void {
+    // Crear objeto de filtro solo con los campos que tienen valor
+    const filter: EmployeeFilter = Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
+      if (value !== '' && value !== null && value !== undefined) {
+        (acc as any)[key] = value;
+      }
+      return acc;
+    }, {} as EmployeeFilter);
+
+    // Llamar al servicio con los filtros
+    this.employeeService.searchEmployees(filter).subscribe(
+      (employees) => {
+        this.employeeList = employees;
+      },
+      (error) => {
+        console.error('Error al filtrar empleados:', error);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
+    );
+  }
+  
   getEmployees() {
     this.employeeService.getEmployees().subscribe((employeeList) => {
       this.employeeList = employeeList;
