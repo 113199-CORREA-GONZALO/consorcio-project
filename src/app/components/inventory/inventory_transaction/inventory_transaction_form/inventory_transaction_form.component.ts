@@ -1,18 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InventoryService } from '../../../services/inventory.service';
-import { Transaction, TransactionType, Inventory, TransactionPost } from '../../../models/inventory.model';
+import { InventoryService } from '../../../../services/inventory.service';
+import { Transaction, TransactionType, Inventory, TransactionPost } from '../../../../models/inventory.model';
 import { CommonModule } from '@angular/common';
-import { Article } from '../../../models/article.model';
+import { Article } from '../../../../models/article.model';
 import { ActivatedRoute } from '@angular/router';
-import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
+import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.service';
 
 @Component({
   selector: 'app-transaction',
-  templateUrl: './inventory_transaction.component.html',
+  templateUrl: './inventory_transaction_form.component.html',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-    styleUrls: ['./inventory_transaction.component.css']
+    styleUrls: ['./inventory_transaction_form.component.css']
 })
 export class TransactionComponent implements OnInit {
 

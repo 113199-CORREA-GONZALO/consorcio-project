@@ -1,0 +1,30 @@
+<h3>Lista de Transacciones</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Inventario (Ítem)</th>
+      <th>Cantidad</th>
+      <th>Precio</th>
+      <th>Tipo</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let transaction of transactions">
+      <td> -
+        <!-- Verificamos que el inventario y el ítem existen antes de intentar acceder a ellos -->
+        {{ inventoryMap[transaction.inventory_id] ?
+          (articleMap[inventoryMap[transaction.inventory_id].article_id].name || 'Desconocido') : 'Inventario no encontrado' }}
+        ({{ inventoryMap[transaction.inventory_id] ?
+          (articleMap[inventoryMap[transaction.inventory_id].article_id].identifier || 'Sin Identificador') : '' }})
+      </td>
+      <td>{{ transaction.quantity }}</td>
+      <td>{{ transaction.price || '-' }}</td>
+      <td>{{ transaction.transaction_type }}</td>
+      <td>
+        <button (click)="editTransaction(transaction)" class="btn btn-warning">Editar</button>
+        <button (click)="deleteTransaction(transaction.id!)" class="btn btn-danger">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -4,18 +4,16 @@ import { CommonModule } from '@angular/common';
 import { Inventory, StatusType } from '../../../models/inventory.model';
 import { Article, MeasurementUnit, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
-import { ArticleComponent } from '../inventory-articles/inventory-articles-form/inventory-articles-form.component';
+import { ArticleComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 import { RouterModule } from '@angular/router';
-
-
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ArticleComponent, RouterModule],
-  templateUrl: './inventory-inventories.component.html',
-  styleUrls: ['./inventory-inventories.component.css']
+  templateUrl: './inventory_inventories.component.html',
+  styleUrls: ['./inventory_inventories.component.css']
 })
 export class InventoryComponent implements OnInit {
 transactionInventory(_t17: Inventory) {
