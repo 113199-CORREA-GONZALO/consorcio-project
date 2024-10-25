@@ -161,7 +161,7 @@
   ],
   "suppliers": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Santoro Killer",
       "cuil": "204121231",
       "service": "Security",
@@ -170,20 +170,13 @@
       "enabled": true
     },
     {
-      "name": "Gino Leonel Soler",
-      "cuil": "2042217681",
-      "service": "Tecnico",
-      "addressId": 1,
-      "details": "Gino es un tecnico que va brindar el servicio de lunes a viernes en la manzana 5 de 09:00 a 12:00.",
-      "id": 2
-    },
-    {
       "name": "SOLER GINO LEONEL",
       "cuil": "2042217681",
       "service": "Tecnico",
       "addressId": 2,
       "details": "sdaasdasdasdasd",
-      "id": 3
+      "id": "3",
+      "enabled": true
     },
     {
       "name": "Ginino7",
@@ -191,12 +184,22 @@
       "service": "Tecnico",
       "addressId": 1,
       "details": "123123123qseqsdqasd",
-      "id": 4
+      "id": "4",
+      "enabled": true
+    },
+    {
+      "id": "5",
+      "name": "Santoro",
+      "cuil": "20-278217772-1",
+      "service": "Security",
+      "addressId": 2,
+      "details": "grita",
+      "enabled": true
     }
   ],
   "addresses": [
     {
-      "id": 1,
+      "id": "1",
       "street_address": "Avenida Siempre Viva",
       "number": 742,
       "floor": 0,
@@ -207,7 +210,7 @@
       "postal_code": 1234
     },
     {
-      "id": 2,
+      "id": "2",
       "street_address": "Calle Falsa",
       "number": 123,
       "floor": 2,

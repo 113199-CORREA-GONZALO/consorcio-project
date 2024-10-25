@@ -14,22 +14,23 @@ export class ProvidersService {
   constructor(private http: HttpClient) {}
 
   getProviders(filters?: {
-    serviceType?: string,
-    state?: string,
-    contactNumber?: string
+    name?: string,
+    cuil?: string,
+    service?: string,
+    addressId?: number,
+    enabled?: boolean
   }): Observable<Supplier[]> {
     let params = new HttpParams();
+    
     if (filters) {
-      if (filters.serviceType) {
-        params = params.append('serviceType', filters.serviceType);
-      }
-      if (filters.state) {
-        params = params.append('state', filters.state);
-      }
-      if (filters.contactNumber) {
-        params = params.append('contact', filters.contactNumber);
-      }
+      Object.keys(filters).forEach(key => {
+        const value = filters[key as keyof typeof filters];
+        if (value !== undefined && value !== '') {
+          params = params.append(key, value.toString());
+        }
+      });
     }
+    
     return this.http.get<Supplier[]>(this.apiUrl, { params });
   }
 

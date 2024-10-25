@@ -13,6 +13,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 
 @Component({
   selector: 'app-provider-list',
@@ -27,6 +28,7 @@ export class ProviderListComponent implements OnInit{
   providerList: Supplier[] = [];
   addresses: Address[] = []; // Agregar la lista de direcciones
   filteredProviders: Supplier[] = []; // Proveedores filtrados
+  isLoading = false;
 
   filterForm: FormGroup;
   serviceTypes = Object.values(ServiceType);
@@ -38,22 +40,38 @@ export class ProviderListComponent implements OnInit{
 
   constructor() {
     this.filterForm = this.fb.group({
-      state: [''],
-      cuil: [''] // Filtro para buscar por CUIL
-
+      name: [''],
+      cuil: [''],
+      service: [''],
+      addressId: [''],
+      enabled: ['']
     });
   }
 
   ngOnInit(): void {
     this.getProviders();
-    this.loadAddresses(); // Cargar las direcciones
-    this.filterForm.get('state')?.valueChanges.subscribe(() => this.applyFilters());
+    this.loadAddresses();
+    this.setupFilterSubscriptions();
   }
+
+  private setupFilterSubscriptions(): void {
+    // Aplicar debounce a todos los controles del formulario
+    Object.keys(this.filterForm.controls).forEach(key => {
+      this.filterForm.get(key)?.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      ).subscribe(() => {
+        this.applyFilters();
+      });
+    });
+  }
+  
   loadAddresses(): void {
     this.providerService.getAddresses().subscribe((addresses: Address[]) => {
       this.addresses = addresses;
     });
   }
+
   trackByFn(index: number, item: Supplier): number {
     return item.id; // Devuelve el ID del proveedor como clave
   }
@@ -63,21 +81,36 @@ export class ProviderListComponent implements OnInit{
   }
 
   getProviders() {
+    this.isLoading = true;
     this.providerService.getProviders().subscribe((providerList) => {
       this.providerList = providerList;
       this.filteredProviders = providerList; // Inicialmente, no hay filtros aplicados
+      this.isLoading = false;
     });
   }
 
   applyFilters(): void {
     const filters = {
-      state: this.filterForm.get('state')?.value,
-      cuil: this.filterForm.get('cuil')?.value
+      name: this.filterForm.get('name')?.value,
+      cuil: this.filterForm.get('cuil')?.value,
+      service: this.filterForm.get('service')?.value,
+      addressId: this.filterForm.get('addressId')?.value,
+      enabled: this.filterForm.get('enabled')?.value
     };
-    this.providerService.getProviders(filters).subscribe((providerList) => {
-      this.providerList = providerList;
+
+    // Eliminar propiedades con valores vacíos
+    Object.keys(filters).forEach(key => {
+      if (!filters[key as keyof typeof filters]) {
+        delete filters[key as keyof typeof filters];
+      }
+    });
+
+    this.providerService.getProviders(filters).subscribe(providers => {
+      this.providerList = providers;
+      this.filteredProviders = providers;
     });
   }
+  
   // Método para buscar proveedores por CUIL
   searchByCUIL(): void {
     const cuil = this.filterForm.get('cuil')?.value;
