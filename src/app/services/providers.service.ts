@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Supplier } from '../models/supplier.model';
+import { Address, Supplier } from '../models/supplier.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProvidersService {
   private apiUrl = 'http://localhost:3000/suppliers';
+  private apiAddressUrl = 'http://localhost:3000/addresses'; // URL para las direcciones
+
 
   constructor(private http: HttpClient) {}
 
@@ -45,5 +47,9 @@ export class ProvidersService {
 
   deleteProvider(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+  // Obtener direcciones
+  getAddresses(): Observable<Address[]> {
+    return this.http.get<Address[]>(this.apiAddressUrl);
   }
 }
