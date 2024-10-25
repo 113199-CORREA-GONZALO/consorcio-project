@@ -8,8 +8,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-inventory-article-table',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './inventory-articles-table.component.html',
-  styleUrl: './inventory-articles-table.component.css'
+  templateUrl: './inventory_articles_table.component.html',
+  styleUrl: './inventory_articles_table.component.css'
 })
 export class InventoryArticleTableComponent {
 
