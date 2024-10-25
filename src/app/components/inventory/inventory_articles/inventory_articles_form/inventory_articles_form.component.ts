@@ -1,4 +1,4 @@
-import { ArticleInventoryPost, ArticlePost } from './../../../../models/article.model';
+import { ArticleInventoryPost, ArticlePost } from '../../../../models/article.model';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,8 +10,8 @@ import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.se
   selector: 'app-article',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule], // Agrega ReactiveFormsModule aquí
-  templateUrl: './inventory-articles-form.component.html',
-  styleUrls: ['./inventory-articles-form.component.css']
+  templateUrl: './inventory_articles_form.component.html',
+  styleUrls: ['./inventory_articles_form.component.css']
 })
 export class ArticleComponent implements OnInit {
 
