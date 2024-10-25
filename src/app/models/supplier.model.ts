@@ -4,7 +4,7 @@ import { StatusType } from "./enums/status-type.enum";
 
 // Definimos la interfaz Supplier para representar un proveedor en el sistema.
 export interface Supplier {
-  id?: number;             // Identificador único del proveedor (opcional para creación)
+  id: number;             // Identificador único del proveedor (opcional para creación)
   name: string;            // Nombre del proveedor
   cuil: string;            // CUIL del proveedor
   service: string;         // Servicio que ofrece el proveedor

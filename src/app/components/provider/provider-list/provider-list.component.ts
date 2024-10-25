@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { Supplier } from '../../../models/supplier.model';
+import { Address, Supplier } from '../../../models/supplier.model';
 import { ProvidersService } from '../../../services/providers.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
@@ -25,6 +25,9 @@ export class ProviderListComponent implements OnInit{
   @ViewChild('providersTable') providersTable!: ElementRef;
   
   providerList: Supplier[] = [];
+  addresses: Address[] = []; // Agregar la lista de direcciones
+  filteredProviders: Supplier[] = []; // Proveedores filtrados
+
   filterForm: FormGroup;
   serviceTypes = Object.values(ServiceType);
   statusTypes = Object.values(StatusType);
@@ -35,33 +38,55 @@ export class ProviderListComponent implements OnInit{
 
   constructor() {
     this.filterForm = this.fb.group({
-      serviceType: [''],
       state: [''],
-      contactNumber: ['']
+      cuil: [''] // Filtro para buscar por CUIL
+
     });
   }
 
   ngOnInit(): void {
     this.getProviders();
-    this.filterForm.get('serviceType')?.valueChanges.subscribe(() => this.applyFilters());
+    this.loadAddresses(); // Cargar las direcciones
     this.filterForm.get('state')?.valueChanges.subscribe(() => this.applyFilters());
+  }
+  loadAddresses(): void {
+    this.providerService.getAddresses().subscribe((addresses: Address[]) => {
+      this.addresses = addresses;
+    });
+  }
+  trackByFn(index: number, item: Supplier): number {
+    return item.id; // Devuelve el ID del proveedor como clave
+  }
+  getAddressById(addressId: number): string {
+    const address = this.addresses.find(a => a.id === addressId);
+    return address ? address.street_address : 'N/A';
   }
 
   getProviders() {
-    this.applyFilters();
+    this.providerService.getProviders().subscribe((providerList) => {
+      this.providerList = providerList;
+      this.filteredProviders = providerList; // Inicialmente, no hay filtros aplicados
+    });
   }
 
   applyFilters(): void {
     const filters = {
-      serviceType: this.filterForm.get('serviceType')?.value,
       state: this.filterForm.get('state')?.value,
-      contactNumber: this.filterForm.get('contactNumber')?.value
+      cuil: this.filterForm.get('cuil')?.value
     };
     this.providerService.getProviders(filters).subscribe((providerList) => {
       this.providerList = providerList;
     });
   }
-
+  // Método para buscar proveedores por CUIL
+  searchByCUIL(): void {
+    const cuil = this.filterForm.get('cuil')?.value;
+    if (cuil) {
+      this.filteredProviders = this.providerList.filter(provider => provider.cuil.includes(cuil));
+    } else {
+      this.filteredProviders = this.providerList; // Restablece la lista si no hay CUIL ingresado
+    }
+  }
   searchByContact() {
     this.applyFilters();
   }
@@ -101,15 +126,17 @@ export class ProviderListComponent implements OnInit{
 
   exportToPDF() {
     const doc = new jsPDF();
-    const tableColumn = ["Nombre", "Tipo de servicio", "Contacto", "Estado"];
+    const tableColumn = ['Nombre', 'CUIL', 'Tipo de servicio', 'Dirección', 'Estado'];
     const tableRows: any[][] = [];
   
-    this.providerList.forEach(provider => {
+    this.providerList.forEach((provider) => {
+      const providerAddress = this.addresses.find((addr) => addr.id === provider.addressId);
       const providerData = [
         provider.name,
-        provider.serviceType,
-        provider.contact,
-        provider.state
+        provider.cuil,
+        provider.service,
+        providerAddress ? providerAddress.street_address : 'N/A', // Mostramos la dirección
+        provider.enabled ? 'Activo' : 'Inactivo'
       ];
       tableRows.push(providerData);
     });
@@ -153,9 +180,17 @@ export class ProviderListComponent implements OnInit{
     });
 
     // Crear filas de datos
-    this.providerList.forEach(provider => {
+    // this.providerList.forEach(provider => {
+    //   const row = tbody.insertRow();
+    //   [provider.name, provider.serviceType, provider.contact, provider.state].forEach(text => {
+    //     const cell = row.insertCell();
+    //     cell.textContent = text;
+    //   });
+    // });
+    this.providerList.forEach((provider) => {
+      const providerAddress = this.addresses.find((addr) => addr.id === provider.addressId);
       const row = tbody.insertRow();
-      [provider.name, provider.serviceType, provider.contact, provider.state].forEach(text => {
+      [provider.name, provider.cuil, provider.service, providerAddress ? providerAddress.street_address : 'N/A', provider.enabled ? 'Activo' : 'Inactivo'].forEach((text) => {
         const cell = row.insertCell();
         cell.textContent = text;
       });
