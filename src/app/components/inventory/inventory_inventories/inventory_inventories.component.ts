@@ -119,10 +119,10 @@ getDisplayUnit(unit: MeasurementUnit): string {
   updateInventory(): void {
     if (this.inventoryForm.valid) {
       const updatedInventory = this.inventoryForm.value;
-      this.inventoryService.updateInventory(updatedInventory).subscribe(() => {
+      /*this.inventoryService.updateInventory(updatedInventory).subscribe(() => {
         this.getInventories();
         this.inventoryForm.reset({ stock: 1, min_stock: 1, inventory_status: Status.ACTIVE });
-      });
+      });*/
     }
   }
 
@@ -147,10 +147,10 @@ getDisplayUnit(unit: MeasurementUnit): string {
           ...inventoryData,
           id: this.editingInventoryId
         };
-        this.inventoryService.updateInventory(updatedInventory).subscribe(() => {
+        /*this.inventoryService.updateInventory(updatedInventory).subscribe(() => {
           this.getInventories(); // Recargar la lista después de actualizar
           this.resetForm(); // Resetear el formulario después de editar
-        });
+        });*/
       } else {
         // Agregar nuevo inventario
         this.inventoryService.addInventory(inventoryData).subscribe(() => {

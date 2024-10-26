@@ -79,7 +79,6 @@ export class ArticleFormComponent implements OnInit {
     this.articleForm.get('articleType')?.disable();
     this.articleForm.get('articleCondition')?.disable();
     this.articleForm.get('stock')?.disable();
-    this.articleForm.get('stockMin')?.disable();
     this.articleForm.get('location')?.disable();
     this.isEditing=true;
   }
@@ -126,6 +125,13 @@ export class ArticleFormComponent implements OnInit {
       }
       else if (this.currentArticleId!= undefined){
         this.inventoryService.updateArticle(this.currentArticleId,articleInventoryFormatted.article as Article).subscribe((data)=> console.log(data));
+        let inventoryUpdate= {
+          stock: articleInventory.stock,
+          minStock: articleInventory.minStock,
+          location: articleInventory.location,
+        }
+        const inventoryUpdateFormatted = this.mapperService.toSnakeCase(inventoryUpdate);
+        this.inventoryService.updateInventory(this.currentArticleId, inventoryUpdateFormatted).subscribe((data)=> console.log(data));
       }
     }
   }

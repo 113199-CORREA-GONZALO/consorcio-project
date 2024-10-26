@@ -49,9 +49,9 @@ export class InventoryService {
     console.log(articleInventory);
     return this.http.post<ArticleInventoryPost>(this.apiInventoriesUrl+'/newArticle', articleInventory);
   }
-  updateInventory(inventory: Inventory): Observable<Inventory> {
+  updateInventory(id:number , inventory: Inventory): Observable<Inventory> {
     console.log('update',inventory);
-    return this.http.put<Inventory>(`${this.apiInventoriesUrl}/${inventory.id}`, inventory);
+    return this.http.put<Inventory>(`${this.apiInventoriesUrl}/${id}`, inventory);
   }
 
   deleteInventory(inventory_id: number): Observable<void> {
