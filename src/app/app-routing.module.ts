@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path: 'articles/article/:id', component: ArticleFormComponent },
   { path: 'inventories', component: InventoryTableComponent },
   { path: 'transactions/:id', component: TransactionComponentForm },
-  { path: 'inventories/transactions/:id', component: InventoryTransactionTableComponent },
+  { path: 'inventories/transactions/:inventoryId', component: InventoryTransactionTableComponent },
   { path: '', redirectTo: '/employees', pathMatch: 'full' }
 ];
 

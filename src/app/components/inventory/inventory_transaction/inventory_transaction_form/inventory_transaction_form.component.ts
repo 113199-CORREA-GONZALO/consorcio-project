@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InventoryService } from '../../../../services/inventory.service';
 import { Transaction, TransactionType, Inventory, TransactionPost } from '../../../../models/inventory.model';
@@ -18,8 +18,13 @@ export class TransactionComponentForm implements OnInit {
 
   private mapperService = inject(MapperService);
 
+@Input() inventoryId: string | null = null;
+@Output() closeRegisterTransaction = new EventEmitter<void>();
+@Output() showRegisterTransactionForm = new EventEmitter<void>();
+isModalOpen : boolean = true;
+
+
   transactionForm: FormGroup;
-  inventoryId: string | undefined; // Agrega esta propiedad para almacenar el ID del inventario
 
   transactions: Transaction[] = [];
   inventories: Inventory[] = [];
@@ -35,26 +40,14 @@ export class TransactionComponentForm implements OnInit {
       transactionType: [TransactionType.ENTRY, Validators.required],
       quantity: [0, Validators.required],
       price: [0],
-      transactionDate: [{ value: new Date().toISOString().split('T')[0] }] // Fecha autogenerada
+      transactionDate: [{ value: new Date().toISOString().split('T')[0] }]
     });
   }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      this.inventoryId = id ? id : '';
-    });
-    this.getInventories();
-    this.getTransactions();
-    this.transactionForm.get('transactionType')?.valueChanges.subscribe(value => {
-      this.selectedTransactionType = value;
-      this.toggleFieldsByTransactionType(value);
-    });
-    console.log('ID del inventario:', this.inventoryId);
-    this.getArticles();
-    this.getInventories()
-    console.log('Mapa de ítems:', this.articleMap);
-    console.log('Mapa de inventarios:', this.inventoryMap);
+    if (this.inventoryId) {
+      console.log('ID de inventario recibido:', this.inventoryId);
+    }
   }
 
   addTransaction(): void {
@@ -147,11 +140,11 @@ export class TransactionComponentForm implements OnInit {
       // Crear el objeto actualizado de la transacción
       const updatedTransaction: Transaction = {
         id: this.editingTransactionId, // Mantén el ID de la transacción
-        inventory_id: formValues.inventory_id,
+        inventoryId: formValues.inventory_id,
         quantity: formValues.quantity,
         price: formValues.price,
-        transaction_type: formValues.transaction_type, // Asegúrate de capturar correctamente el tipo de transacción
-        transaction_date: new Date().toISOString() // Si quieres mantener la fecha actualizada
+        transactionType: formValues.transaction_type, // Asegúrate de capturar correctamente el tipo de transacción
+        transactionDate: new Date().toISOString() // Si quieres mantener la fecha actualizada
       };
 
       // Enviar la actualización al servidor
@@ -168,7 +161,7 @@ export class TransactionComponentForm implements OnInit {
     this.isEditing = true;
    // this.editingTransactionId = transaction.id;
     this.transactionForm.patchValue(transaction);
-    this.toggleFieldsByTransactionType(transaction.transaction_type);
+    this.toggleFieldsByTransactionType(transaction.transactionType);
   }
 
   deleteTransaction(transaction_id: number): void {
@@ -187,5 +180,10 @@ export class TransactionComponentForm implements OnInit {
     });
     this.isEditing = false;
   //  this.editingTransactionId = null;
+  }
+
+  onClose(){
+    this.showRegisterTransactionForm.emit();
+    this.isModalOpen = false
   }
 }

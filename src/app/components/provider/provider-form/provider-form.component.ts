@@ -6,7 +6,7 @@ import { ProvidersService } from '../../../services/providers.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Supplier } from '../../../models/supplier.model';
+import { Address, Supplier } from '../../../models/supplier.model';
 
 @Component({
   selector: 'app-provider-form',
@@ -21,6 +21,8 @@ export class ProviderFormComponent implements OnInit{
   statusTypes = Object.values(StatusType);
   isEditMode = false;
   currentProviderId: number | null = null;
+  addresses: Address[] = []; // Cargaremos las direcciones desde db.json
+
 
   private providerService = inject(ProvidersService);
   private fb = inject(FormBuilder);
@@ -30,15 +32,17 @@ export class ProviderFormComponent implements OnInit{
   constructor() {
     this.providerForm = this.fb.group({
       name: ['', Validators.required],
-      serviceType: ['', Validators.required],
-      contact: ['', Validators.required],
-      address: ['', Validators.required],
+      cuil: ['', Validators.required],
+      service: ['', Validators.required],
+      addressId: [null, Validators.required],
       details: ['', Validators.required],
-      state: ['', Validators.required],
+      phone: ['', [Validators.required, Validators.minLength(10)]],
+      // state: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
+    this.loadAddresses(); // Cargar direcciones al iniciar el componente
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -49,48 +53,45 @@ export class ProviderFormComponent implements OnInit{
     });
   }
 
-  onSubmit(): void{
-    if (this.providerForm.valid){
-      if (this.isEditMode){
-        this.updateProvider();
+  onSubmit(): void {
+    if (this.providerForm.valid) {
+      const formData = { ...this.providerForm.value };
+      formData.addressId = Number(formData.addressId);
+      
+      if (this.isEditMode && this.currentProviderId !== null) {
+        formData.id = this.currentProviderId; // Asignar el ID actual al proveedor en modo edición
+        this.updateProvider(formData);
       } else {
-        this.addProvider();
+        this.addProvider(formData);
       }
     }
   }
+  
+  
 
-  updateProvider(): void {
-    if (this.currentProviderId !== null) {
-      const update: Supplier = { ...this.providerForm.value, id: this.currentProviderId };
-      this.providerService.updateProvider(update).subscribe(
-        () => {
-          Swal.fire({
-            title: 'Proveedor actualizado!',
-            text: 'El proveedor ha sido actualizado.',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
-          this.router.navigate(['/providers/list']);
-        },
-        (error) => {
-          console.error('Error updating provider:', error);
-          Swal.fire('Error', 'No se pudo actualizar el proveedor', 'error');
-        }
-      );
-    }
-  }
-
-  addProvider(): void {
-    this.providerService.addProvider(this.providerForm.value).subscribe(() => {
+  addProvider(providerData: Supplier): void {
+    this.providerService.addProvider(providerData).subscribe(() => {
       Swal.fire({
         title: 'Proveedor agregado!',
         text: 'El proveedor ha sido agregado.',
         icon: 'success',
-        timer: 2000, 
+        timer: 2000,
         showConfirmButton: false
       });
       this.resetForm();
+      this.router.navigate(['/providers/list']);
+    });
+  }
+  
+  updateProvider(providerData: Supplier): void {
+    this.providerService.updateProvider(providerData).subscribe(() => {
+      Swal.fire({
+        title: 'Proveedor actualizado!',
+        text: 'El proveedor ha sido actualizado.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
       this.router.navigate(['/providers/list']);
     });
   }
@@ -101,10 +102,17 @@ export class ProviderFormComponent implements OnInit{
     this.currentProviderId = null;
     this.router.navigate(['/providers/list']);
   }
+  loadAddresses(): void {
+    // Simulamos la carga de direcciones desde el db.json
+    this.providerService.getAddresses().subscribe((addresses: Address[]) => {
+      this.addresses = addresses;
+    });
+  }
 
   loadProviderData(id: number): void {
     this.providerService.getProviderById(id).subscribe(
       (provider: Supplier) => {
+        this.currentProviderId = provider.id; // Asegúrate de asignar el id
         this.providerForm.patchValue(provider);
       },
       (error) => {
@@ -113,4 +121,5 @@ export class ProviderFormComponent implements OnInit{
       }
     );
   }
+  
 }

@@ -6,18 +6,27 @@ import { Article, MeasurementUnit, Status } from '../../../models/article.model'
 import { InventoryService } from '../../../services/inventory.service';
 import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
-import { Router, RouterModule } from '@angular/router';
+
+import {Router, RouterModule } from '@angular/router';
+import { TransactionComponentForm } from '../inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
+import { InventoryTransactionTableComponent } from "../inventory_transaction/inventory_transaction_table/inventory_transaction_table.component";
+
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule, TransactionComponentForm, InventoryTransactionTableComponent],
   templateUrl: './inventory_inventories.component.html',
   styleUrls: ['./inventory_inventories.component.css']
 })
 export class InventoryTableComponent implements OnInit {
   private router = inject(Router);
   private mapperService = inject(MapperService);
+
+  // Modals
+  showRegisterForm: boolean = false;
+  showRegisterTransactionForm: boolean = false;
+  showTransactions: boolean = false;
 
   inventoryForm: FormGroup;
   inventories: Inventory[] = [];
@@ -27,6 +36,7 @@ export class InventoryTableComponent implements OnInit {
   isEditing: boolean = false;
   editingInventoryId: any | null = null; // Para guardar el ID del inventario en edición
 
+  selectedInventoryId: string | null = null;
 
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
@@ -40,7 +50,6 @@ export class InventoryTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.getInventories();
-    // this.getArticles();
   }
 
   getInventories(): void {
@@ -160,5 +169,30 @@ getDisplayUnit(unit: MeasurementUnit): string {
       }
     }
   }
+
+  onNewArticle(){
+    this.showRegisterForm = !this.showRegisterForm;
+  }
+  onRegisterClose(){
+    this.showRegisterForm = this.showRegisterForm;
+}
+
+onNewTransaction(id:any){
+  this.selectedInventoryId = id;
+  this.showRegisterTransactionForm = !this.showRegisterTransactionForm;
+}
+onRegisterTransactionClose(){
+  this.showRegisterTransactionForm = this.showRegisterTransactionForm;
+  this.selectedInventoryId = "";
+}
+
+onTransactions(id:any){
+  this.selectedInventoryId = id;
+  this.showTransactions = !this.showTransactions;
+}
+onTransactionsClose(){
+  this.showTransactions = this.showTransactions;
+  this.selectedInventoryId = "";
+}
 
 }

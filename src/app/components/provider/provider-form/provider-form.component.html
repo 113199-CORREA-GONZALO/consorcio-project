@@ -1,96 +1,102 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <h3 class="text-center">{{ isEditMode ? 'Editar Proveedor' : 'Agregar Nuevo Proveedor' }}</h3>
-            <form [formGroup]="providerForm" (ngSubmit)="onSubmit()" class="form-group">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="name">Nombre</label>
-                        <input id="name" formControlName="name" class="form-control" 
-                               [ngClass]="{'is-invalid': providerForm.get('name')?.invalid && providerForm.get('name')?.touched, 
-                                           'is-valid': providerForm.get('name')?.valid && providerForm.get('name')?.touched}" />
-                        @if (providerForm.get('name')?.invalid && providerForm.get('name')?.touched) {
-                            <div class="invalid-feedback">
-                                El nombre es requerido.
-                            </div>
-                        }
-                    </div>
-                    <div class="col-md-6">
-                        <label for="serviceType">Tipo de Servicio</label>
-                        <select id="serviceType" formControlName="serviceType" class="form-control" 
-                                [ngClass]="{'is-invalid': providerForm.get('serviceType')?.invalid && providerForm.get('serviceType')?.touched, 
-                                            'is-valid': providerForm.get('serviceType')?.valid && providerForm.get('serviceType')?.touched}">
-                            @for (type of serviceTypes; track $index) {
-                                <option [value]="type">{{ type }}</option>
-                            }
-                        </select>
-                        @if (providerForm.get('serviceType')?.invalid && providerForm.get('serviceType')?.touched) {
-                            <div class="invalid-feedback">
-                                El tipo de servicio es requerido.
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-6">
-                        <label for="contact">Contacto</label>
-                        <input id="contact" formControlName="contact" class="form-control" 
-                               [ngClass]="{'is-invalid': providerForm.get('contact')?.invalid && providerForm.get('contact')?.touched, 
-                                           'is-valid': providerForm.get('contact')?.valid && providerForm.get('contact')?.touched}" />
-                        @if (providerForm.get('contact')?.invalid && providerForm.get('contact')?.touched) {
-                            <div class="invalid-feedback"> 
-                                El contacto es requerido. 
-                            </div>
-                        }
-                    </div>
-                    <div class="col-md-6">
-                        <label for="address">Dirección</label>
-                        <input id="address" formControlName="address" class="form-control" 
-                               [ngClass]="{'is-invalid': providerForm.get('address')?.invalid && providerForm.get('address')?.touched, 
-                                           'is-valid': providerForm.get('address')?.valid && providerForm.get('address')?.touched}" />
-                        @if (providerForm.get('address')?.invalid && providerForm.get('address')?.touched) {
-                            <div class="invalid-feedback">
-                                La dirección es requerida.
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <label for="details">Detalles</label>
-                        <textarea id="details" formControlName="details" class="form-control" 
-                                  [ngClass]="{'is-invalid': providerForm.get('details')?.invalid && providerForm.get('details')?.touched, 
-                                              'is-valid': providerForm.get('details')?.valid && providerForm.get('details')?.touched}">
-                        </textarea>
-                        @if (providerForm.get('details')?.invalid && providerForm.get('details')?.touched) {
-                            <div class="invalid-feedback ">
-                                Los detalles son requeridos.
-                            </div>
-                        }                        
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-6">
-                        <label for="state">Estado</label>
-                        <select id="state" formControlName="state" class="form-control" 
-                                [ngClass]="{'is-invalid': providerForm.get('state')?.invalid && providerForm.get('state')?.touched, 
-                                            'is-valid': providerForm.get('state')?.valid && providerForm.get('state')?.touched}">
-                            <option *ngFor="let state of statusTypes" [value]="state">{{ state }}</option>
-                        </select>
-                        @if (providerForm.get('state')?.invalid && providerForm.get('state')?.touched) {
-                            <div class="invalid-feedback">
-                                El estado es requerido.
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-12 text-end">
-                        <button type="button" class="btn btn-secondary me-2" (click)="resetForm()" *ngIf="isEditMode">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" [disabled]="providerForm.invalid">{{ isEditMode ? 'Actualizar' : 'Guardar' }}</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+      <div class="col-md-10">
+        <h3 class="text-center">{{ isEditMode ? 'Editar Proveedor' : 'Agregar Nuevo Proveedor' }}</h3>
+        <form [formGroup]="providerForm" (ngSubmit)="onSubmit()" class="form-group">
+          <div class="row">
+            <div class="col-md-6">
+              <label for="name">Nombre</label>
+              <input id="name" formControlName="name" class="form-control" 
+                     [ngClass]="{
+                       'is-invalid': providerForm.get('name')?.invalid && providerForm.get('name')?.touched, 
+                       'is-valid': providerForm.get('name')?.valid && providerForm.get('name')?.touched
+                     }" />
+              <div class="invalid-feedback" *ngIf="providerForm.get('name')?.invalid && providerForm.get('name')?.touched">
+                El nombre es requerido.
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label for="cuil">CUIL</label>
+              <input id="cuil" formControlName="cuil" class="form-control" 
+                     [ngClass]="{
+                       'is-invalid': providerForm.get('cuil')?.invalid && providerForm.get('cuil')?.touched, 
+                       'is-valid': providerForm.get('cuil')?.valid && providerForm.get('cuil')?.touched
+                     }" />
+              <div class="invalid-feedback" *ngIf="providerForm.get('cuil')?.invalid && providerForm.get('cuil')?.touched">
+                El CUIL debe tener 11 caracteres.
+              </div>
+            </div>
+          </div>
+  
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label for="service">Servicio</label>
+              <input id="service" formControlName="service" class="form-control" 
+                     [ngClass]="{
+                       'is-invalid': providerForm.get('service')?.invalid && providerForm.get('service')?.touched, 
+                       'is-valid': providerForm.get('service')?.valid && providerForm.get('service')?.touched
+                     }" />
+              <div class="invalid-feedback" *ngIf="providerForm.get('service')?.invalid && providerForm.get('service')?.touched">
+                El servicio es requerido.
+              </div>
+            </div>
+  
+            <div class="col-md-6">
+              <label for="addressId">Dirección</label>
+              <select id="addressId" formControlName="addressId" class="form-control"
+                      [ngClass]="{
+                        'is-invalid': providerForm.get('addressId')?.invalid && providerForm.get('addressId')?.touched, 
+                        'is-valid': providerForm.get('addressId')?.valid && providerForm.get('addressId')?.touched
+                      }">
+                <option *ngFor="let address of addresses" [value]="address.id">
+                  {{ address.street_address }}, {{ address.city }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="providerForm.get('addressId')?.invalid && providerForm.get('addressId')?.touched">
+                La dirección es requerida.
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <label for="phone">Teléfono</label>
+              <input id="phone" formControlName="phone" class="form-control" 
+                     [ngClass]="{
+                       'is-invalid': providerForm.get('phone')?.invalid && providerForm.get('phone')?.touched, 
+                       'is-valid': providerForm.get('phone')?.valid && providerForm.get('phone')?.touched
+                     }" />
+              <div class="invalid-feedback" *ngIf="providerForm.get('phone')?.invalid && providerForm.get('phone')?.touched">
+                <span *ngIf="providerForm.get('phone')?.errors?.['required']">El teléfono es requerido.</span>
+                <span *ngIf="providerForm.get('phone')?.errors?.['minlength']">El teléfono debe tener al menos 10 caracteres.</span>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <label for="details">Detalles</label>
+              <textarea id="details" formControlName="details" class="form-control" 
+                        [ngClass]="{
+                          'is-invalid': providerForm.get('details')?.invalid && providerForm.get('details')?.touched, 
+                          'is-valid': providerForm.get('details')?.valid && providerForm.get('details')?.touched
+                        }">
+              </textarea>
+              <div class="invalid-feedback" *ngIf="providerForm.get('details')?.invalid && providerForm.get('details')?.touched">
+                Los detalles son requeridos.
+              </div>
+            </div>
+          </div>
+  
+          <div class="row mt-3">
+            <div class="col-md-12 text-end">
+              <button type="button" class="btn btn-secondary me-2" (click)="resetForm()" *ngIf="isEditMode">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="providerForm.invalid">{{ isEditMode ? 'Actualizar' : 'Guardar' }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-</div>
+  </div>
+  

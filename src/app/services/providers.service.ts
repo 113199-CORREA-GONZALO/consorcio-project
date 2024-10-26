@@ -1,33 +1,37 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Supplier } from '../models/supplier.model';
+import { Address, Supplier } from '../models/supplier.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProvidersService {
   private apiUrl = 'http://localhost:3000/suppliers';
+  private apiAddressUrl = 'http://localhost:3000/addresses'; // URL para las direcciones
+
 
   constructor(private http: HttpClient) {}
 
   getProviders(filters?: {
-    serviceType?: string,
-    state?: string,
-    contactNumber?: string
+    name?: string,
+    cuil?: string,
+    service?: string,
+    addressId?: number,
+    enabled?: boolean,
+    phoneNumber?: string
   }): Observable<Supplier[]> {
     let params = new HttpParams();
+    
     if (filters) {
-      if (filters.serviceType) {
-        params = params.append('serviceType', filters.serviceType);
-      }
-      if (filters.state) {
-        params = params.append('state', filters.state);
-      }
-      if (filters.contactNumber) {
-        params = params.append('contact', filters.contactNumber);
-      }
+      Object.keys(filters).forEach(key => {
+        const value = filters[key as keyof typeof filters];
+        if (value !== undefined && value !== '') {
+          params = params.append(key, value.toString());
+        }
+      });
     }
+    
     return this.http.get<Supplier[]>(this.apiUrl, { params });
   }
 
@@ -45,5 +49,9 @@ export class ProvidersService {
 
   deleteProvider(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+  // Obtener direcciones
+  getAddresses(): Observable<Address[]> {
+    return this.http.get<Address[]>(this.apiAddressUrl);
   }
 }

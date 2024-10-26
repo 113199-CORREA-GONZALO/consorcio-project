@@ -1,9 +1,9 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { Supplier } from '../../../models/supplier.model';
+import { Address, Supplier } from '../../../models/supplier.model';
 import { ProvidersService } from '../../../services/providers.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ServiceType } from '../../../models/enums/service-tpye.enum';
 import { CommonModule } from '@angular/common';
 import { StatusType } from '../../../models/inventory.model';
@@ -13,6 +13,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 
 @Component({
   selector: 'app-provider-list',
@@ -25,9 +26,22 @@ export class ProviderListComponent implements OnInit{
   @ViewChild('providersTable') providersTable!: ElementRef;
   
   providerList: Supplier[] = [];
+  addresses: Address[] = []; // Agregar la lista de direcciones
+  filteredProviders: Supplier[] = []; // Proveedores filtrados
+  isLoading = false;
+
+  sortedProviderList: Supplier[] = [];
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
   filterForm: FormGroup;
   serviceTypes = Object.values(ServiceType);
   statusTypes = Object.values(StatusType);
+
+  nameFilter = new FormControl('');
+  cuilFilter = new FormControl('');
+  serviceFilter = new FormControl('');
+  phoneFilter = new FormControl('');
 
   private providerService = inject(ProvidersService);
   private router = inject(Router);
@@ -35,39 +49,176 @@ export class ProviderListComponent implements OnInit{
 
   constructor() {
     this.filterForm = this.fb.group({
-      serviceType: [''],
-      state: [''],
-      contactNumber: ['']
+      addressId: [''],
+      enabled: ['']
     });
   }
 
   ngOnInit(): void {
     this.getProviders();
-    this.filterForm.get('serviceType')?.valueChanges.subscribe(() => this.applyFilters());
-    this.filterForm.get('state')?.valueChanges.subscribe(() => this.applyFilters());
+    this.loadAddresses();
+    this.setupFilterSubscriptions();
+  }
+
+  private setupFilterSubscriptions(): void {
+    // Aplicar debounce a todos los controles del formulario
+    Object.keys(this.filterForm.controls).forEach(key => {
+      this.filterForm.get(key)?.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      ).subscribe(() => {
+        this.applyFilters();
+      });
+    });
+  }
+  sortData(column: string): void {
+    if (this.sortColumn === column) {
+      // Cambiar la dirección de orden si se hace clic en la misma columna
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Si es una columna nueva, establecerla en ascendente
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.sortedProviderList.sort((a , b) => {
+      const valueA = a[column as keyof Supplier];
+      const valueB = b[column as keyof Supplier];
+
+       // Verificar si alguno de los valores es undefined y colocarlos al final
+       if (valueA == undefined && valueB === undefined) return 0;
+       if (valueA == undefined) return this.sortDirection === 'asc' ? 1 : -1;
+       if (valueB == undefined) return this.sortDirection === 'asc' ? -1 : 1;
+
+       // Comparar valores cuando están definidos
+       if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+       if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+       return 0;
+    });
+  }
+
+  sortProviders(column: keyof Supplier): void {
+    // Cambia la dirección de orden si la columna ya está seleccionada, sino reinicia a 'asc'
+    this.sortDirection = this.sortColumn === column ? (this.sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+    this.sortColumn = column;
+  
+    // Ordena la lista
+    this.providerList = [...this.providerList].sort((a, b) => {
+      const valueA = a[column];
+      const valueB = b[column];
+  
+      if (valueA == null || valueB == null) return 0; // Evita ordenamiento si es null o undefined
+  
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+  
+  getSortIcon(column: string): string {
+    if (this.sortColumn === column) {
+      return this.sortDirection === 'asc' ? 'fa fa-arrow-up' : 'fa fa-arrow-down';
+    }
+    return 'fa fa-sort';
+  }
+  
+  loadAddresses(): void {
+    this.providerService.getAddresses().subscribe((addresses: Address[]) => {
+      this.addresses = addresses;
+    });
+  }
+
+  trackByFn(index: number, item: Supplier): number {
+    return item.id; // Devuelve el ID del proveedor como clave
+  }
+  getAddressById(addressId: number): string {
+    const address = this.addresses.find(a => a.id === addressId);
+    return address ? address.street_address : 'N/A';
   }
 
   getProviders() {
-    this.applyFilters();
+    this.isLoading = true;
+    this.nameFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.name.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    this.cuilFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.cuil.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    this.phoneFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.phoneNumber.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    this.serviceFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.service.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    
+    this.providerService.getProviders().subscribe((providerList) => {
+      this.filteredProviders = providerList;
+      this.providerList = providerList;
+      this.isLoading = false;
+    });
   }
 
   applyFilters(): void {
     const filters = {
-      serviceType: this.filterForm.get('serviceType')?.value,
-      state: this.filterForm.get('state')?.value,
-      contactNumber: this.filterForm.get('contactNumber')?.value
+      addressId: this.filterForm.get('addressId')?.value,
+      enabled: this.filterForm.get('enabled')?.value
     };
-    this.providerService.getProviders(filters).subscribe((providerList) => {
-      this.providerList = providerList;
+
+    // Eliminar propiedades con valores vacíos
+    Object.keys(filters).forEach(key => {
+      if (!filters[key as keyof typeof filters]) {
+        delete filters[key as keyof typeof filters];
+      }
+    });
+
+    this.providerService.getProviders(filters).subscribe(providers => {
+      this.providerList = providers;
+      this.filteredProviders = providers;
     });
   }
-
+  
+  // Método para buscar proveedores por CUIL
+  searchByCUIL(): void {
+    const cuil = this.filterForm.get('cuil')?.value;
+    if (cuil) {
+      this.filteredProviders = this.providerList.filter(provider => provider.cuil.includes(cuil));
+    } else {
+      this.filteredProviders = this.providerList; // Restablece la lista si no hay CUIL ingresado
+    }
+  }
   searchByContact() {
     this.applyFilters();
   }
 
   clearSearch() {
-    this.filterForm.reset();
+    this.nameFilter.reset();
+    this.cuilFilter.reset();
+    this.serviceFilter.reset();
+    this.phoneFilter.reset();
+    this.filterForm.reset({
+      addressId: '',
+      enabled: ''
+    });
     this.applyFilters();
   }
 
@@ -101,15 +252,18 @@ export class ProviderListComponent implements OnInit{
 
   exportToPDF() {
     const doc = new jsPDF();
-    const tableColumn = ["Nombre", "Tipo de servicio", "Contacto", "Estado"];
+    const tableColumn = ['Nombre', 'CUIL', 'Tipo de servicio', 'Dirección', 'Numero de Telefono', 'Estado'];
     const tableRows: any[][] = [];
   
-    this.providerList.forEach(provider => {
+    this.providerList.forEach((provider) => {
+      const providerAddress = this.addresses.find((addr) => addr.id === provider.addressId);
       const providerData = [
         provider.name,
-        provider.serviceType,
-        provider.contact,
-        provider.state
+        provider.cuil,
+        provider.service,
+        providerAddress ? providerAddress.street_address : 'N/A', // Mostramos la dirección
+        provider.phoneNumber,
+        provider.enabled ? 'Activo' : 'Inactivo'
       ];
       tableRows.push(providerData);
     });
@@ -153,9 +307,17 @@ export class ProviderListComponent implements OnInit{
     });
 
     // Crear filas de datos
-    this.providerList.forEach(provider => {
+    // this.providerList.forEach(provider => {
+    //   const row = tbody.insertRow();
+    //   [provider.name, provider.serviceType, provider.contact, provider.state].forEach(text => {
+    //     const cell = row.insertCell();
+    //     cell.textContent = text;
+    //   });
+    // });
+    this.providerList.forEach((provider) => {
+      const providerAddress = this.addresses.find((addr) => addr.id === provider.addressId);
       const row = tbody.insertRow();
-      [provider.name, provider.serviceType, provider.contact, provider.state].forEach(text => {
+      [provider.name, provider.cuil, provider.service, providerAddress ? providerAddress.street_address : 'N/A', provider.enabled ? 'Activo' : 'Inactivo'].forEach((text) => {
         const cell = row.insertCell();
         cell.textContent = text;
       });

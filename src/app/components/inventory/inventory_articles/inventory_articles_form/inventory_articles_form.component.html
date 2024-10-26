@@ -1,17 +1,18 @@
 <div class="container">
   <form [formGroup]="articleForm" (ngSubmit)="addArticle()">
     @if(isEditing){
-      <h2 class="h1 mb-4">Modificar Artículo</h2>
+
+      <h2 class="h1 mb-4">Modificar Inventario</h2>
     }
     @else {
-      <h2 class="h1 mb-4">Registrar Artículo</h2>
+      <h2 class="h1 mb-4">Registrar Inventario</h2>
     }
     <!-- Primera fila - Dos columnas -->
     <div class="row">
       <!-- Tipo de Artículo -->
       <div class="col-md-6 d-flex align-items-center mb-3">
         <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="articleType">
-          Tipo <span style="color: red; margin-left: 2px;">*</span>:
+          Tipo <span style="color: red; margin-left: 2px;">*</span>
         </label>
         <select id="articleType" formControlName="articleType" class="form-select">
           <option [value]="ArticleType.REGISTRABLE">Registrable</option>
@@ -20,7 +21,7 @@
       </div>
       <!-- Identificador -->
       <div class="col-md-6 d-flex align-items-center mb-3">
-        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="identifier">Identificador:</label>
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="identifier">Identificador</label>
         <input id="identifier" formControlName="identifier" class="form-control disabled" />
       </div>
     </div>
@@ -30,13 +31,13 @@
       <!-- Nombre -->
       <div class="col-md-6 d-flex align-items-center mb-3">
         <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="name">
-          Nombre <span style="color: red; margin-left: 2px;">*</span>:
+          Nombre <span style="color: red; margin-left: 2px;">*</span>
         </label>
         <input id="name" formControlName="name" class="form-control" />
       </div>
       <!-- Descripción -->
       <div class="col-md-6 d-flex align-items-center mb-3">
-        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="description">Descripción:</label>
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="description">Descripción</label>
         <input id="description" formControlName="description" class="form-control" />
       </div>
     </div>
@@ -46,7 +47,7 @@
       <!-- Categoría -->
       <div class="col-md-6 d-flex align-items-center mb-3">
         <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="articleCategory">
-          Categoría <span style="color: red; margin-left: 2px;">*</span>:
+          Categoría <span style="color: red; margin-left: 2px;">*</span>
         </label>
         <select id="articleCategory" formControlName="articleCategory" class="form-select">
           <option [value]="ArticleCategory.DURABLES">Durables</option>
@@ -58,7 +59,7 @@
       <!-- Unidad de Medida -->
       <div class="col-md-6 d-flex align-items-center mb-3">
         <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="measurementUnit">
-          Medida <span style="color: red; margin-left: 2px;">*</span>:
+          Medida <span style="color: red; margin-left: 2px;">*</span>
         </label>
         <select id="measurementUnit" formControlName="measurementUnit" class="form-select">
           <option [value]="MeasurementUnit.LITERS">Litros</option>
@@ -72,12 +73,12 @@
     <div class="row">
       <!-- Ubicación -->
       <div class="col-md-6 d-flex align-items-center mb-3">
-        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="location">Ubicación <span style="color: red; margin-left: 2px;">*</span>:</label>
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="location">Ubicación <span style="color: red; margin-left: 2px;">*</span></label>
         <input id="location" formControlName="location" class="form-control" />
       </div>
       <!-- Precio -->
       <div class="col-md-6 d-flex align-items-center mb-3">
-        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="price">Precio:</label>
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="price">Precio</label>
         <input id="price" formControlName="price" class="form-control" />
       </div>
     </div>
@@ -85,11 +86,11 @@
     <!-- Quinta fila - Dos columnas: Stock y Stock Mínimo -->
     <div class="row">
       <div class="col-md-6 d-flex align-items-center mb-3">
-        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="stock">Stock <span style="color: red; margin-left: 2px;">*</span>:</label>
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="stock">Stock <span style="color: red; margin-left: 2px;">*</span></label>
         <input id="stock" formControlName="stock" class="form-control" />
       </div>
       <div class="col-md-6 d-flex align-items-center mb-3">
-        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="stockMin">Stock Mínimo:</label>
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="stockMin">Stock Mínimo</label>
         <input id="stockMin" formControlName="stockMin" class="form-control" />
       </div>
     </div>

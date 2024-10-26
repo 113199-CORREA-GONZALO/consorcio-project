@@ -1,75 +1,92 @@
-<div class="container">
+<div class="container mt-5">
   <h3 class="h3">Tabla de Inventarios</h3>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Identificador</th>
-        <th>Artículo</th>
-        <th>Descripción</th>
-        <th>Stock</th>
-        <th>Medida</th>
-        <th>Stock Mínimo</th>
-        <th>Ubicación</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <tr *ngFor="let inventory of inventories">
-        <td class="text-center">{{ inventory.article.identifier || '-' }}</td>
-        <td>{{ inventory.article.name }}</td>
-        <td>{{ inventory.article.description }}</td>
-        <td class="text-center">{{ inventory.stock }}</td>
-        <td>{{ getDisplayUnit(inventory.article.measurementUnit) }}</td>
-        <td class="text-center">{{ inventory.minStock || '-' }}</td>
-        <td [ngClass]="{'text-center': !inventory.location}">
-          {{ inventory.location || '-' }}</td>
+  <!-- Botonera -->
+  <div class="d-flex justify-content-end">
+    <button class="btn btn-primary" [routerLink]="['/articles/article']" title="Nuevo">
+      <i class="bi bi-plus"></i>
+    </button>
+  </div>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Identificador</th>
+          <th>Artículo</th>
+          <th>Descripción</th>
+          <th>Stock</th>
+          <th>Medida</th>
+          <th>Stock Mínimo</th>
+          <th>Ubicación</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inventory of inventories">
+          <td class="text-center">{{ inventory.article.identifier || "-" }}</td>
+          <td>{{ inventory.article.name }}</td>
+          <td>{{ inventory.article.description }}</td>
+          <td class="text-center">{{ inventory.stock }}</td>
+          <td>{{ getDisplayUnit(inventory.article.measurementUnit) }}</td>
+          <td class="text-center">{{ inventory.minStock || "-" }}</td>
+          <td [ngClass]="{ 'text-center': !inventory.location }">{{ inventory.location || "-" }}</td>
+          <td>{{ inventory.inventoryStatus }}</td>
           <td>
-            <!-- Botón para ver transacciones, llama a la función viewInventory -->
-            <button
-              [routerLink]="['/inventories/transactions', inventory.id]"
-              class="btn btn-info btn-sm"
-              title="Ver Movimientos"
-              data-toggle="tooltip"
-              data-placement="top">
-              <i class="bi bi-eye"></i>
-            </button>
-            <!-- Botón para realizar transacción, llama a la función transactionInventory -->
-            <button
-              [routerLink]="['/transactions', inventory.id]"
-              class="btn btn-primary btn-sm"
-              title="Realizar Movimiento"
-              data-toggle="tooltip"
-              data-placement="top">
-              <i class="bi bi-plus-circle"></i>
-            </button>
-            <!-- Botón para editar el inventario, llama a la función editInventory -->
-            <button
-              (click)="editInventory(inventory)"
-              class="btn btn-success btn-sm"
-              title="Editar"
-              data-toggle="tooltip"
-              data-placement="top">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <!-- Botón para eliminar el inventario, llama a la función deleteInventory -->
-            <button
-              (click)="deleteInventory(inventory.id!)"
-              class="btn btn-danger btn-sm"
-              title="Eliminar"
-              data-toggle="tooltip"
-              data-placement="top">
-              <i class="bi bi-trash"></i>
-            </button>
+            <div class="btn-group" role="group">
+              <!-- Botón principal que despliega el menú -->
+              <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+              </button>
+              <ul class="dropdown-menu">
+                <!-- Opción para ver transacciones -->
+                <li>
+                  <a class="dropdown-item" (click)="onTransactions(inventory.id)" title="Ver Movimientos">
+                    <!-- <i class="bi bi-eye"></i> -->
+                     Ver Movimientos
+                  </a>
+                </li>
+                <!-- Opción para realizar transacción -->
+                <li>
+                  <a class="dropdown-item" (click)="onNewTransaction(inventory.id)" title="Realizar Movimiento">
+                    <!-- <i class="bi bi-plus-circle"></i> -->
+                    Realizar Movimiento
+                  </a>
+                </li>
+                <!-- Opción para editar el inventario -->
+                <li>
+                  <a class="dropdown-item" (click)="editInventory(inventory)" title="Editar">
+                    <!-- <i class="bi bi-pencil"></i> -->
+                     Editar
+                  </a>
+                </li>
+                <!-- Opción para eliminar el inventario -->
+                <li>
+                  <a class="dropdown-item text-danger" (click)="deleteInventory(inventory.id!)" title="Eliminar">
+                    <!-- <i class="bi bi-trash"></i> -->
+                     Eliminar
+                  </a>
+                </li>
+              </ul>
+            </div>
           </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
+  <app-article *ngIf="showRegisterForm" (closeRegister)="onRegisterClose()" />
+  <app-transaction
+    *ngIf="showRegisterTransactionForm"
+    [inventoryId]="selectedInventoryId"
+    (closeRegisterTransaction)="onRegisterTransactionClose()"
+  ></app-transaction>
+  <app-inventory-transaction-table
+    *ngIf="showTransactions"
+    [inventoryId]="selectedInventoryId"
+    (closeTransactions)="onTransactionsClose()"
+  ></app-inventory-transaction-table>
 
-
-<!-- <form [formGroup]="inventoryForm" (ngSubmit)="saveInventory()">
+  <!-- <form [formGroup]="inventoryForm" (ngSubmit)="saveInventory()">
   <div class="form-group">
     <label for="article_id">Ítem</label>
     <select id="article_id" formControlName="article_id" class="form-control">
@@ -90,3 +107,4 @@
     {{ isEditing ? 'Guardar Cambios' : 'Agregar Inventario' }}
   </button>
 </form> -->
+</div>

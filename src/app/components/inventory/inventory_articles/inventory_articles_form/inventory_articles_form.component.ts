@@ -1,5 +1,5 @@
 import { ArticleInventoryPost, ArticlePost } from '../../../../models/article.model';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../../services/inventory.service';
@@ -16,7 +16,8 @@ import { Inventory } from '../../../../models/inventory.model';
   styleUrls: ['./inventory_articles_form.component.css']
 })
 export class ArticleFormComponent implements OnInit {
-
+  @Output() showRegisterForm = new EventEmitter<void>();
+  isModalOpen : boolean = true;
   private mapperService = inject(MapperService);
   private readonly activatedRoute = inject(ActivatedRoute);
 
@@ -41,9 +42,10 @@ export class ArticleFormComponent implements OnInit {
       articleCategory: [ArticleCategory.DURABLES, Validators.required],
       measurementUnit: [MeasurementUnit.UNITS, Validators.required],
       location: ['', Validators.required], // Campo ubicación del inventario
-      stock: ['', Validators.required],    // Campo stock del inventario
+      stock: [{value: '', disabled: false}, Validators.required],    // Campo stock del inventario
       stockMin: [''], // Campo stock mínimo del inventario
-      price: [''] // Campo precio para la transacción inicial
+      price: ['']     // Campo precio para la transacción inicial
+
     });
   }
 
@@ -90,10 +92,14 @@ export class ArticleFormComponent implements OnInit {
     if(value === ArticleType.REGISTRABLE) {
       this.articleForm.get('identifier')?.enable();
       this.articleForm.get('measurementUnit')?.disable();
+      this.articleForm.get('stock')?.disable();
+      this.articleForm.get('stock')?.setValue(1);
     } else {
       this.articleForm.get('identifier')?.disable();
       this.articleForm.get('measurementUnit')?.enable();
       this.articleForm.get('identifier')?.reset();
+      this.articleForm.get('stock')?.enable();
+      this.articleForm.get('stock')?.setValue('');
     }
   }
 
@@ -149,5 +155,10 @@ export class ArticleFormComponent implements OnInit {
     });
     this.isEditing = false; // Cambia el estado a no edición
     this.currentArticleId = undefined; // Limpia el ID del ítem actual
+  }
+
+  onClose(){
+    this.showRegisterForm.emit();
+    this.isModalOpen = false
   }
 }
