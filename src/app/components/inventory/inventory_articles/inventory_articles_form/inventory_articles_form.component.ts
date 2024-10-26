@@ -15,7 +15,7 @@ import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.se
 })
 export class ArticleFormComponent implements OnInit {
   @Output() showRegisterForm = new EventEmitter<void>();
-  isModalOpen : boolean = true
+  isModalOpen : boolean = true;
   private mapperService = inject(MapperService);
 
   articleForm: FormGroup;
