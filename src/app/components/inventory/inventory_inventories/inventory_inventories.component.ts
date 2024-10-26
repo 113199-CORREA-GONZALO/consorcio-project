@@ -1,7 +1,7 @@
+import { Inventory, StatusType } from './../../../models/inventory.model';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Inventory, StatusType } from '../../../models/inventory.model';
 import { Article, MeasurementUnit, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
 import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
@@ -10,12 +10,13 @@ import { MapperService } from '../../../services/MapperCamelToSnake/mapper.servi
 import {Router, RouterModule } from '@angular/router';
 import { TransactionComponentForm } from '../inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
 import { InventoryTransactionTableComponent } from "../inventory_transaction/inventory_transaction_table/inventory_transaction_table.component";
+import { InventoryInventoriesUpdateComponent } from "./inventory-inventories-update/inventory-inventories-update.component";
 
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule, TransactionComponentForm, InventoryTransactionTableComponent],
+  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule, TransactionComponentForm, InventoryTransactionTableComponent, InventoryInventoriesUpdateComponent],
   templateUrl: './inventory_inventories.component.html',
   styleUrls: ['./inventory_inventories.component.css']
 })
@@ -27,6 +28,7 @@ export class InventoryTableComponent implements OnInit {
   showRegisterForm: boolean = false;
   showRegisterTransactionForm: boolean = false;
   showTransactions: boolean = false;
+  showInventoryUpdate: boolean = false;
 
   inventoryForm: FormGroup;
   inventories: Inventory[] = [];
@@ -37,6 +39,7 @@ export class InventoryTableComponent implements OnInit {
   editingInventoryId: any | null = null; // Para guardar el ID del inventario en edición
 
   selectedInventoryId: string | null = null;
+  selectedInventory: Inventory | null = null;
 
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
@@ -181,18 +184,26 @@ onNewTransaction(id:any){
   this.selectedInventoryId = id;
   this.showRegisterTransactionForm = !this.showRegisterTransactionForm;
 }
-onRegisterTransactionClose(){
-  this.showRegisterTransactionForm = this.showRegisterTransactionForm;
-  this.selectedInventoryId = "";
-}
-
 onTransactions(id:any){
   this.selectedInventoryId = id;
   this.showTransactions = !this.showTransactions;
+}
+onInventoryUpdate(inventory: Inventory){
+  this.selectedInventory = inventory;
+  this.showInventoryUpdate = !this.showInventoryUpdate;
+}
+
+onRegisterTransactionClose(){
+  this.showRegisterTransactionForm = this.showRegisterTransactionForm;
+  this.selectedInventoryId = "";
 }
 onTransactionsClose(){
   this.showTransactions = this.showTransactions;
   this.selectedInventoryId = "";
 }
-
+onInventoryUpdateClose() {
+  this.showInventoryUpdate = false;
+  this.selectedInventory = null;
+  this.getInventories();
+}
 }
