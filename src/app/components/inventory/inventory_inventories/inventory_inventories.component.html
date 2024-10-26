@@ -54,7 +54,7 @@
                 </li>
                 <!-- Opción para editar el inventario -->
                 <li>
-                  <a class="dropdown-item" (click)="editInventory(inventory)" title="Editar">
+                  <a class="dropdown-item" (click)="onInventoryUpdate(inventory)" title="Editar">
                     <!-- <i class="bi bi-pencil"></i> -->
                      Editar
                   </a>
@@ -85,6 +85,12 @@
     [inventoryId]="selectedInventoryId"
     (closeTransactions)="onTransactionsClose()"
   ></app-inventory-transaction-table>
+
+  <app-inventory-inventories-update
+  *ngIf="showInventoryUpdate"
+  [inventory]="selectedInventory"
+  (closeModal)="onInventoryUpdateClose()"
+></app-inventory-inventories-update>
 
   <!-- <form [formGroup]="inventoryForm" (ngSubmit)="saveInventory()">
   <div class="form-group">
