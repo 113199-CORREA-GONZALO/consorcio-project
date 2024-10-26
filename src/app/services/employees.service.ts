@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { Employee, EmployeeFilter, EmployeePayment } from '../models/employee.model';
 import { MapperService } from './MapperCamelToSnake/mapper.service';
 
@@ -12,6 +12,9 @@ export class EmployeesService {
   private mapperService = inject(MapperService);
   private http = inject(HttpClient);
 
+  private displayRegister = new BehaviorSubject<boolean>(false);
+  private employeeToEdit = new BehaviorSubject<Employee | null>(null);
+  
   getEmployees(): Observable<Employee[]> {
     return this.http.get<any[]>(`${this.apiUrl}`).pipe(
       map(employees => this.mapperService.toCamelCase(employees))

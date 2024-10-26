@@ -13,22 +13,34 @@ import autoTable from 'jspdf-autotable';
 import { auto } from '@popperjs/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { EmployeeTableComponent } from "../employee-table/employee-table.component";
+import { EmployeeFormComponent } from "../employee-form/employee-form.component";
+import { EmployeeModalRegisterComponent } from "../employee-modal-register/employee-modal-register.component";
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, EmployeeTableComponent, EmployeeFormComponent, EmployeeModalRegisterComponent],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })
 export class EmployeeListComponent implements OnInit{
   employeeList: Employee[] = [];
 
+  showFilters = false;
+   
+  colums = [
+    {key: 'firstName', label: 'Nombres'},
+    {key: 'lastName', label: 'Apellidos'},
+    {key: 'employeeType', label: 'Tipo de Empleado'},
+    {key: 'state', label: 'Estado'},
+  ]
+
   filterForm: FormGroup;
   employeeTypes = Object.values(EmployeeType);
   documentTypes = Object.values(DocumentType);
   statusTypes = Object.values(StatusType);
-
+  showRegisterForm = false;
   private employeeService = inject(EmployeesService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
@@ -51,6 +63,10 @@ export class EmployeeListComponent implements OnInit{
     this.setupFilterSubscription();
     this.applyFilter();
     this.getEmployees();
+  }
+
+  toggleFilters(){
+    this.showFilters = !this.showFilters;
   }
 
   private setupFilterSubscription(): void {
@@ -183,5 +199,19 @@ exportToExcel() {
 
   // Generar el archivo Excel
   XLSX.writeFile(wb, 'lista-empleados.xlsx');
+}
+
+// Funciones para mostrar y ocultar el formulario de registro de empleado
+onNewEmployee() {
+  this.showRegisterForm = !this.showRegisterForm;
+}
+onRegisterClose() {
+  this.showRegisterForm = !this.showRegisterForm;
+}
+
+clearFilter(){
+  this.filterForm.reset();
+  this.getEmployees();
+
 }
 }
