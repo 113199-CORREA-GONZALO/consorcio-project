@@ -1,71 +1,82 @@
-<div class="container">
-  <h3 class="h3">Tabla de Inventarios</h3>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Identificador</th>
-        <th>Artículo</th>
-        <th>Descripción</th>
-        <th>Stock</th>
-        <th>Medida</th>
-        <th>Stock Mínimo</th>
-        <th>Ubicación</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
+<div class="container mt-5">
+  <h3>Lista de Article</h3>
+    <div class="card mb-4">
+      <div class="card-body">
+        <button class="btn btn-primary mb-3 ms-2" (click)="onNewArticle()">
+          {{ showRegisterForm ? 'Cancelar' : 'Nuevo Artículo' }}
+        </button>
+      </div>
+    </div>
+      <div class="container">
+        <h3 class="h3">Tabla de Inventarios</h3>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Identificador</th>
+              <th>Artículo</th>
+              <th>Descripción</th>
+              <th>Stock</th>
+              <th>Medida</th>
+              <th>Stock Mínimo</th>
+              <th>Ubicación</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
 
-      <tr *ngFor="let inventory of inventories">
-        <td class="text-center">{{ inventory.article.identifier || '-' }}</td>
-        <td>{{ inventory.article.name }}</td>
-        <td>{{ inventory.article.description }}</td>
-        <td class="text-center">{{ inventory.stock }}</td>
-        <td>{{ getDisplayUnit(inventory.article.measurementUnit) }}</td>
-        <td class="text-center">{{ inventory.minStock || '-' }}</td>
-        <td [ngClass]="{'text-center': !inventory.location}">
-          {{ inventory.location || '-' }}</td>
-          <td>
-            <!-- Botón para ver transacciones, llama a la función viewInventory -->
-            <button
-              [routerLink]="['/inventories/transactions', inventory.id]"
-              class="btn btn-info btn-sm"
-              title="Ver Movimientos"
-              data-toggle="tooltip"
-              data-placement="top">
-              <i class="bi bi-eye"></i>
-            </button>
-            <!-- Botón para realizar transacción, llama a la función transactionInventory -->
-            <button
-              [routerLink]="['/transactions', inventory.id]"
-              class="btn btn-primary btn-sm"
-              title="Realizar Movimiento"
-              data-toggle="tooltip"
-              data-placement="top">
-              <i class="bi bi-plus-circle"></i>
-            </button>
-            <!-- Botón para editar el inventario, llama a la función editInventory -->
-            <button
-              (click)="editInventory(inventory)"
-              class="btn btn-success btn-sm"
-              title="Editar"
-              data-toggle="tooltip"
-              data-placement="top">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <!-- Botón para eliminar el inventario, llama a la función deleteInventory -->
-            <button
-              (click)="deleteInventory(inventory.id!)"
-              class="btn btn-danger btn-sm"
-              title="Eliminar"
-              data-toggle="tooltip"
-              data-placement="top">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+            <tr *ngFor="let inventory of inventories">
+              <td class="text-center">{{ inventory.article.identifier || '-' }}</td>
+              <td>{{ inventory.article.name }}</td>
+              <td>{{ inventory.article.description }}</td>
+              <td class="text-center">{{ inventory.stock }}</td>
+              <td>{{ getDisplayUnit(inventory.article.measurementUnit) }}</td>
+              <td class="text-center">{{ inventory.minStock || '-' }}</td>
+              <td [ngClass]="{'text-center': !inventory.location}">
+                {{ inventory.location || '-' }}</td>
+                <td>
+                  <!-- Botón para ver transacciones, llama a la función viewInventory -->
+                  <button
+                    [routerLink]="['/inventories/transactions', inventory.id]"
+                    class="btn btn-info btn-sm"
+                    title="Ver Movimientos"
+                    data-toggle="tooltip"
+                    data-placement="top">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <!-- Botón para realizar transacción, llama a la función transactionInventory -->
+                  <button
+                    [routerLink]="['/transactions', inventory.id]"
+                    class="btn btn-primary btn-sm"
+                    title="Realizar Movimiento"
+                    data-toggle="tooltip"
+                    data-placement="top">
+                    <i class="bi bi-plus-circle"></i>
+                  </button>
+                  <!-- Botón para editar el inventario, llama a la función editInventory -->
+                  <button
+                    (click)="editInventory(inventory)"
+                    class="btn btn-success btn-sm"
+                    title="Editar"
+                    data-toggle="tooltip"
+                    data-placement="top">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <!-- Botón para eliminar el inventario, llama a la función deleteInventory -->
+                  <button
+                    (click)="deleteInventory(inventory.id!)"
+                    class="btn btn-danger btn-sm"
+                    title="Eliminar"
+                    data-toggle="tooltip"
+                    data-placement="top">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <app-article *ngIf="showRegisterForm" (closeRegister)="onRegisterClose()"/>
+
 
 
 

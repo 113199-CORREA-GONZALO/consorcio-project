@@ -1,5 +1,5 @@
 import { ArticleInventoryPost, ArticlePost } from '../../../../models/article.model';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../../services/inventory.service';
@@ -14,7 +14,8 @@ import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.se
   styleUrls: ['./inventory_articles_form.component.css']
 })
 export class ArticleFormComponent implements OnInit {
-
+  @Output() showRegisterForm = new EventEmitter<void>();
+  isModalOpen : boolean = true
   private mapperService = inject(MapperService);
 
   articleForm: FormGroup;
@@ -109,5 +110,10 @@ export class ArticleFormComponent implements OnInit {
     });
     this.isEditing = false; // Cambia el estado a no edición
     this.currentArticleId = undefined; // Limpia el ID del ítem actual
+  }
+
+  onClose(){
+    this.showRegisterForm.emit();
+    this.isModalOpen = false
   }
 }
