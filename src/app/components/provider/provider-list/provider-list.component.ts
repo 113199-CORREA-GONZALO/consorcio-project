@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { Address, Supplier } from '../../../models/supplier.model';
+import {  Supplier } from '../../../models/supplier.model';
 import { ProvidersService } from '../../../services/providers.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
@@ -26,7 +26,6 @@ export class ProviderListComponent implements OnInit{
   @ViewChild('providersTable') providersTable!: ElementRef;
   
   providerList: Supplier[] = [];
-  addresses: Address[] = []; // Agregar la lista de direcciones
   filteredProviders: Supplier[] = []; // Proveedores filtrados
   isLoading = false;
 
@@ -48,19 +47,16 @@ export class ProviderListComponent implements OnInit{
 
   constructor() {
     this.filterForm = this.fb.group({
-      addressId: [''],
       enabled: ['']
     });
   }
 
   ngOnInit(): void {
     this.getProviders();
-    this.loadAddresses();
     this.setupFilterSubscriptions();
   }
 
   private setupFilterSubscriptions(): void {
-    // Aplicar debounce a todos los controles del formulario
     Object.keys(this.filterForm.controls).forEach(key => {
       this.filterForm.get(key)?.valueChanges.pipe(
         debounceTime(300),
@@ -70,31 +66,7 @@ export class ProviderListComponent implements OnInit{
       });
     });
   }
-  sortData(column: string): void {
-    if (this.sortColumn === column) {
-      // Cambiar la dirección de orden si se hace clic en la misma columna
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      // Si es una columna nueva, establecerla en ascendente
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
 
-    this.sortedProviderList.sort((a , b) => {
-      const valueA = a[column as keyof Supplier];
-      const valueB = b[column as keyof Supplier];
-
-       // Verificar si alguno de los valores es undefined y colocarlos al final
-       if (valueA == undefined && valueB === undefined) return 0;
-       if (valueA == undefined) return this.sortDirection === 'asc' ? 1 : -1;
-       if (valueB == undefined) return this.sortDirection === 'asc' ? -1 : 1;
-
-       // Comparar valores cuando están definidos
-       if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
-       if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
-       return 0;
-    });
-  }
 
   sortProviders(column: keyof Supplier): void {
     // Cambia la dirección de orden si la columna ya está seleccionada, sino reinicia a 'asc'
@@ -121,18 +93,9 @@ export class ProviderListComponent implements OnInit{
     return 'fa fa-sort';
   }
   
-  loadAddresses(): void {
-    this.providerService.getAddresses().subscribe((addresses: Address[]) => {
-      this.addresses = addresses;
-    });
-  }
 
   trackByFn(index: number, item: Supplier): number {
     return item.id; // Devuelve el ID del proveedor como clave
-  }
-  getAddressById(addressId: number): string {
-    const address = this.addresses.find(a => a.id === addressId);
-    return address ? address.street_address : 'N/A';
   }
 
   getProviders() {
@@ -245,12 +208,12 @@ export class ProviderListComponent implements OnInit{
     const tableRows: any[][] = [];
   
     this.providerList.forEach((provider) => {
-      const providerAddress = this.addresses.find((addr) => addr.id === provider.addressId);
+      // const providerAddress = this.addresses.find((addr) => addr.id === provider.addressId);
       const providerData = [
         provider.name,
         provider.cuil,
         provider.service,
-        providerAddress ? providerAddress.street_address : 'N/A', // Mostramos la dirección
+        // providerAddress ? providerAddress.street_address : 'N/A', // Mostramos la dirección
         provider.enabled ? 'Activo' : 'Inactivo'
       ];
       tableRows.push(providerData);
@@ -303,9 +266,11 @@ export class ProviderListComponent implements OnInit{
     //   });
     // });
     this.providerList.forEach((provider) => {
-      const providerAddress = this.addresses.find((addr) => addr.id === provider.addressId);
+      // const providerAddress = this.addresses.find((addr) => addr.id === provider.addressId);
       const row = tbody.insertRow();
-      [provider.name, provider.cuil, provider.service, providerAddress ? providerAddress.street_address : 'N/A', provider.enabled ? 'Activo' : 'Inactivo'].forEach((text) => {
+      [provider.name, provider.cuil, provider.service, 
+        // providerAddress ? providerAddress.street_address : 'N/A',
+         provider.enabled ? 'Activo' : 'Inactivo'].forEach((text) => {
         const cell = row.insertCell();
         cell.textContent = text;
       });

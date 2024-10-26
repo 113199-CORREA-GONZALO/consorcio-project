@@ -41,23 +41,34 @@
                 El servicio es requerido.
               </div>
             </div>
-  
+
             <div class="col-md-6">
-              <label for="addressId">Dirección</label>
-              <select id="addressId" formControlName="addressId" class="form-control"
-                      [ngClass]="{
-                        'is-invalid': providerForm.get('addressId')?.invalid && providerForm.get('addressId')?.touched, 
-                        'is-valid': providerForm.get('addressId')?.valid && providerForm.get('addressId')?.touched
-                      }">
-                <option *ngFor="let address of addresses" [value]="address.id">
-                  {{ address.street_address }}, {{ address.city }}
-                </option>
-              </select>
-              <div class="invalid-feedback" *ngIf="providerForm.get('addressId')?.invalid && providerForm.get('addressId')?.touched">
+              <label for="contact">Contacto</label>
+              <input id="contact" formControlName="contact" class="form-control"
+                     [ngClass]="{
+                       'is-invalid': providerForm.get('contact')?.invalid && providerForm.get('contact')?.touched, 
+                       'is-valid': providerForm.get('contact')?.valid && providerForm.get('contact')?.touched
+                     }" />
+              <div class="invalid-feedback" *ngIf="providerForm.get('contact')?.invalid && providerForm.get('contact')?.touched">
+                El contacto es requerido.
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <label for="address">Dirección</label>
+              <input id="address" formControlName="address" class="form-control"
+                     [ngClass]="{
+                       'is-invalid': providerForm.get('address')?.invalid && providerForm.get('address')?.touched, 
+                       'is-valid': providerForm.get('address')?.valid && providerForm.get('address')?.touched
+                     }" />
+              <div class="invalid-feedback" *ngIf="providerForm.get('address')?.invalid && providerForm.get('address')?.touched">
                 La dirección es requerida.
               </div>
             </div>
           </div>
+
   
           <div class="row mt-3">
             <div class="col-md-12">
