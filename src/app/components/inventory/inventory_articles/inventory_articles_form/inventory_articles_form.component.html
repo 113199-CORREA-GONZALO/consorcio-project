@@ -1,121 +1,110 @@
-@if (isModalOpen)
-{
-<div class="register-overlay">
-    <div class="register-container">
-        <div class="card mx-auto" style="width: 50rem;">
-            <div class="card-header ">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">{{ isEditing ? 'Modificar Artículo' : 'Registrar Artículo' }}</h5>
-                    <button type="button" class="btn-close text-white" (click)="onClose()"></button>
-                </div>
-            </div>
-            <div class="card-body">
-                <form [formGroup]="articleForm" (ngSubmit)="addArticle()">
-                    <!-- Primera fila - Dos columnas -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="articleType" class="form-label">Tipo <span class="text-danger">*</span>:</label>
-                            <select id="articleType" formControlName="articleType" class="form-select">
-                                <option [value]="ArticleType.REGISTRABLE">Registrable</option>
-                                <option [value]="ArticleType.NON_REGISTRABLE">No Registrable</option>
-                            </select>
-                            <div *ngIf="articleForm.get('articleType')?.invalid && articleForm.get('articleType')?.touched" class="text-danger">
-                                Tipo es obligatorio.
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="identifier" class="form-label">Identificador:</label>
-                            <input id="identifier" formControlName="identifier" class="form-control" />
-                        </div>
-                    </div>
-
-                    <!-- Segunda fila - Dos columnas -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="name" class="form-label">Nombre <span class="text-danger">*</span>:</label>
-                            <input id="name" formControlName="name" class="form-control" />
-                            <div *ngIf="articleForm.get('name')?.invalid && articleForm.get('name')?.touched" class="text-danger">
-                                Nombre es obligatorio.
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="description" class="form-label">Descripción:</label>
-                            <input id="description" formControlName="description" class="form-control" />
-                        </div>
-                    </div>
-
-                    <!-- Tercera fila - Dos columnas -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="articleCategory" class="form-label">Categoría <span class="text-danger">*</span>:</label>
-                            <select id="articleCategory" formControlName="articleCategory" class="form-select">
-                                <option [value]="ArticleCategory.DURABLES">Durables</option>
-                                <option [value]="ArticleCategory.CONSUMABLES">Consumibles</option>
-                                <option [value]="ArticleCategory.MATERIALS_CONSTRUCTION">Materiales de Construcción</option>
-                                <option [value]="ArticleCategory.OTHERS">Otros</option>
-                            </select>
-                            <div *ngIf="articleForm.get('articleCategory')?.invalid && articleForm.get('articleCategory')?.touched" class="text-danger">
-                                Categoría es obligatoria.
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="measurementUnit" class="form-label">Medida <span class="text-danger">*</span>:</label>
-                            <select id="measurementUnit" formControlName="measurementUnit" class="form-select">
-                                <option [value]="MeasurementUnit.LITERS">Litros</option>
-                                <option [value]="MeasurementUnit.KILOS">Kilos</option>
-                                <option [value]="MeasurementUnit.UNITS">Unidades</option>
-                            </select>
-                            <div *ngIf="articleForm.get('measurementUnit')?.invalid && articleForm.get('measurementUnit')?.touched" class="text-danger">
-                                Medida es obligatoria.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Cuarta fila - Dos columnas -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="location" class="form-label">Ubicación <span class="text-danger">*</span>:</label>
-                            <input id="location" formControlName="location" class="form-control" />
-                            <div *ngIf="articleForm.get('location')?.invalid && articleForm.get('location')?.touched" class="text-danger">
-                                Ubicación es obligatoria.
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="price" class="form-label">Precio:</label>
-                            <input id="price" formControlName="price" class="form-control" />
-                        </div>
-                    </div>
-
-                    <!-- Quinta fila - Dos columnas -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="stock" class="form-label">Stock <span class="text-danger">*</span>:</label>
-                            <input id="stock" formControlName="stock" class="form-control" />
-                            <div *ngIf="articleForm.get('stock')?.invalid && articleForm.get('stock')?.touched" class="text-danger">
-                                Stock es obligatorio.
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="stockMin" class="form-label">Stock Mínimo:</label>
-                            <input id="stockMin" formControlName="stockMin" class="form-control" />
-                        </div>
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="row mt-4">
-                        <div class="col text-end">
-                            <button type="button" class="btn btn-secondary me-2" (click)="onClose()">Cerrar</button>
-                            <button type="submit" class="btn btn-primary me-2" [disabled]="articleForm.invalid">
-                                {{ isEditing ? 'Modificar' : 'Registrar' }}
-                            </button>
-                            <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()" *ngIf="isEditing">
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
+<div class="container">
+  <form [formGroup]="articleForm" (ngSubmit)="addArticle()">
+    @if(isEditing){
+      <h2 class="h1 mb-4">Modificar Artículo</h2>
+    }
+    @else {
+      <h2 class="h1 mb-4">Registrar Artículo</h2>
+    }
+    <!-- Primera fila - Dos columnas -->
+    <div class="row">
+      <!-- Tipo de Artículo -->
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="articleType">
+          Tipo <span style="color: red; margin-left: 2px;">*</span>:
+        </label>
+        <select id="articleType" formControlName="articleType" class="form-select">
+          <option [value]="ArticleType.REGISTRABLE">Registrable</option>
+          <option [value]="ArticleType.NON_REGISTRABLE">No Registrable</option>
+        </select>
+      </div>
+      <!-- Identificador -->
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="identifier">Identificador:</label>
+        <input id="identifier" formControlName="identifier" class="form-control disabled" />
+      </div>
     </div>
+
+    <!-- Segunda fila - Dos columnas -->
+    <div class="row">
+      <!-- Nombre -->
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="name">
+          Nombre <span style="color: red; margin-left: 2px;">*</span>:
+        </label>
+        <input id="name" formControlName="name" class="form-control" />
+      </div>
+      <!-- Descripción -->
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="description">Descripción:</label>
+        <input id="description" formControlName="description" class="form-control" />
+      </div>
+    </div>
+
+    <!-- Tercera fila - Dos columnas -->
+    <div class="row">
+      <!-- Categoría -->
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="articleCategory">
+          Categoría <span style="color: red; margin-left: 2px;">*</span>:
+        </label>
+        <select id="articleCategory" formControlName="articleCategory" class="form-select">
+          <option [value]="ArticleCategory.DURABLES">Durables</option>
+          <option [value]="ArticleCategory.CONSUMABLES">Consumibles</option>
+          <option [value]="ArticleCategory.MATERIALS_CONSTRUCTION">Materiales de Construcción</option>
+          <option [value]="ArticleCategory.OTHERS">Otros</option>
+        </select>
+      </div>
+      <!-- Unidad de Medida -->
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="measurementUnit">
+          Medida <span style="color: red; margin-left: 2px;">*</span>:
+        </label>
+        <select id="measurementUnit" formControlName="measurementUnit" class="form-select">
+          <option [value]="MeasurementUnit.LITERS">Litros</option>
+          <option [value]="MeasurementUnit.KILOS">Kilos</option>
+          <option [value]="MeasurementUnit.UNITS">Unidades</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Cuarta fila - Dos columnas: Ubicación y Precio -->
+    <div class="row">
+      <!-- Ubicación -->
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="location">Ubicación <span style="color: red; margin-left: 2px;">*</span>:</label>
+        <input id="location" formControlName="location" class="form-control" />
+      </div>
+      <!-- Precio -->
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="price">Precio:</label>
+        <input id="price" formControlName="price" class="form-control" />
+      </div>
+    </div>
+
+    <!-- Quinta fila - Dos columnas: Stock y Stock Mínimo -->
+    <div class="row">
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="stock">Stock <span style="color: red; margin-left: 2px;">*</span>:</label>
+        <input id="stock" formControlName="stock" class="form-control" />
+      </div>
+      <div class="col-md-6 d-flex align-items-center mb-3">
+        <label style="display: inline-flex; align-items: center; margin-right: 8px;" for="stockMin">Stock Mínimo:</label>
+        <input id="stockMin" formControlName="stockMin" class="form-control" />
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="row text-end">
+      <div class="col-md-12">
+        <button type="submit" class="btn btn-primary mt-3">
+          {{ isEditing ? 'Modificar' : 'Registrar' }}
+        </button>
+        <button type="button" class="btn btn-secondary mt-3 ml-2" (click)="resetForm()" *ngIf="isEditing">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+  </form>
 </div>
-}
