@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Inventory, StatusType } from '../../../models/inventory.model';
@@ -9,6 +9,12 @@ import { MapperService } from '../../../services/MapperCamelToSnake/mapper.servi
 import { RouterModule } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
+//exportar a pdf y excel
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import autoTable from 'jspdf-autotable';
+
 @Component({
   selector: 'app-inventory',
   standalone: true,
@@ -17,6 +23,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
   styleUrls: ['./inventory_inventories.component.css']
 })
 export class InventoryTableComponent implements OnInit {
+  @ViewChild('inventoryTable') inventoryTable: ElementRef | undefined;
 
   private mapperService = inject(MapperService);
 
@@ -265,9 +272,81 @@ getDisplayUnit(unit: MeasurementUnit): string {
     this.showRegisterForm = this.showRegisterForm;
   }
 
-exportToExcel(){
 
+
+exportToPDF(): void {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  });
+  const title = 'Listado de Inventario';
+  doc.setFontSize(20);
+  doc.setTextColor(40, 40, 40);
+  doc.text(title, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+
+  const tableColumn = ['Identificador','Artículo', 'Descripcion','Stock','Medida', 'Stock Mínimo', 'Ubicación'];
+  const tableRows: any[][] = [];
+  
+  this.inventories.forEach(inventory => {
+    const inventoryData = [
+      inventory.article.identifier,
+      inventory.article.name,
+      inventory.article.description,
+      inventory.stock,
+      this.getDisplayUnit(inventory.article.measurementUnit),
+      inventory.minStock,
+      inventory.location
+    ];
+    tableRows.push(inventoryData);
+  });
+
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 25,
+  });
+
+  doc.save('inventario.pdf');
 }
-exportToPDF(){
+
+exportToExcel(): void {
+  try{
+    let element = document.getElementById('inventoryTable');
+    if(!element){
+      console.warn('No se encontró el elemento con el ID "inventoryTable"');
+      element = this.createTableFromData();
+    }
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+    XLSX.writeFile(wb, 'inventario.xlsx');
+  } catch( error ){
+    console.error('Error al exportar a Excel:', error);
+  }
+}
+
+private createTableFromData(): HTMLTableElement {
+  const table = document.createElement('table');
+  const thead = table.createTHead();
+  const tbody = table.createTBody();
+
+  const headerRow = thead.insertRow();
+  const headers = ['Identificador','Artículo', 'Descripcion','Stock','Medida', 'Stock Mínimo', 'Ubicación'].forEach(text => {
+    const th = document.createElement('th');
+    th.textContent = text;
+    headerRow.appendChild(th);
+  });
+
+  this.inventories.forEach(inventory => {
+    const unid = this.getDisplayUnit(inventory.article.measurementUnit);
+    const row = tbody.insertRow();
+    [inventory.article.identifier, inventory.article.name, inventory.article.description, inventory.stock, unid, inventory.minStock, inventory.location].forEach(text => {
+      const cell = row.insertCell();
+      cell.textContent = text !== undefined && text !== null ? text.toString() : null;
+    });
+  });
+
+  return table;
 }
 }
