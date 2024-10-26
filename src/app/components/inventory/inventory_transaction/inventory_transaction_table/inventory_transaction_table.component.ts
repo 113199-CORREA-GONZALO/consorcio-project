@@ -1,5 +1,5 @@
 import { InventoryService } from './../../../../services/inventory.service';
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Inventory, Transaction, TransactionType } from '../../../../models/inventory.model';
 import { Article } from '../../../../models/article.model';
 import { CommonModule } from '@angular/common';
@@ -14,8 +14,16 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './inventory_transaction_table.component.css'
 })
 export class InventoryTransactionTableComponent {
+
   private mapperService = inject(MapperService);
   private inventoryService = inject(InventoryService);
+
+
+  @Input() inventoryId: string | null = null;
+  @Output() closeTransactions = new EventEmitter<void>();
+  @Output() showTransactions = new EventEmitter<void>();
+  isModalOpen : boolean = true;
+
 
   constructor(private route: ActivatedRoute) {}
 
@@ -26,21 +34,18 @@ export class InventoryTransactionTableComponent {
   selectedTransactionType: TransactionType = TransactionType.ENTRY;
   articleMap: { [key: number]: Article } = {};
   inventoryMap: { [key: number]: Inventory } = {};
-  inventoryId: string | undefined;
   articles: Article[] = [];
 
-  ngOnInit(): void {
-    // Suscríbete a los cambios de parámetros
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('inventoryId');
-      if (id) {
-        this.inventoryId = id;
-        this.loadTransactions(id);
-      } else {
-        console.error('Invalid inventory ID');
-      }
-    });
+
+ngOnInit(): void {
+  if (this.inventoryId) {
+    console.log('ID de inventario recibido:', this.inventoryId);
+    this.loadTransactions(this.inventoryId);
   }
+}
+
+
+
 
   loadTransactions(inventoryId: string): void {
     this.inventoryService.getTransactionsInventory(inventoryId.toString()).subscribe({
@@ -68,6 +73,11 @@ throw new Error('Method not implemented.');
 }
 editTransaction(_t12: any) {
 throw new Error('Method not implemented.');
+}
+
+onClose(){
+  this.showTransactions.emit();
+  this.isModalOpen = false
 }
 
 }
