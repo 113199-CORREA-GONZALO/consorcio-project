@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Employee, EmployeePayment } from '../models/employee.model';
 
 @Injectable({
@@ -9,10 +9,18 @@ import { Employee, EmployeePayment } from '../models/employee.model';
 export class EmployeesService {
   private apiUrl = 'http://localhost:8063/employees'; // URL de la API para empleados
   private http = inject(HttpClient);
-
+  private selectedEmployee = new BehaviorSubject<Employee | null>(null);
+  
   // Obtener empleados
   getEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.apiUrl);
+  }
+  
+  setSelectedEmployee(employee: Employee) {
+    this.selectedEmployee.next(employee);
+  }
+  getSelectedEmployee(): Observable<Employee | null> {
+    return this.selectedEmployee.asObservable();
   }
 
   getEmployeeById(id: number): Observable<Employee> {
