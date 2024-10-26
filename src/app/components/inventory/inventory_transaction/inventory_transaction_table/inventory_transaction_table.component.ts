@@ -19,7 +19,7 @@ export class InventoryTransactionTableComponent {
   private inventoryService = inject(InventoryService);
 
 
-  @Input() inventoryId: string | null = null;
+  @Input() inventory: Inventory | null = null;
   @Output() closeTransactions = new EventEmitter<void>();
   @Output() showTransactions = new EventEmitter<void>();
   isModalOpen : boolean = true;
@@ -38,9 +38,9 @@ export class InventoryTransactionTableComponent {
 
 
 ngOnInit(): void {
-  if (this.inventoryId) {
-    console.log('ID de inventario recibido:', this.inventoryId);
-    this.loadTransactions(this.inventoryId);
+  if (this.inventory?.id) {
+    console.log('ID de inventario recibido:', this.inventory?.id);
+    this.loadTransactions(this.inventory?.id.toString());
   }
 }
 

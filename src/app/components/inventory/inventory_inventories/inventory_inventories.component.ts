@@ -43,7 +43,7 @@ export class InventoryTableComponent implements OnInit {
   inventories: Inventory[] = [
 
   ];
-  articles: Article[] = [ 
+  articles: Article[] = [
     {
       id: 100,
       identifier: '1234',
@@ -206,8 +206,8 @@ onNewTransaction(id:any){
   this.selectedInventoryId = id;
   this.showRegisterTransactionForm = !this.showRegisterTransactionForm;
 }
-onTransactions(id:any){
-  this.selectedInventoryId = id;
+onTransactions(inventory:Inventory){
+  this.selectedInventory = inventory;
   this.showTransactions = !this.showTransactions;
 }
 onInventoryUpdate(inventory: Inventory){
@@ -221,7 +221,7 @@ onRegisterTransactionClose(){
 }
 onTransactionsClose(){
   this.showTransactions = this.showTransactions;
-  this.selectedInventoryId = "";
+  this.selectedInventory = null;
 }
 onInventoryUpdateClose() {
   this.showInventoryUpdate = false;
