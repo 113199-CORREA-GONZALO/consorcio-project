@@ -19,6 +19,7 @@ export class InventoryTableComponent implements OnInit {
 
   private mapperService = inject(MapperService);
 
+  showRegisterForm: boolean = false;
   inventoryForm: FormGroup;
   inventories: Inventory[] = [];
   articles: Article[] = [];
@@ -158,5 +159,12 @@ getDisplayUnit(unit: MeasurementUnit): string {
       }
     }
   }
+
+  onNewArticle(){
+    this.showRegisterForm = !this.showRegisterForm;
+  }
+  onRegisterClose(){
+    this.showRegisterForm = this.showRegisterForm;
+  }
 
 }
