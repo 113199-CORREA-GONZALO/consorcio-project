@@ -13,7 +13,7 @@ import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.se
   templateUrl: './inventory_articles_form.component.html',
   styleUrls: ['./inventory_articles_form.component.css']
 })
-export class ArticleComponent implements OnInit {
+export class ArticleFormComponent implements OnInit {
 
   private mapperService = inject(MapperService);
 

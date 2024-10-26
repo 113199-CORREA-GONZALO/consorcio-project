@@ -14,7 +14,7 @@ import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.se
   imports: [CommonModule, ReactiveFormsModule],
     styleUrls: ['./inventory_transaction_form.component.css']
 })
-export class TransactionComponent implements OnInit {
+export class TransactionComponentForm implements OnInit {
 
   private mapperService = inject(MapperService);
 

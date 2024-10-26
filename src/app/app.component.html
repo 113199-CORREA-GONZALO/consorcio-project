@@ -23,14 +23,16 @@
             <a ngbDropdownItem routerLink="/providers/form">Formulario</a>
           </div>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/article">Gestion Article</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/inventory">Inventario</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/transaction">Transaccion</a>
+
+
+        <li class="nav-item" ngbDropdown>
+          <a class="nav-link" id="navbarDropdown" role="button" ngbDropdownToggle>
+            Inventario
+          </a>
+          <div ngbDropdownMenu aria-labelledby="navbarDropdown">
+            <a ngbDropdownItem routerLink="/articles/article">Registrar Artículo</a>
+            <a ngbDropdownItem routerLink="/inventories">Inventarios</a>
+          </div>
         </li>
       </ul>
     </div>

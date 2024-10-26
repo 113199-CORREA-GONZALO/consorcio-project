@@ -3,9 +3,10 @@ import { ProviderListComponent } from './components/provider/provider-list/provi
 import { ProviderFormComponent } from './components/provider/provider-form/provider-form.component';
 import { EmployeeListComponent } from './components/employee/employee-list/employee-list.component';
 import { EmployeeFormComponent } from './components/employee/employee-form/employee-form.component';
-import { ArticleComponent } from './components/inventory/inventory_articles/inventory_articles_form/inventory_articles_form.component'
-import { TransactionComponent } from './components/inventory/inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
-import { InventoryComponent } from './components/inventory/inventory_inventories/inventory_inventories.component';
+import { ArticleFormComponent } from './components/inventory/inventory_articles/inventory_articles_form/inventory_articles_form.component'
+import { TransactionComponentForm } from './components/inventory/inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
+import { InventoryTransactionTableComponent } from './components/inventory/inventory_transaction/inventory_transaction_table/inventory_transaction_table.component';
+import { InventoryTableComponent } from './components/inventory/inventory_inventories/inventory_inventories.component';
 
 
 
@@ -16,9 +17,10 @@ export const routes: Routes = [
   { path: 'providers/list', component: ProviderListComponent },
   { path: 'providers/form', component: ProviderFormComponent },
   { path: 'providers/form/:id', component: ProviderFormComponent },
-  { path: 'article', component: ArticleComponent },
-  { path: 'inventory', component: InventoryComponent },
-  { path: 'transaction', component: TransactionComponent },
-  { path: 'transaction/:id', component: TransactionComponent },
+  { path: 'articles/article', component: ArticleFormComponent },
+  { path: 'inventories', component: InventoryTableComponent },
+  { path: 'transactions/:id', component: TransactionComponentForm },
+  { path: 'inventories/transactions/:id', component: InventoryTransactionTableComponent },
   { path: '', redirectTo: '/employees', pathMatch: 'full' }
 ];
+

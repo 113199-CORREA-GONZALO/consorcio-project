@@ -1,5 +1,5 @@
 <div class="container">
-  <h3>Tabla de Inventarios</h3>
+  <h3 class="h3">Tabla de Inventarios</h3>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -27,7 +27,7 @@
           <td>
             <!-- Botón para ver transacciones, llama a la función viewInventory -->
             <button
-              (click)="viewInventory(inventory)"
+              [routerLink]="['/inventories/transactions', inventory.id]"
               class="btn btn-info btn-sm"
               title="Ver transacciones"
               data-toggle="tooltip"
@@ -36,7 +36,7 @@
             </button>
             <!-- Botón para realizar transacción, llama a la función transactionInventory -->
             <button
-              [routerLink]="['/transaction', inventory.id]"
+              [routerLink]="['/transactions', inventory.id]"
               class="btn btn-primary btn-sm"
               title="Realizar transacción"
               data-toggle="tooltip"
