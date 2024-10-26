@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Employee } from '../../../models/employee.model';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { DocumentType, Employee, EmployeeType, StatusType } from '../../../models/employee.model';
 import { EmployeesService } from '../../../services/employees.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -11,16 +11,28 @@ import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
 import { auto } from '@popperjs/core';
+import { EmployeeEditModalComponent } from "../employee-edit-modal/employee-edit-modal.component";
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EmployeeEditModalComponent],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })
 export class EmployeeListComponent implements OnInit{
-  employeeList: Employee[] = [];
+  employeeList: Employee[] = [
+    {
+      id: 0,
+      firstName: 'test',
+      lastName: 'TEST',
+      employeeType: EmployeeType.ADMIN,
+      documentType: DocumentType.DNI,
+      docNumber: '123456789',
+      hiringDate: new Date(),
+      salary: 0,
+      state: StatusType.ACTIVE,}
+  ];
 
   private employeeService = inject(EmployeesService);
   private router = inject(Router);
@@ -36,6 +48,13 @@ export class EmployeeListComponent implements OnInit{
 
   editEmployee(id: number): void {
     this.router.navigate(['employees/form', id]);
+  }
+
+  @Output() showEditModal: EventEmitter<boolean> = new EventEmitter<boolean>();
+  showEditForm: boolean = false;
+  editEmployee2(employee: Employee) {
+    this.employeeService.setSelectedEmployee(employee);
+    this.showEditForm = true;
   }
 
   deleteEmployee(id: number): void {
@@ -129,4 +148,9 @@ exportToExcel() {
   // Generar el archivo Excel
   XLSX.writeFile(wb, 'lista-empleados.xlsx');
 }
+
+  onModalClose() {
+    this.showEditForm = false;
+    this.getEmployees();
+  }
 }
