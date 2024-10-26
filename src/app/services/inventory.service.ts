@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Article, ArticleInventoryPost, ArticlePost } from '../models/article.model';
 import { Inventory, Transaction, TransactionPost } from '../models/inventory.model';
@@ -33,8 +33,29 @@ export class InventoryService {
   }
 
   // CRUD para Inventarios
-  getInventories(): Observable<Inventory[]> {
-      return this.http.get<Inventory[]>(this.apiInventoriesUrl);
+  getInventories(filters?:{
+    measure?: string;
+    location?: string;
+    articleName?: string;
+    stock?: number;
+  } 
+  ): Observable<Inventory[]> {
+    let params = new HttpParams();
+    
+    if (filters) {
+      Object.keys(filters).forEach(key => {
+        const value = filters[key as keyof typeof filters];
+        if (value !== undefined && value !== '') {
+          params = params.append(key, value.toString());
+        }
+      });
+    }
+    
+    return this.http.get<Inventory[]>(this.apiInventoriesUrl, { params });
+  }
+
+  getInventoriesUnit(measure: string): Observable<Inventory[]> {
+    return this.http.get<Inventory[]>(`${this.apiInventoriesUrl}/article/${measure}`);
   }
 
   addInventory(inventory: Inventory): Observable<Inventory> {

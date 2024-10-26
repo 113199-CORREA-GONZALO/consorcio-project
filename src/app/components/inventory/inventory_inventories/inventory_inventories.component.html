@@ -2,6 +2,65 @@
   <h3>Lista de Article</h3>
     <div class="card mb-4">
       <div class="card-body">
+        <div class="row">
+          <!-- <div class="col-md-3 mb-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              [formControl]="identifierFilter"
+              placeholder="Buscar por identificador">
+          </div> -->
+          <div class="col-md-3 mb-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              [formControl]="articleNameFilter"
+              placeholder="Buscar por artículo">
+          </div>
+          <div class="col-md-3 mb-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              [formControl]="stockFilter"
+              placeholder="Stock">
+          </div>
+          <!-- <div class="col-md-3 mb-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              [formControl]="locationFilter"
+              placeholder="Locacion">
+          </div> -->
+        </div>
+
+         <!-- FormGroup filters -->
+    <form [formGroup]="filterForm" class="row g-3">
+      
+      <select class="form-select" formControlName="measure">
+        <option [value]="MeasurementUnit.UNITS">UNITS</option>
+        <option [value]="MeasurementUnit.LITERS">Litros</option>
+        <option [value]="MeasurementUnit.KILOS">Kilogramos</option>
+      </select>
+
+      <!-- Export buttons -->
+      <div class="col-md-3">
+        <button class="btn btn-success w-100" (click)="exportToExcel()">
+          <i class="bi bi-file-earmark-excel me-2"></i>
+          Excel
+        </button>
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-danger w-100" (click)="exportToPDF()">
+          <i class="bi bi-filetype-pdf me-2"></i>
+          PDF
+        </button>
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-secondary w-100" (click)="clearFilters()">
+          Limpiar
+        </button>
+      </div>
+    </form>
         <button class="btn btn-primary mb-3 ms-2" (click)="onNewArticle()">
           {{ showRegisterForm ? 'Cancelar' : 'Nuevo Artículo' }}
         </button>

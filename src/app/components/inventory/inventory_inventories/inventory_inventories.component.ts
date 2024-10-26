@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Inventory, StatusType } from '../../../models/inventory.model';
-import { Article, MeasurementUnit, Status } from '../../../models/article.model';
+import { Article, ArticleCategory, ArticleCondition, ArticleType, MeasurementUnit, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
 import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 import { RouterModule } from '@angular/router';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-inventory',
@@ -27,8 +28,20 @@ export class InventoryTableComponent implements OnInit {
   articleMap: { [key: number]: string } = {}; // Mapa para almacenar nombre de ítems con sus IDs
   isEditing: boolean = false;
   editingInventoryId: any | null = null; // Para guardar el ID del inventario en edición
+  filteredInventories: Inventory[] = [];
+  isLoading = false;
 
+  // Filtros individuales para búsqueda en tiempo real
+  articleNameFilter = new FormControl('');
+  stockFilter = new FormControl('');
+  minStockFilter = new FormControl('');
+  locationFilter = new FormControl('');
 
+  // Formulario para filtros que requieren llamada al servidor
+  filterForm: FormGroup;
+  readonly MeasurementUnit = MeasurementUnit;
+
+  measurementUnits: MeasurementUnit[] = [MeasurementUnit.LITERS, MeasurementUnit.KILOS, MeasurementUnit.UNITS];
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
     this.inventoryForm = this.fb.group({
@@ -37,27 +50,112 @@ export class InventoryTableComponent implements OnInit {
       min_stock: [1],
       inventory_status: [StatusType.ACTIVE]
     });
+    this.filterForm = this.fb.group({
+      measure: [this.measurementUnits[2]],
+    });
+
   }
 
   ngOnInit(): void {
     this.getInventories();
-    // this.getArticles();
+    //this.getInventoriesUnit('UNITS');
+    
+    this.setupFilterSubscriptions();
+    
   }
+//   getInventoriesUnit(measure: string): void {
+//     this.inventoryService.getInventoriesUnit(measure).subscribe((inventories: Inventory[]) => {
+//       this.inventories = inventories;
+//     });
+// }
 
-  getInventories(): void {
-    this.inventoryService.getInventories().subscribe((inventories: any[]) => {
-      this.inventories = inventories.map(inventory => ({
-        ...this.mapperService.toCamelCase(inventory), // Convertir todo el inventario a camelCase
-        article: this.mapperService.toCamelCase(inventory.article) // Convertir el artículo a camelCase
-        //transactions: inventory.transactions.map(transaction => this.mapperService.toCamelCase(transaction)) // Convertir las transacciones a camelCase
-      }));
-
-      console.log(this.inventories); // Para verificar que la conversión se realizó correctamente
+  private setupFilterSubscriptions(): void {
+    Object.keys(this.filterForm.controls).forEach(key => {
+      this.filterForm.get(key)?.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      ).subscribe(() => {
+        console.log('Aplicando filtros...', this.filterForm.value);
+        this.applyAllFilters();
+      });
     });
   }
 
+   applyAllFilters(): void {
+    const filters = {
+      measure: this.filterForm.get('measure')?.value
+    }
+
+    Object.keys(filters).forEach(key => {
+      if (!filters[key as keyof typeof filters]) {
+        delete filters[key as keyof typeof filters];
+      }
+    });
+
+    this.inventoryService.getInventoriesUnit(filters.measure).subscribe((inventories: Inventory[]) => {
+      this.inventories = inventories.map( inventory => ({
+        ...this.mapperService.toCamelCase(inventory),
+      }));
+      this.inventories.forEach(inventory => {
+        inventories.map(inventory.article = this.mapperService.toCamelCase(inventory.article));
+      });
+      this.inventories = inventories;
+      this.filteredInventories = inventories;
+      this.isLoading = false;
+      console.log('CHANCHA FILTRADA', this.inventories);
+    });
+  }
+
+  clearFilters(): void {
+    this.articleNameFilter.reset();
+    this.stockFilter.reset();
+    this.getInventories(); // Recargar todos los inventarios
+  }
+
+  getInventories(): void {
+    this.isLoading = true;
+    this.articleNameFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getInventories();
+      }
+      this.inventories = this.inventories.filter(
+        x => x.article.name.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    this.stockFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getInventories();
+      }
+      this.inventories = this.inventories.filter(
+        x => x.stock.toString().toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    // this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
+    //   this.inventories = inventories.map(inventory => ({
+    //     ...this.mapperService.toCamelCase(inventory), // Convertir todo el inventario a camelCase
+    //     article: this.mapperService.toCamelCase(inventory.article) // Convertir el artículo a camelCase
+    //     //transactions: inventory.transactions.map(transaction => this.mapperService.toCamelCase(transaction)) // Convertir las transacciones a camelCase
+    //   }));
+    this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
+      this.inventories = inventories.map( inventory => ({
+        ...this.mapperService.toCamelCase(inventory),
+      }));
+      this.inventories.forEach(inventory => {
+        inventories.map(inventory.article = this.mapperService.toCamelCase(inventory.article));
+      });
+      this.inventories = inventories;
+      this.filteredInventories = inventories;
+      this.isLoading = false;
+      console.log('CHANCHA', this.inventories);
+    });      
+
+      console.log(this.inventories); // Para verificar que la conversión se realizó correctamente
+    };
+  
+
  // Método para convertir la unidad de medida a una representación amigable
 getDisplayUnit(unit: MeasurementUnit): string {
+  console.log('Santoro Killer:', unit);
   switch (unit) {
       case MeasurementUnit.LITERS:
           return 'Lts.';
@@ -167,4 +265,9 @@ getDisplayUnit(unit: MeasurementUnit): string {
     this.showRegisterForm = this.showRegisterForm;
   }
 
+exportToExcel(){
+
+}
+exportToPDF(){
+}
 }

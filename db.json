@@ -43,16 +43,13 @@
   ],
   "articles": [
     {
-      "identifier": "....",
-      "name": "Camaras",
-      "description": "Camaras para seguridad",
-      "location": "galpon",
-      "type": "NON_REGISTRABLE",
-      "status": "FUNCTIONAL",
-      "category": "DURABLES",
+      "identifier": null,
+      "name": "Escoba",
+      "description": "Escoba de cerdas duras",
+      "article_condition": null,
+      "article_category": "DURABLES",
       "measurement_unit": "UNITS",
-      "article_status": "ACTIVE",
-      "id": "1"
+      "article_type": "NON_REGISTRABLE"
     },
     {
       "identifier": "asd123",
@@ -81,6 +78,7 @@
   ],
   "inventories": [
     {
+      "identifier": "1",
       "article_id": "1",
       "stock": 2,
       "min_stock": 1,
@@ -96,9 +94,12 @@
     },
     {
       "article_id": "1",
-      "stock": 1,
-      "min_stock": 1,
+      "stock": 100,
+    "min_stock": 10,
+    "location": null,
+    "price": null,
       "inventory_status": "Active",
+      "measurement_unit": "KILOS",
       "id": "3"
     }
   ],
