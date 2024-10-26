@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../../services/inventory.service';
 import { Article, ArticleCategory, ArticleType, ArticleCondition, MeasurementUnit,Status } from '../../../../models/article.model';
 import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.service';
+import { ActivatedRoute } from '@angular/router';
+import { Inventory } from '../../../../models/inventory.model';
 
 @Component({
   selector: 'app-article',
@@ -16,6 +18,7 @@ import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.se
 export class ArticleFormComponent implements OnInit {
 
   private mapperService = inject(MapperService);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   articleForm: FormGroup;
   articles: Article[] = [];
@@ -39,17 +42,52 @@ export class ArticleFormComponent implements OnInit {
       measurementUnit: [MeasurementUnit.UNITS, Validators.required],
       location: ['', Validators.required], // Campo ubicación del inventario
       stock: ['', Validators.required],    // Campo stock del inventario
-      stockMin: ['', Validators.required], // Campo stock mínimo del inventario
-      price: ['', Validators.required]     // Campo precio para la transacción inicial
+      stockMin: [''], // Campo stock mínimo del inventario
+      price: [''] // Campo precio para la transacción inicial
     });
   }
 
   ngOnInit(): void {
-    this.getArticles();
+    this.activatedRoute.params.subscribe((params) => {
+      const id = +params['id'];
+      if (id) {
+        this.getById(id);
+      }
+    });
     this.articleForm.get('articleType')?.valueChanges.subscribe(this.handleArticleTypeChange.bind(this));
   }
 
+  getById(id: number) {
+    this.inventoryService.getArticleInventory(id).subscribe((data) => {
+      this.currentArticleId=id;
+      data = this.mapperService.toCamelCase(data);
+      console.log(data);
+      this.articleForm.patchValue({
+        identifier: data.article.identifier,
+        name: data.article.name,
+        description:data.article.description,
+        articleType: data.article.articleType,
+        articleCondition:data.article.articleCondition,
+        measurementUnit: data.article.measurementUnit,
+        location:data.location,
+        stock:data.stock,
+        stockMin:data.minStock,
+        price:data.price
+      });
+    });
+    this.articleForm.get('id')?.disable();
+    this.articleForm.get('articleType')?.disable();
+    this.articleForm.get('articleCondition')?.disable();
+    this.articleForm.get('stock')?.disable();
+    this.articleForm.get('stockMin')?.disable();
+    this.articleForm.get('location')?.disable();
+    this.isEditing=true;
+  }
+
   handleArticleTypeChange(value: ArticleType): void {
+    if(this.isEditing||this.currentArticleId!=undefined){
+      return;
+    }
     if(value === ArticleType.REGISTRABLE) {
       this.articleForm.get('identifier')?.enable();
       this.articleForm.get('measurementUnit')?.disable();
@@ -60,14 +98,7 @@ export class ArticleFormComponent implements OnInit {
     }
   }
 
-  getArticles(): void {
-    this.inventoryService.getArticles().subscribe(articles => {
-      this.articles = articles;
-    });
-  }
-
   addArticle(): void {
-    console.log(this.articleForm.value); // Loguear el estado actual del formulario
     if (this.articleForm.valid) {
       const article: ArticlePost = {
         identifier: this.articleForm.get('identifier')?.value ?? null,
@@ -88,11 +119,14 @@ export class ArticleFormComponent implements OnInit {
       };
 
       const articleInventoryFormatted = this.mapperService.toSnakeCase(articleInventory);
-
-      this.inventoryService.addInventoryArticle(articleInventoryFormatted).subscribe(() => {
-        this.getArticles();
-        this.resetForm();
-      });
+      if(!this.isEditing){
+        this.inventoryService.addInventoryArticle(articleInventoryFormatted).subscribe((data) => {
+          console.log(data);
+        });
+      }
+      else if (this.currentArticleId!= undefined){
+        this.inventoryService.updateArticle(this.currentArticleId,articleInventoryFormatted.article as Article).subscribe((data)=> console.log(data));
+      }
     }
   }
 

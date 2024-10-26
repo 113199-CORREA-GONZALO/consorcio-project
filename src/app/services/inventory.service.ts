@@ -19,6 +19,10 @@ export class InventoryService {
     return this.http.get<Article[]>(this.apiArticlesUrl);
   }
 
+  getArticleInventory(id:number):Observable<ArticleInventoryPost>{
+    return this.http.get<ArticleInventoryPost>(this.apiInventoriesUrl+'/'+id);
+  }
+
   addArticle(article: ArticlePost): Observable<ArticlePost> {
     console.log(article);
     return this.http.post<ArticlePost>(this.apiArticlesUrl, article);
@@ -42,9 +46,11 @@ export class InventoryService {
   }
 
   addInventoryArticle(articleInventory: ArticleInventoryPost): Observable<ArticleInventoryPost> {
+    console.log(articleInventory);
     return this.http.post<ArticleInventoryPost>(this.apiInventoriesUrl+'/newArticle', articleInventory);
   }
   updateInventory(inventory: Inventory): Observable<Inventory> {
+    console.log('update',inventory);
     return this.http.put<Inventory>(`${this.apiInventoriesUrl}/${inventory.id}`, inventory);
   }
 
@@ -56,12 +62,15 @@ export class InventoryService {
   getTransactions(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(this.apiTransactionsUrl);
   }
+  
   addTransaction(transaction: TransactionPost, inventoryId: string): Observable<Transaction> {
     return this.http.post<Transaction>(`${this.apiTransactionsUrl}/${inventoryId}`, transaction);
   }
+  
   updateTransaction(transactionId: number, transaction: Transaction): Observable<Transaction> {
     return this.http.put<Transaction>(`${this.apiTransactionsUrl}/${transactionId}`, transaction);
   }
+  
   deleteTransaction(transaction_id: number): Observable<void> {
     return this.http.patch<void>(`${this.apiTransactionsUrl}/${transaction_id}`, { transaction_status: 'Inactive' });
   }

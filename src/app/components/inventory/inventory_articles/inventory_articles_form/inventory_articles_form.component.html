@@ -1,8 +1,11 @@
 <div class="container">
   <form [formGroup]="articleForm" (ngSubmit)="addArticle()">
-
-    <h2 class="h1 mb-4">Registrar Artículo</h2>
-
+    @if(isEditing){
+      <h2 class="h1 mb-4">Modificar Artículo</h2>
+    }
+    @else {
+      <h2 class="h1 mb-4">Registrar Artículo</h2>
+    }
     <!-- Primera fila - Dos columnas -->
     <div class="row">
       <!-- Tipo de Artículo -->

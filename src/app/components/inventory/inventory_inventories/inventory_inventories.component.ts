@@ -6,7 +6,7 @@ import { Article, MeasurementUnit, Status } from '../../../models/article.model'
 import { InventoryService } from '../../../services/inventory.service';
 import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-inventory',
@@ -16,7 +16,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./inventory_inventories.component.css']
 })
 export class InventoryTableComponent implements OnInit {
-
+  private router = inject(Router);
   private mapperService = inject(MapperService);
 
   inventoryForm: FormGroup;
@@ -103,14 +103,16 @@ getDisplayUnit(unit: MeasurementUnit): string {
   }
 
   editInventory(inventory: Inventory): void {
-    this.isEditing = true; // Activar el modo edición
+    console.log(inventory.id);
+    this.router.navigate(['articles/article', inventory.id]);
+    /*this.isEditing = true; // Activar el modo edición
     this.editingInventoryId = inventory.id; // Guardar el ID del inventario en edición
     this.inventoryForm.patchValue({
       article_id: inventory.article_id,
       stock: inventory.stock,
       min_stock: inventory.min_stock,
       inventory_status: inventory.inventory_status
-    });
+    });*/
   }
 
 
