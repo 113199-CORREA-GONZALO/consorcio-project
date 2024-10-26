@@ -8,7 +8,7 @@ import { InventoryTransactionTableComponent } from '../inventory_transaction/inv
 import { InventoryInventoriesUpdateComponent } from './inventory-inventories-update/inventory-inventories-update.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 import { Inventory, StatusType } from '../../../models/inventory.model';
-import { Article, MeasurementUnit, Status } from '../../../models/article.model';
+import { Article, ArticleCategory, ArticleCondition, ArticleType, MeasurementUnit, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
 @Component({
   selector: 'app-inventory',
@@ -40,8 +40,21 @@ export class InventoryTableComponent implements OnInit {
   itemsPerPage: number = 10;
 
   inventoryForm: FormGroup;
-  inventories: Inventory[] = [];
-  articles: Article[] = [];
+  inventories: Inventory[] = [
+
+  ];
+  articles: Article[] = [ 
+    {
+      id: 100,
+      identifier: '1234',
+      name: 'Producto 1',
+      description: 'Descripción del producto 1',
+      articleCondition: ArticleCondition.FUNCTIONAL,
+      articleCategory: ArticleCategory.DURABLES,
+      articleType: ArticleType.REGISTRABLE,
+      measurementUnit: MeasurementUnit.UNITS
+    }
+  ];
   activeArticles: Article[] = []; // Solo los ítems activos
   articleMap: { [key: number]: string } = {}; // Mapa para almacenar nombre de ítems con sus IDs
   isEditing: boolean = false;
