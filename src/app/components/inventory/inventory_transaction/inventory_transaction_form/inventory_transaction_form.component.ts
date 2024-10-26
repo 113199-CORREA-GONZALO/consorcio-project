@@ -18,7 +18,6 @@ export class TransactionComponentForm implements OnInit {
 
   private mapperService = inject(MapperService);
 
-// Añadir el decorador de entrada
 @Input() inventoryId: string | null = null;
 @Output() closeRegisterTransaction = new EventEmitter<void>();
 @Output() showRegisterTransactionForm = new EventEmitter<void>();

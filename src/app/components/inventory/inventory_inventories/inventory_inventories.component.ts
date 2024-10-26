@@ -8,11 +8,12 @@ import { ArticleFormComponent } from '../inventory_articles/inventory_articles_f
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 import { RouterModule } from '@angular/router';
 import { TransactionComponentForm } from '../inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
+import { InventoryTransactionTableComponent } from "../inventory_transaction/inventory_transaction_table/inventory_transaction_table.component";
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule, TransactionComponentForm],
+  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule, TransactionComponentForm, InventoryTransactionTableComponent],
   templateUrl: './inventory_inventories.component.html',
   styleUrls: ['./inventory_inventories.component.css']
 })
@@ -23,7 +24,7 @@ export class InventoryTableComponent implements OnInit {
   // Modals
   showRegisterForm: boolean = false;
   showRegisterTransactionForm: boolean = false;
-
+  showTransactions: boolean = false;
 
   inventoryForm: FormGroup;
   inventories: Inventory[] = [];
@@ -178,6 +179,15 @@ onNewTransaction(id:any){
 }
 onRegisterTransactionClose(){
   this.showRegisterTransactionForm = this.showRegisterTransactionForm;
+  this.selectedInventoryId = "";
+}
+
+onTransactions(id:any){
+  this.selectedInventoryId = id;
+  this.showTransactions = !this.showTransactions;
+}
+onTransactionsClose(){
+  this.showTransactions = this.showTransactions;
   this.selectedInventoryId = "";
 }
 
