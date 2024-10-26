@@ -40,7 +40,7 @@ export class InventoryTableComponent implements OnInit {
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
     this.inventoryForm = this.fb.group({
       article_id: ['', Validators.required],
-      stock: [1, Validators.required], 
+      stock: [1, Validators.required], // Stock inicial es 1
       min_stock: [1],
       inventory_status: [StatusType.ACTIVE]
     });

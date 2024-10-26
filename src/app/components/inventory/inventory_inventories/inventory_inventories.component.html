@@ -17,6 +17,7 @@
           <th>Medida</th>
           <th>Stock Mínimo</th>
           <th>Ubicación</th>
+          <th>Estado</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -28,9 +29,8 @@
           <td class="text-center">{{ inventory.stock }}</td>
           <td>{{ getDisplayUnit(inventory.article.measurementUnit) }}</td>
           <td class="text-center">{{ inventory.minStock || "-" }}</td>
-          <td [ngClass]="{ 'text-center': !inventory.location }">
-            {{ inventory.location || "-" }}
-          </td>
+          <td [ngClass]="{ 'text-center': !inventory.location }">{{ inventory.location || "-" }}</td>
+          <td>{{ inventory.inventoryStatus }}</td>
           <td>
             <div class="btn-group" role="group">
               <!-- Botón principal que despliega el menú -->
