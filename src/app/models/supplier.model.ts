@@ -8,6 +8,7 @@ export interface Supplier {
   name: string;            // Nombre del proveedor
   cuil: string;            // CUIL del proveedor
   service: string;         // Servicio que ofrece el proveedor
+  phoneNumber: string;  // Números de teléfono del proveedor
   addressId: number;       // Relación con el ID de la dirección
   details?: string;        // Detalles adicionales sobre el proveedor (opcional)
   enabled: boolean;        // Si está activo o no

@@ -18,7 +18,8 @@ export class ProvidersService {
     cuil?: string,
     service?: string,
     addressId?: number,
-    enabled?: boolean
+    enabled?: boolean,
+    phoneNumber?: string
   }): Observable<Supplier[]> {
     let params = new HttpParams();
     

@@ -36,6 +36,7 @@ export class ProviderFormComponent implements OnInit{
       service: ['', Validators.required],
       addressId: [null, Validators.required],
       details: ['', Validators.required],
+      phone: ['', [Validators.required, Validators.minLength(10)]],
       // state: ['', Validators.required],
     });
   }

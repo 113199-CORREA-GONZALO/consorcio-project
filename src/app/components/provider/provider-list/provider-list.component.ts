@@ -41,6 +41,7 @@ export class ProviderListComponent implements OnInit{
   nameFilter = new FormControl('');
   cuilFilter = new FormControl('');
   serviceFilter = new FormControl('');
+  phoneFilter = new FormControl('');
 
   private providerService = inject(ProvidersService);
   private router = inject(Router);
@@ -153,6 +154,14 @@ export class ProviderListComponent implements OnInit{
         x => x.cuil.toLowerCase().includes(data!.toLowerCase())
       )
     })
+    this.phoneFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.phoneNumber.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
     this.serviceFilter.valueChanges.subscribe( data => {
       if(data === null || data === ''){
         this.getProviders();
@@ -161,6 +170,7 @@ export class ProviderListComponent implements OnInit{
         x => x.service.toLowerCase().includes(data!.toLowerCase())
       )
     })
+    
     this.providerService.getProviders().subscribe((providerList) => {
       this.filteredProviders = providerList;
       this.providerList = providerList;
@@ -204,6 +214,7 @@ export class ProviderListComponent implements OnInit{
     this.nameFilter.reset();
     this.cuilFilter.reset();
     this.serviceFilter.reset();
+    this.phoneFilter.reset();
     this.filterForm.reset({
       addressId: '',
       enabled: ''
@@ -241,7 +252,7 @@ export class ProviderListComponent implements OnInit{
 
   exportToPDF() {
     const doc = new jsPDF();
-    const tableColumn = ['Nombre', 'CUIL', 'Tipo de servicio', 'Dirección', 'Estado'];
+    const tableColumn = ['Nombre', 'CUIL', 'Tipo de servicio', 'Dirección', 'Numero de Telefono', 'Estado'];
     const tableRows: any[][] = [];
   
     this.providerList.forEach((provider) => {
@@ -251,6 +262,7 @@ export class ProviderListComponent implements OnInit{
         provider.cuil,
         provider.service,
         providerAddress ? providerAddress.street_address : 'N/A', // Mostramos la dirección
+        provider.phoneNumber,
         provider.enabled ? 'Activo' : 'Inactivo'
       ];
       tableRows.push(providerData);
