@@ -1,12 +1,12 @@
 <div class="container mt-5">
   <h3>Lista de Article</h3>
-    <div class="card mb-4">
-      <div class="card-body">
-        <button class="btn btn-primary mb-3 ms-2" (click)="onNewArticle()">
-          {{ showRegisterForm ? 'Cancelar' : 'Nuevo Artículo' }}
-        </button>
-      </div>
-    </div>
+
+  <!-- Botonera -->
+  <div class="d-flex justify-content-end ">
+    <button class="btn btn-primary" (click)="onNewArticle()" title="Nuevo">
+      <i class="bi bi-plus"></i>
+    </button>
+  </div>
       <div class="container">
         <h3 class="h3">Tabla de Inventarios</h3>
         <table class="table table-striped">
@@ -45,7 +45,7 @@
                   </button>
                   <!-- Botón para realizar transacción, llama a la función transactionInventory -->
                   <button
-                    [routerLink]="['/transactions', inventory.id]"
+                  (click)="onNewTransaction(inventory.id)"
                     class="btn btn-primary btn-sm"
                     title="Realizar Movimiento"
                     data-toggle="tooltip"
@@ -76,6 +76,7 @@
         </table>
       </div>
       <app-article *ngIf="showRegisterForm" (closeRegister)="onRegisterClose()"/>
+      <app-transaction *ngIf="showRegisterTransactionForm" [inventoryId]="selectedInventoryId" (closeRegisterTransaction)="onRegisterTransactionClose()"></app-transaction>
 
 
 

@@ -7,11 +7,12 @@ import { InventoryService } from '../../../services/inventory.service';
 import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 import { RouterModule } from '@angular/router';
+import { TransactionComponentForm } from '../inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule, TransactionComponentForm],
   templateUrl: './inventory_inventories.component.html',
   styleUrls: ['./inventory_inventories.component.css']
 })
@@ -19,7 +20,11 @@ export class InventoryTableComponent implements OnInit {
 
   private mapperService = inject(MapperService);
 
+  // Modals
   showRegisterForm: boolean = false;
+  showRegisterTransactionForm: boolean = false;
+
+
   inventoryForm: FormGroup;
   inventories: Inventory[] = [];
   articles: Article[] = [];
@@ -28,6 +33,7 @@ export class InventoryTableComponent implements OnInit {
   isEditing: boolean = false;
   editingInventoryId: any | null = null; // Para guardar el ID del inventario en edición
 
+  selectedInventoryId: string | null = null;
 
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
@@ -41,7 +47,6 @@ export class InventoryTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.getInventories();
-    // this.getArticles();
   }
 
   getInventories(): void {
@@ -165,6 +170,15 @@ getDisplayUnit(unit: MeasurementUnit): string {
   }
   onRegisterClose(){
     this.showRegisterForm = this.showRegisterForm;
-  }
+}
+
+onNewTransaction(id:any){
+  this.selectedInventoryId = id;
+  this.showRegisterTransactionForm = !this.showRegisterTransactionForm;
+}
+onRegisterTransactionClose(){
+  this.showRegisterTransactionForm = this.showRegisterTransactionForm;
+  this.selectedInventoryId = "";
+}
 
 }
