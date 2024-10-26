@@ -32,51 +32,48 @@
             {{ inventory.location || "-" }}
           </td>
           <td>
-            <!-- Botón para ver transacciones, llama a la función viewInventory -->
-            <button
-              (click)="onTransactions(inventory.id)"
-              class="btn btn-info btn-sm"
-              title="Ver Movimientos"
-              data-toggle="tooltip"
-              data-placement="top"
-            >
-              <i class="bi bi-eye"></i>
-            </button>
-            <!-- Botón para realizar transacción, llama a la función transactionInventory -->
-            <button
-              (click)="onNewTransaction(inventory.id)"
-              class="btn btn-primary btn-sm"
-              title="Realizar Movimiento"
-              data-toggle="tooltip"
-              data-placement="top"
-            >
-              <i class="bi bi-plus-circle"></i>
-            </button>
-            <!-- Botón para editar el inventario, llama a la función editInventory -->
-            <button
-              (click)="editInventory(inventory)"
-              class="btn btn-success btn-sm"
-              title="Editar"
-              data-toggle="tooltip"
-              data-placement="top"
-            >
-              <i class="bi bi-pencil"></i>
-            </button>
-            <!-- Botón para eliminar el inventario, llama a la función deleteInventory -->
-            <button
-              (click)="deleteInventory(inventory.id!)"
-              class="btn btn-danger btn-sm"
-              title="Eliminar"
-              data-toggle="tooltip"
-              data-placement="top"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
+            <div class="btn-group" role="group">
+              <!-- Botón principal que despliega el menú -->
+              <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+              </button>
+              <ul class="dropdown-menu">
+                <!-- Opción para ver transacciones -->
+                <li>
+                  <a class="dropdown-item" (click)="onTransactions(inventory.id)" title="Ver Movimientos">
+                    <!-- <i class="bi bi-eye"></i> -->
+                     Ver Movimientos
+                  </a>
+                </li>
+                <!-- Opción para realizar transacción -->
+                <li>
+                  <a class="dropdown-item" (click)="onNewTransaction(inventory.id)" title="Realizar Movimiento">
+                    <!-- <i class="bi bi-plus-circle"></i> -->
+                    Realizar Movimiento
+                  </a>
+                </li>
+                <!-- Opción para editar el inventario -->
+                <li>
+                  <a class="dropdown-item" (click)="editInventory(inventory)" title="Editar">
+                    <!-- <i class="bi bi-pencil"></i> -->
+                     Editar
+                  </a>
+                </li>
+                <!-- Opción para eliminar el inventario -->
+                <li>
+                  <a class="dropdown-item text-danger" (click)="deleteInventory(inventory.id!)" title="Eliminar">
+                    <!-- <i class="bi bi-trash"></i> -->
+                     Eliminar
+                  </a>
+                </li>
+              </ul>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
   <app-article *ngIf="showRegisterForm" (closeRegister)="onRegisterClose()" />
   <app-transaction
     *ngIf="showRegisterTransactionForm"
