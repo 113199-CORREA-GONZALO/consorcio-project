@@ -1,22 +1,27 @@
-import { Inventory, StatusType } from './../../../models/inventory.model';
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
+import { Router, RouterModule } from '@angular/router';
+import { TransactionComponentForm } from '../inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
+import { InventoryTransactionTableComponent } from '../inventory_transaction/inventory_transaction_table/inventory_transaction_table.component';
+import { InventoryInventoriesUpdateComponent } from './inventory-inventories-update/inventory-inventories-update.component';
+import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
+import { Inventory, StatusType } from '../../../models/inventory.model';
 import { Article, MeasurementUnit, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
-import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
-import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
-
-import {Router, RouterModule } from '@angular/router';
-import { TransactionComponentForm } from '../inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
-import { InventoryTransactionTableComponent } from "../inventory_transaction/inventory_transaction_table/inventory_transaction_table.component";
-import { InventoryInventoriesUpdateComponent } from "./inventory-inventories-update/inventory-inventories-update.component";
-
-
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ArticleFormComponent, RouterModule, TransactionComponentForm, InventoryTransactionTableComponent, InventoryInventoriesUpdateComponent],
+  imports: [CommonModule,
+     ReactiveFormsModule,
+      ArticleFormComponent,
+       RouterModule,
+        TransactionComponentForm,
+         InventoryTransactionTableComponent,
+          InventoryInventoriesUpdateComponent,
+          FormsModule
+        ],
   templateUrl: './inventory_inventories.component.html',
   styleUrls: ['./inventory_inventories.component.css']
 })
@@ -29,6 +34,10 @@ export class InventoryTableComponent implements OnInit {
   showRegisterTransactionForm: boolean = false;
   showTransactions: boolean = false;
   showInventoryUpdate: boolean = false;
+
+  currentPage: number = 1;
+  totalPages: number = 1;
+  itemsPerPage: number = 10;
 
   inventoryForm: FormGroup;
   inventories: Inventory[] = [];
@@ -205,5 +214,18 @@ onInventoryUpdateClose() {
   this.showInventoryUpdate = false;
   this.selectedInventory = null;
   this.getInventories();
+}
+goToNextPage() {
+  if (this.currentPage < this.totalPages) {
+    this.currentPage++;
+    // Actualizar lista de empleados
+  }
+}
+
+goToPreviousPage() {
+  if (this.currentPage > 1) {
+    this.currentPage--;
+    // Actualizar lista de empleados
+  }
 }
 }
