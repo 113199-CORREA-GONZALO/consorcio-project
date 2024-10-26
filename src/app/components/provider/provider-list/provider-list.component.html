@@ -5,25 +5,42 @@
       <div class="card mb-4">
         <div class="card-body">
           <h5 class="card-title mb-3">Filtros</h5>
-          <form [formGroup]="filterForm" class="row g-3">
+      
+          <!-- Primera fila con los 3 filtros dinámicos -->
+          <div class="row g-3 mb-3">
             <div class="col-md-3">
               <input type="text" 
                      class="form-control" 
                      placeholder="Nombre"
-                     formControlName="name">
+                     [formControl]="nameFilter">
             </div>
             <div class="col-md-3">
               <input type="text" 
                      class="form-control" 
                      placeholder="CUIL"
-                     formControlName="cuil">
+                     [formControl]="cuilFilter">
             </div>
             <div class="col-md-3">
               <input type="text" 
                      class="form-control" 
                      placeholder="Servicio"
-                     formControlName="service">
+                     [formControl]="serviceFilter">
             </div>
+            <!-- Dejamos el cuarto espacio vacío para mantener la alineación -->
+            <div class="col-md-3">
+              <button class="btn btn-success w-100" (click)="exportToExcel()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16">
+                  <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z"/>
+                  <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                </svg>
+                Excel
+              </button>
+            </div>
+          </div>
+      
+          <!-- FormGroup con los selects y botones -->
+          <form [formGroup]="filterForm" class="row g-3">
+            <!-- Primera fila del form -->
             <div class="col-md-3">
               <select class="form-select" formControlName="addressId">
                 <option value="">Todas las direcciones</option>
@@ -41,16 +58,7 @@
             </div>
             <div class="col-md-3">
               <button class="btn btn-secondary w-100" (click)="clearSearch()">
-                Limpiar Filtros
-              </button>
-            </div>
-            <div class="col-md-3">
-              <button class="btn btn-success w-100 mb-2" (click)="exportToExcel()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16">
-                  <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z"/>
-                  <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
-                </svg>
-                Excel
+                Limpiar
               </button>
             </div>
             <div class="col-md-3">

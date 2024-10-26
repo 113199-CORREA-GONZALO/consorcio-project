@@ -161,13 +161,12 @@
   ],
   "suppliers": [
     {
-      "name": "Santoro Killer",
+      "name": "Santoro Killer 3000",
       "cuil": "204121231",
       "service": "xSecurityx",
       "addressId": 1,
-      "details": "xDx",
-      "id": 1,
-      "enabled": true
+      "details": "xDxxxxxx",
+      "id": "1"
     },
     {
       "name": "Ginino7",
@@ -192,6 +191,14 @@
       "addressId": 2,
       "details": "asdasdasd",
       "id": 6
+    },
+    {
+      "name": "Agus Pussy Destroyalo papa",
+      "cuil": "31-69696969-69",
+      "service": "Pussy",
+      "addressId": 2,
+      "details": "Se deja romper todo por un choripan a la vuelta de la UTN\n🙊🍩🍆💦",
+      "id": "69"
     }
   ],
   "addresses": [

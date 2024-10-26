@@ -3,7 +3,7 @@ import { Address, Supplier } from '../../../models/supplier.model';
 import { ProvidersService } from '../../../services/providers.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ServiceType } from '../../../models/enums/service-tpye.enum';
 import { CommonModule } from '@angular/common';
 import { StatusType } from '../../../models/inventory.model';
@@ -38,15 +38,16 @@ export class ProviderListComponent implements OnInit{
   serviceTypes = Object.values(ServiceType);
   statusTypes = Object.values(StatusType);
 
+  nameFilter = new FormControl('');
+  cuilFilter = new FormControl('');
+  serviceFilter = new FormControl('');
+
   private providerService = inject(ProvidersService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
   constructor() {
     this.filterForm = this.fb.group({
-      name: [''],
-      cuil: [''],
-      service: [''],
       addressId: [''],
       enabled: ['']
     });
@@ -136,18 +137,39 @@ export class ProviderListComponent implements OnInit{
 
   getProviders() {
     this.isLoading = true;
+    this.nameFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.name.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    this.cuilFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.cuil.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    this.serviceFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.service.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
     this.providerService.getProviders().subscribe((providerList) => {
+      this.filteredProviders = providerList;
       this.providerList = providerList;
-      this.filteredProviders = providerList; // Inicialmente, no hay filtros aplicados
       this.isLoading = false;
     });
   }
 
   applyFilters(): void {
     const filters = {
-      name: this.filterForm.get('name')?.value,
-      cuil: this.filterForm.get('cuil')?.value,
-      service: this.filterForm.get('service')?.value,
       addressId: this.filterForm.get('addressId')?.value,
       enabled: this.filterForm.get('enabled')?.value
     };
@@ -179,7 +201,13 @@ export class ProviderListComponent implements OnInit{
   }
 
   clearSearch() {
-    this.filterForm.reset();
+    this.nameFilter.reset();
+    this.cuilFilter.reset();
+    this.serviceFilter.reset();
+    this.filterForm.reset({
+      addressId: '',
+      enabled: ''
+    });
     this.applyFilters();
   }
 
