@@ -53,6 +53,9 @@ export class InventoryService {
   }
 
   // CRUD para Transacciones
+  getTransactionsInventory(inventoryId: string): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.apiTransactionsUrl}/inventory/${inventoryId}`);
+}
   getTransactions(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(this.apiTransactionsUrl);
   }

@@ -40,8 +40,8 @@ export class ArticleFormComponent implements OnInit {
       measurementUnit: [MeasurementUnit.UNITS, Validators.required],
       location: ['', Validators.required], // Campo ubicación del inventario
       stock: ['', Validators.required],    // Campo stock del inventario
-      stockMin: ['', Validators.required], // Campo stock mínimo del inventario
-      price: ['', Validators.required]     // Campo precio para la transacción inicial
+      stockMin: [''], // Campo stock mínimo del inventario
+      price: ['']     // Campo precio para la transacción inicial
     });
   }
 

@@ -147,11 +147,11 @@ export class TransactionComponentForm implements OnInit {
       // Crear el objeto actualizado de la transacción
       const updatedTransaction: Transaction = {
         id: this.editingTransactionId, // Mantén el ID de la transacción
-        inventory_id: formValues.inventory_id,
+        inventoryId: formValues.inventory_id,
         quantity: formValues.quantity,
         price: formValues.price,
-        transaction_type: formValues.transaction_type, // Asegúrate de capturar correctamente el tipo de transacción
-        transaction_date: new Date().toISOString() // Si quieres mantener la fecha actualizada
+        transactionType: formValues.transaction_type, // Asegúrate de capturar correctamente el tipo de transacción
+        transactionDate: new Date().toISOString() // Si quieres mantener la fecha actualizada
       };
 
       // Enviar la actualización al servidor
@@ -168,7 +168,7 @@ export class TransactionComponentForm implements OnInit {
     this.isEditing = true;
    // this.editingTransactionId = transaction.id;
     this.transactionForm.patchValue(transaction);
-    this.toggleFieldsByTransactionType(transaction.transaction_type);
+    this.toggleFieldsByTransactionType(transaction.transactionType);
   }
 
   deleteTransaction(transaction_id: number): void {
