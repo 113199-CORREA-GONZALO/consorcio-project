@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { DocumentType, Employee, EmployeeType, StatusType } from '../../../models/employee.model';
 import { EmployeesService } from '../../../services/employees.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 
@@ -12,11 +12,12 @@ import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
 import { auto } from '@popperjs/core';
 import { EmployeeEditModalComponent } from "../employee-edit-modal/employee-edit-modal.component";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, EmployeeEditModalComponent],
+  imports: [CommonModule, EmployeeEditModalComponent, RouterLink ,FormsModule],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })
@@ -31,9 +32,13 @@ export class EmployeeListComponent implements OnInit{
       docNumber: '123456789',
       hiringDate: new Date(),
       salary: 0,
-      state: StatusType.ACTIVE,}
+      state: StatusType.ACTIVE,
+    }
+    
   ];
-
+  currentPage: number = 1;
+  totalPages: number = 1;
+  itemsPerPage: number = 10;
   private employeeService = inject(EmployeesService);
   private router = inject(Router);
 
@@ -45,7 +50,19 @@ export class EmployeeListComponent implements OnInit{
       this.employeeList = employeeList;
     });
   }
-
+  goToNextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      // Actualizar lista de empleados
+    }
+  }
+  
+  goToPreviousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      // Actualizar lista de empleados
+    }
+  }
   editEmployee(id: number): void {
     this.router.navigate(['employees/form', id]);
   }
