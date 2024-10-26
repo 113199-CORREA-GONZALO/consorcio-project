@@ -30,6 +30,10 @@ export class ProviderListComponent implements OnInit{
   filteredProviders: Supplier[] = []; // Proveedores filtrados
   isLoading = false;
 
+  sortedProviderList: Supplier[] = [];
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
   filterForm: FormGroup;
   serviceTypes = Object.values(ServiceType);
   statusTypes = Object.values(StatusType);
@@ -64,6 +68,56 @@ export class ProviderListComponent implements OnInit{
         this.applyFilters();
       });
     });
+  }
+  sortData(column: string): void {
+    if (this.sortColumn === column) {
+      // Cambiar la dirección de orden si se hace clic en la misma columna
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Si es una columna nueva, establecerla en ascendente
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.sortedProviderList.sort((a , b) => {
+      const valueA = a[column as keyof Supplier];
+      const valueB = b[column as keyof Supplier];
+
+       // Verificar si alguno de los valores es undefined y colocarlos al final
+       if (valueA == undefined && valueB === undefined) return 0;
+       if (valueA == undefined) return this.sortDirection === 'asc' ? 1 : -1;
+       if (valueB == undefined) return this.sortDirection === 'asc' ? -1 : 1;
+
+       // Comparar valores cuando están definidos
+       if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+       if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+       return 0;
+    });
+  }
+
+  sortProviders(column: keyof Supplier): void {
+    // Cambia la dirección de orden si la columna ya está seleccionada, sino reinicia a 'asc'
+    this.sortDirection = this.sortColumn === column ? (this.sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+    this.sortColumn = column;
+  
+    // Ordena la lista
+    this.providerList = [...this.providerList].sort((a, b) => {
+      const valueA = a[column];
+      const valueB = b[column];
+  
+      if (valueA == null || valueB == null) return 0; // Evita ordenamiento si es null o undefined
+  
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+  
+  getSortIcon(column: string): string {
+    if (this.sortColumn === column) {
+      return this.sortDirection === 'asc' ? 'fa fa-arrow-up' : 'fa fa-arrow-down';
+    }
+    return 'fa fa-sort';
   }
   
   loadAddresses(): void {

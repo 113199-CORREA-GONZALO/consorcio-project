@@ -55,17 +55,17 @@ export class ProviderFormComponent implements OnInit{
   onSubmit(): void {
     if (this.providerForm.valid) {
       const formData = { ...this.providerForm.value };
-  
-      // Asegurarnos de que addressId es numérico
       formData.addressId = Number(formData.addressId);
-  
-      if (this.isEditMode) {
+      
+      if (this.isEditMode && this.currentProviderId !== null) {
+        formData.id = this.currentProviderId; // Asignar el ID actual al proveedor en modo edición
         this.updateProvider(formData);
       } else {
         this.addProvider(formData);
       }
     }
   }
+  
   
 
   addProvider(providerData: Supplier): void {
@@ -111,6 +111,7 @@ export class ProviderFormComponent implements OnInit{
   loadProviderData(id: number): void {
     this.providerService.getProviderById(id).subscribe(
       (provider: Supplier) => {
+        this.currentProviderId = provider.id; // Asegúrate de asignar el id
         this.providerForm.patchValue(provider);
       },
       (error) => {
@@ -119,4 +120,5 @@ export class ProviderFormComponent implements OnInit{
       }
     );
   }
+  
 }

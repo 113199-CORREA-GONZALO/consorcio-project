@@ -81,11 +81,21 @@
         <table class="table table-hover border rounded-lg overflow-hidden">
           <thead class="bg-dark text-white">
             <tr>
-              <th class="py-3 px-4 font-semibold">Nombre</th>
-              <th class="py-3 px-4 font-semibold">CUIL</th>
-              <th class="py-3 px-4 font-semibold">Servicio</th>
-              <th class="py-3 px-4 font-semibold">Dirección</th>
-              <th class="py-3 px-4 font-semibold">Estado</th>
+              <th class="py-3 px-4 font-semibold" (click)="sortProviders('name')">
+                Nombre <span [ngClass]="{'asc': sortColumn === 'name' && sortDirection === 'asc', 'desc': sortColumn === 'name' && sortDirection === 'desc'}">⇅</span>
+              </th>
+              <th class="py-3 px-4 font-semibold" (click)="sortProviders('cuil')">
+                CUIL <span [ngClass]="{'asc': sortColumn === 'cuil' && sortDirection === 'asc', 'desc': sortColumn === 'cuil' && sortDirection === 'desc'}">⇅</span>
+              </th>
+              <th class="py-3 px-4 font-semibold" (click)="sortProviders('service')">
+                Servicio <span [ngClass]="{'asc': sortColumn === 'service' && sortDirection === 'asc', 'desc': sortColumn === 'service' && sortDirection === 'desc'}">⇅</span>
+              </th>
+              <th class="py-3 px-4 font-semibold" (click)="sortProviders('addressId')">
+                Dirección <span [ngClass]="{'asc': sortColumn === 'addressId' && sortDirection === 'asc', 'desc': sortColumn === 'addressId' && sortDirection === 'desc'}">⇅</span>
+              </th>
+              <th class="py-3 px-4 font-semibold" (click)="sortProviders('enabled')">
+                Estado <span [ngClass]="{'asc': sortColumn === 'enabled' && sortDirection === 'asc', 'desc': sortColumn === 'enabled' && sortDirection === 'desc'}">⇅</span>
+              </th>
               <th class="py-3 px-4 font-semibold">Acciones</th>
             </tr>
           </thead>
@@ -116,7 +126,7 @@
                         onmouseout="this.style.backgroundColor='#ef4444';">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" class="bi bi-trash" viewBox="0 0 16 16">
                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
                   </svg>
                 </button>
               </td>
@@ -124,5 +134,6 @@
           </tbody>
         </table>
       </div>
+      
   </div>
 </div>
