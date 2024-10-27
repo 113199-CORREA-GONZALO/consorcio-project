@@ -59,17 +59,23 @@
             Filtros
           </button>
           <div class="col-lg-4"></div> <!-- Espacio central para separación -->
-          <button class="btn btn-outline-primary col-lg-2 mx-1">
+            <button class="btn btn-outline-primary col-lg-2 mx-1" 
+            [class.active]="currentFilter === 'true'"
+            (click)="filterActiveProviders()">
             Proveedores Activos
-          </button>
-        
-          <button class="btn btn-outline-primary col-lg-2 mx-1">
-            Proveedores Inactivos
-          </button>
-        
-          <button class="btn btn-outline-primary col-lg-1 mx-1">
-            Todos
-          </button>  
+            </button>
+    
+            <button class="btn btn-outline-primary col-lg-2 mx-1"
+                    [class.active]="currentFilter === 'false'"
+                    (click)="filterInactiveProviders()">
+              Proveedores Inactivos
+            </button>
+    
+            <button class="btn btn-outline-primary col-lg-1 mx-1"
+                    [class.active]="currentFilter === 'all'"
+                    (click)="showAllProviders()">
+              Todos
+            </button>
         </div>
     <!-- Modal de Filtros -->
     <div *ngIf="showModalFilter" class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
