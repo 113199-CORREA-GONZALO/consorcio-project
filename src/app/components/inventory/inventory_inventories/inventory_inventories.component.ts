@@ -28,7 +28,7 @@ import { InventoryService } from '../../../services/inventory.service';
 export class InventoryTableComponent implements OnInit {
   private router = inject(Router);
   private mapperService = inject(MapperService);
-
+  Status = StatusType;
   // Modals
   showRegisterForm: boolean = false;
   showRegisterTransactionForm: boolean = false;
@@ -62,7 +62,6 @@ export class InventoryTableComponent implements OnInit {
 
   selectedInventoryId: string | null = null;
   selectedInventory: Inventory | null = null;
-
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
     this.inventoryForm = this.fb.group({

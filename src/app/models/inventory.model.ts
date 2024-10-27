@@ -42,6 +42,6 @@ export interface Inventory {
   stock: number;           // Cantidad en stock
   minStock: number;       // Stock mínimo
   location: string | null; // Ubicación del artículo, puede ser null
-  inventoryStatus: StatusType;
+  status: StatusType;
   transactions: Transaction[]; // Lista de transacciones asociadas
 }

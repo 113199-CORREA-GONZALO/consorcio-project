@@ -49,14 +49,15 @@ export class InventoryService {
     console.log(articleInventory);
     return this.http.post<ArticleInventoryPost>(this.apiInventoriesUrl+'/newArticle', articleInventory);
   }
-  
+
   updateInventory(id: number, updatedInventory: Partial<Inventory>): Observable<Inventory> {
     return this.http.put<Inventory>(`${this.apiInventoriesUrl}/${id}`, updatedInventory);
   }
 
-  deleteInventory(inventory_id: number): Observable<void> {
-    return this.http.patch<void>(`${this.apiInventoriesUrl}/${inventory_id}`, { inventory_status: 'Inactive' });
+  deleteInventory(inventoryId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiInventoriesUrl}/${inventoryId}`);
   }
+
 
   // CRUD para Transacciones
   getTransactionsInventory(inventoryId: string): Observable<Transaction[]> {
