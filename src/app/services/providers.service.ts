@@ -7,7 +7,8 @@ import { Supplier } from '../models/supplier.model';
   providedIn: 'root'
 })
 export class ProvidersService {
-  private apiUrl = 'http://localhost:3000/suppliers';
+  //private apiUrl = 'http://localhost:3000/suppliers';
+  private apiUrl = 'http://localhost:8080/suppliers';
 
   constructor(private http: HttpClient) {}
 
@@ -39,9 +40,9 @@ export class ProvidersService {
   addProvider(provider: Supplier): Observable<Supplier> {
     return this.http.post<Supplier>(this.apiUrl, provider);
   }
-
+  
   updateProvider(provider: Supplier): Observable<Supplier> {
-    return this.http.put<Supplier>(`${this.apiUrl}/${provider.id}`, provider);
+    return this.http.put<Supplier>(this.apiUrl, provider);
   }
 
   deleteProvider(id: number): Observable<void> {
