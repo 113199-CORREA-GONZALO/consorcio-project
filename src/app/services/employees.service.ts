@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { Employee, EmployeePayment } from '../models/employee.model';
 
 @Injectable({
@@ -11,6 +11,12 @@ export class EmployeesService {
   private http = inject(HttpClient);
   private selectedEmployee = new BehaviorSubject<Employee | null>(null);
   
+  checkIfDocumentExists(docNumber: string): Observable<boolean> {
+    const filter: { docNumber: string } = { docNumber }; // Crear el filtro necesario
+    return this.http.post<Employee[]>(`${this.apiUrl}/search`, filter).pipe(
+      map(employees => employees.length > 0) // Verificar si hay empleados
+    );
+  }
   // Obtener empleados
   getEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.apiUrl);
