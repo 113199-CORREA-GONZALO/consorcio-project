@@ -1,5 +1,5 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { DocumentType, Employee, EmployeeType, StatusType } from '../../../models/employee.model';
+import { Component, EventEmitter, inject, ModelSignal, OnInit, Output } from '@angular/core';
+import { DocumentType, Employee, EmployeeFilter, EmployeeType, StatusType } from '../../../models/employee.model';
 import { EmployeesService } from '../../../services/employees.service';
 import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -10,15 +10,17 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
-import { auto } from '@popperjs/core';
 import { EmployeeEditModalComponent } from "../employee-edit-modal/employee-edit-modal.component";
-import { FormsModule } from '@angular/forms';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, EmployeeEditModalComponent, RouterLink ,FormsModule],
+  imports: [CommonModule, EmployeeEditModalComponent, RouterLink, FormsModule, ReactiveFormsModule],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })
@@ -37,18 +39,49 @@ export class EmployeeListComponent implements OnInit{
     }
     
   ];
+  //private modal: Modal | null = null;
+  private fb = inject(FormBuilder);
+  filterForm: FormGroup;
+
   currentPage: number = 1;
   totalPages: number = 0;
   itemsPerPage: number = 10;
   totalElements: number = 0;
   selectedStatus?: StatusType;
+  statusTypes = Object.values(StatusType);
+  employeeTypes = Object.values(EmployeeType);
+
+  documentTypes = Object.values(DocumentType);
   private employeeService = inject(EmployeesService);
   private router = inject(Router);
   private mapperService = inject(MapperService);
+  showModalFilters: boolean = false;
+
+
+  constructor() {
+    this.filterForm = this.fb.group({
+      firstName: [''],
+      lastName: [''],
+      employeeType: [''],
+      docType: [''],
+      docNumber: [''],
+      hiringDate: [''],
+      salary: [''],
+      state: [''],
+      enabled: [true]
+    });
+  }
+
   
   ngOnInit(): void {
     this.totalPages=1;
     this.loadEmployees();
+
+    const modalElement = document.getElementById('filterModal');
+    if (modalElement) {
+      //this.modal = new Moda(modalElement);
+    }
+
   }
   getEmployees() {
     this.employeeService.getEmployees().subscribe((employeeList) => {
@@ -220,4 +253,58 @@ exportToExcel() {
     this.currentPage = 1; // Reset to first page when filtering
     this.loadEmployees();
   }
+
+  openModalFilters(){
+    this.showModalFilters = !this.showModalFilters; 
+  }
+
+  private setupFilterSubscription(): void {
+    this.filterForm.valueChanges.pipe(
+      debounceTime(300), // Esperar 300ms después del último cambio
+      distinctUntilChanged() // Solo emitir si el valor ha cambiado
+    ).subscribe(() => {
+      this.applyFilter();
+    });
+  }
+  applyFilter(): void {
+    const filter: EmployeeFilter = Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
+      if (value !== '' && value !== null && value !== undefined) {
+        (acc as any)[key] = value;
+      }
+      return acc;
+    }, {} as EmployeeFilter);
+
+    this.employeeService.searchEmployees(filter).subscribe(
+      (employees) => {
+        this.employeeList = employees;
+        // Cerrar el modal después de aplicar los filtros
+
+      },
+      (error) => {
+        console.error('Error al filtrar empleados:', error);
+        Swal.fire('Error', 'Error al filtrar empleados', 'error');
+      }
+    );
+  }
+/*
+  applyFilter(): void {
+    // Crear objeto de filtro solo con los campos que tienen valor
+    const filter: EmployeeFilter = Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
+      if (value !== '' && value !== null && value !== undefined) {
+        (acc as any)[key] = value;
+      }
+      return acc;
+    }, {} as EmployeeFilter);
+
+    // Llamar al servicio con los filtros
+    this.employeeService.searchEmployees(filter).subscribe(
+      (employees) => {
+        this.employeeList = employees;
+      },
+      (error) => {
+        console.error('Error al filtrar empleados:', error);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
+    );
+  }*/
 }
