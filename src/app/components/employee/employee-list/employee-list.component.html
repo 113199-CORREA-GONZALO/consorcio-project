@@ -112,15 +112,20 @@
         
       <div class="col-lg-4"></div> <!-- Espacio central para separación -->
     
-      <button class="btn btn-outline-primary col-lg-2 mx-1">
+      <button class="btn btn-outline-primary col-lg-2 mx-1"
+      [class.active]="currentFilter === 'active'"
+            (click)="filterActiveEmployees()">
         Empleados Activos
       </button>
-    
-      <button class="btn btn-outline-primary col-lg-2 mx-1">
+      <button class="btn btn-outline-primary col-lg-2 mx-1"
+      [class.active]="currentFilter === 'inactive'"
+            (click)="filterInactiveEmployees()">
         Empleados Inactivos
       </button>
     
-      <button class="btn btn-outline-primary col-lg-1 mx-1">
+      <button class="btn btn-outline-primary col-lg-1 mx-1"
+      [class.active]="currentFilter === 'all'"
+            (click)="showAllEmployees()">
         Todos
       </button>
     </div>

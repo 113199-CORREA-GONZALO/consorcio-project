@@ -27,7 +27,7 @@ import { ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 export class EmployeeListComponent implements OnInit{
   employeeList: Employee[] = [
     {
-      id: 0,
+      id: 110,
       firstName: 'test',
       lastName: 'TEST',
       employeeType: EmployeeType.ADMIN,
@@ -36,9 +36,24 @@ export class EmployeeListComponent implements OnInit{
       hiringDate: new Date(),
       salary: 0,
       state: StatusType.ACTIVE,
+    },
+    {
+      id: 100,
+      firstName: 'test 2',
+      lastName: 'TEST 2',
+      employeeType: EmployeeType.ADMIN,
+      documentType: DocumentType.DNI,
+      docNumber: '123456781',
+      hiringDate: new Date(),
+      salary: 0,
+      state: StatusType.INACTIVE,
     }
     
   ];
+  private originalEmployeeList: Employee[] = [];
+  currentFilter: 'all' | 'active' | 'inactive' = 'all';
+  filteredEmployeeList: Employee[] = [];
+  
   //private modal: Modal | null = null;
   private fb = inject(FormBuilder);
   filterForm: FormGroup;
@@ -75,7 +90,8 @@ export class EmployeeListComponent implements OnInit{
   
   ngOnInit(): void {
     this.totalPages=1;
-    this.loadEmployees();
+    // this.loadEmployees(); // Use this for API integration
+    this.mockGetEmployees(); // Use this for mock data
 
     const modalElement = document.getElementById('filterModal');
     if (modalElement) {
@@ -307,4 +323,118 @@ exportToExcel() {
       }
     );
   }*/
+ 
+    // Funciones para filtrar por estado
+    filterActiveEmployees(): void {
+      console.log(this.employeeList.filter(employee => employee.state === StatusType.ACTIVE));
+      this.currentFilter = 'active';
+      // For mock data
+      this.employeeList = this.originalEmployeeList.filter(employee => employee.state === StatusType.ACTIVE);
+      this.filteredEmployeeList = [...this.employeeList];
+      console.log("Using active filter");
+      // For API integration
+      // this.applyFilters();
+    }
+  
+    filterInactiveEmployees(): void {
+      console.log(this.employeeList.filter(employee => employee.state === StatusType.INACTIVE));
+      this.currentFilter = 'inactive';
+      // For mock data
+      this.employeeList = this.originalEmployeeList.filter(employee => employee.state === StatusType.INACTIVE);
+      this.filteredEmployeeList = [...this.employeeList];
+      console.log("Using inactive filter");
+      // For API integration
+      // this.applyFilters();
+    }
+  
+    showAllEmployees(): void {
+      console.log(this.employeeList);
+      this.currentFilter = 'all';
+      // For mock data
+      this.employeeList = [...this.originalEmployeeList];
+      this.filteredEmployeeList = [...this.originalEmployeeList];
+      console.log("Using all filter");
+      // For API integration
+      this.applyFilters();
+    }
+  
+    // Modified to use mock data
+    mockGetEmployees() {
+      //this.isLoading = true;
+      // Simulate API call delay
+      setTimeout(() => {
+        // Save a copy of the original data
+        this.originalEmployeeList = [...this.employeeList]; // Using the mock data from your component
+        this.employeeList = [...this.employeeList];
+        this.filteredEmployeeList = [...this.employeeList];
+        //this.isLoading = false;
+      }, 500);
+  
+      // Add filter subscriptions if needed
+      this.filterForm.get('firstName')?.valueChanges
+        .pipe(
+          debounceTime(300),
+          distinctUntilChanged()
+        )
+        .subscribe(data => {
+          if (data === null || data === '') {
+            this.filteredEmployeeList = [...this.employeeList];
+          } else {
+            this.filteredEmployeeList = this.employeeList.filter(
+              x => x.firstName.toLowerCase().includes(data.toLowerCase())
+            );
+          }
+        });
+    }
+  
+    private applyCurrentFilter(): void {
+      switch (this.currentFilter) {
+        case 'active':
+          this.employeeList = this.originalEmployeeList.filter(
+            employee => employee.state === StatusType.ACTIVE
+          );
+          break;
+        case 'inactive':
+          this.employeeList = this.originalEmployeeList.filter(
+            employee => employee.state === StatusType.INACTIVE
+          );
+          break;
+        default:
+          this.employeeList = [...this.originalEmployeeList];
+      }
+      this.filteredEmployeeList = [...this.employeeList];
+      console.log("Using applyCurrentFilter method");
+    }
+  
+    setFilter(filter: 'all' | 'active' | 'inactive'): void {
+      this.currentFilter = filter;
+      this.applyCurrentFilter();
+      this.applyFilters();
+      console.log("Using setFilter method");
+    }
+  
+    // Modify existing applyFilters method to work with the new filtering system
+    applyFilters(): void {
+      const filter: EmployeeFilter = {
+        ...Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
+          if (value !== '' && value !== null && value !== undefined) {
+            (acc as any)[key] = value;
+          }
+          return acc;
+        }, {} as EmployeeFilter),
+        state: this.currentFilter === 'all' ? undefined : 
+               this.currentFilter === 'active' ? StatusType.ACTIVE : StatusType.INACTIVE
+      };
+  
+      this.employeeService.searchEmployees(filter).subscribe(
+        (employees) => {
+          this.employeeList = employees;
+          this.filteredEmployeeList = [...employees];
+        },
+        (error) => {
+          console.error('Error filtering employees:', error);
+          Swal.fire('Error', 'Error filtering employees', 'error');
+        }
+      );
+    }
 }
