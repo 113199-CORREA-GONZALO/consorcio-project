@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
 import { Article, ArticleInventoryPost, ArticlePost } from '../models/article.model';
 import { Inventory, Transaction, TransactionPost } from '../models/inventory.model';
 
@@ -78,4 +78,19 @@ export class InventoryService {
   deleteTransaction(transaction_id: number): Observable<void> {
     return this.http.patch<void>(`${this.apiTransactionsUrl}/${transaction_id}`, { transaction_status: 'Inactive' });
   }
+
+  getInventoriesPageable(page: number, size: number): Observable<Page<Inventory>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<any>(`${this.apiInventoriesUrl}/pageable`, { params })
+  }
+}
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }
