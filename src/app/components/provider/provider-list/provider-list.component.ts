@@ -2,8 +2,8 @@ import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core'
 import {  Supplier } from '../../../models/supplier.model';
 import { ProvidersService } from '../../../services/providers.service';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ServiceType } from '../../../models/enums/service-tpye.enum';
 import { CommonModule } from '@angular/common';
 import { StatusType } from '../../../models/inventory.model';
@@ -18,7 +18,7 @@ import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 @Component({
   selector: 'app-provider-list',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, FormsModule],
   templateUrl: './provider-list.component.html',
   styleUrl: './provider-list.component.css'
 })
@@ -40,6 +40,13 @@ export class ProviderListComponent implements OnInit{
   nameFilter = new FormControl('');
   cuilFilter = new FormControl('');
   serviceFilter = new FormControl('');
+  phoneFilter = new FormControl('');
+
+  showModalFilter: boolean = false;
+
+  currentPage: number = 1;
+  totalPages: number = 1;
+  itemsPerPage: number = 10;
 
   private providerService = inject(ProvidersService);
   private router = inject(Router);
@@ -54,6 +61,9 @@ export class ProviderListComponent implements OnInit{
   ngOnInit(): void {
     this.getProviders();
     this.setupFilterSubscriptions();
+  }
+  openModal(){
+
   }
 
   private setupFilterSubscriptions(): void {
@@ -116,6 +126,14 @@ export class ProviderListComponent implements OnInit{
         x => x.cuil.toLowerCase().includes(data!.toLowerCase())
       )
     })
+    this.phoneFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.phoneNumber.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
     this.serviceFilter.valueChanges.subscribe( data => {
       if(data === null || data === ''){
         this.getProviders();
@@ -124,6 +142,7 @@ export class ProviderListComponent implements OnInit{
         x => x.service.toLowerCase().includes(data!.toLowerCase())
       )
     })
+    
     this.providerService.getProviders().subscribe((providerList) => {
       this.filteredProviders = providerList;
       this.providerList = providerList;
@@ -167,6 +186,7 @@ export class ProviderListComponent implements OnInit{
     this.nameFilter.reset();
     this.cuilFilter.reset();
     this.serviceFilter.reset();
+    this.phoneFilter.reset();
     this.filterForm.reset({
       addressId: '',
       enabled: ''
@@ -204,7 +224,7 @@ export class ProviderListComponent implements OnInit{
 
   exportToPDF() {
     const doc = new jsPDF();
-    const tableColumn = ['Nombre', 'CUIL', 'Tipo de servicio', 'Dirección', 'Estado'];
+    const tableColumn = ['Nombre', 'CUIL', 'Tipo de servicio', 'Dirección', 'Numero de Telefono', 'Estado'];
     const tableRows: any[][] = [];
   
     this.providerList.forEach((provider) => {
@@ -277,5 +297,18 @@ export class ProviderListComponent implements OnInit{
     });
 
     return table;
+  }
+  goToNextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      // Actualizar lista de empleados
+    }
+  }
+  
+  goToPreviousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      // Actualizar lista de empleados
+    }
   }
 }

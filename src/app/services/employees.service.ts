@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Employee, EmployeePayment } from '../models/employee.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Employee, EmployeePayment, StatusType } from '../models/employee.model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +9,33 @@ import { Employee, EmployeePayment } from '../models/employee.model';
 export class EmployeesService {
   private apiUrl = 'http://localhost:8063/employees'; // URL de la API para empleados
   private http = inject(HttpClient);
+  private selectedEmployee = new BehaviorSubject<Employee | null>(null);
+  
+  getEmployeesPageable(
+    page: number = 0,
+    size: number = 10,
+    type?: StatusType
+  ): Observable<PageResponse<Employee>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    
+    if (type) {
+      params = params.set('type', type);
+    }
+    return this.http.get<PageResponse<Employee>>(`${this.apiUrl}/pageable`, { params });
+  }
 
   // Obtener empleados
   getEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.apiUrl);
+  }
+  
+  setSelectedEmployee(employee: Employee) {
+    this.selectedEmployee.next(employee);
+  }
+  getSelectedEmployee(): Observable<Employee | null> {
+    return this.selectedEmployee.asObservable();
   }
 
   getEmployeeById(id: number): Observable<Employee> {
@@ -46,4 +69,12 @@ export class EmployeesService {
     return this.http.get<Employee>(this.apiUrl+"/"+id);
   }
 
+}
+
+interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }

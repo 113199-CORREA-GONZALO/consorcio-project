@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Employee } from '../../../models/employee.model';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { DocumentType, Employee, EmployeeType, StatusType } from '../../../models/employee.model';
 import { EmployeesService } from '../../../services/employees.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 
@@ -11,31 +11,74 @@ import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
 import { auto } from '@popperjs/core';
+import { EmployeeEditModalComponent } from "../employee-edit-modal/employee-edit-modal.component";
+import { FormsModule } from '@angular/forms';
+import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EmployeeEditModalComponent, RouterLink ,FormsModule],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })
 export class EmployeeListComponent implements OnInit{
-  employeeList: Employee[] = [];
-
+  employeeList: Employee[] = [
+    {
+      id: 0,
+      firstName: 'test',
+      lastName: 'TEST',
+      employeeType: EmployeeType.ADMIN,
+      documentType: DocumentType.DNI,
+      docNumber: '123456789',
+      hiringDate: new Date(),
+      salary: 0,
+      state: StatusType.ACTIVE,
+    }
+    
+  ];
+  currentPage: number = 1;
+  totalPages: number = 0;
+  itemsPerPage: number = 10;
+  totalElements: number = 0;
+  selectedStatus?: StatusType;
   private employeeService = inject(EmployeesService);
   private router = inject(Router);
-
+  private mapperService = inject(MapperService);
+  
   ngOnInit(): void {
-      this.getEmployees();
+    this.totalPages=1;
+    this.loadEmployees();
   }
   getEmployees() {
     this.employeeService.getEmployees().subscribe((employeeList) => {
       this.employeeList = employeeList;
     });
   }
+  
+  /*goToNextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      // Actualizar lista de empleados
+    }
+  }
+  
+  goToPreviousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      // Actualizar lista de empleados
+    }
+  }*/
 
   editEmployee(id: number): void {
     this.router.navigate(['employees/form', id]);
+  }
+
+  @Output() showEditModal: EventEmitter<boolean> = new EventEmitter<boolean>();
+  showEditForm: boolean = false;
+  editEmployee2(employee: Employee) {
+    this.employeeService.setSelectedEmployee(employee);
+    this.showEditForm = true;
   }
 
   deleteEmployee(id: number): void {
@@ -129,4 +172,52 @@ exportToExcel() {
   // Generar el archivo Excel
   XLSX.writeFile(wb, 'lista-empleados.xlsx');
 }
+
+  onModalClose() {
+    this.showEditForm = false;
+    this.getEmployees();
+  }
+
+
+  loadEmployees() {
+    this.employeeService
+      .getEmployeesPageable(this.currentPage - 1, this.itemsPerPage, this.selectedStatus)
+      .subscribe({
+        next: (response) => {
+          response = this.mapperService.toCamelCase(response);
+          this.employeeList = this.mapperService.toCamelCase(response.content);
+          console.log(response)
+          this.totalPages = this.mapperService.toCamelCase(response.totalPages);
+          this.totalElements = this.mapperService.toCamelCase(response.totalElements);
+        },
+        error: (error) => {
+          console.error('Error loading employees:', error);
+        }
+      });
+  }
+
+  goToNextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadEmployees();
+    }
+  }
+
+  goToPreviousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadEmployees();
+    }
+  }
+
+  onItemsPerPageChange() {
+    this.currentPage = 1; // Reset to first page when changing items per page
+    this.loadEmployees();
+  }
+
+  filterByStatus(status?: StatusType) {
+    this.selectedStatus = status;
+    this.currentPage = 1; // Reset to first page when filtering
+    this.loadEmployees();
+  }
 }

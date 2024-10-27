@@ -1,40 +1,67 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Inventory, StatusType } from '../../../models/inventory.model';
-import { Article, MeasurementUnit, Status } from '../../../models/article.model';
-import { InventoryService } from '../../../services/inventory.service';
-import { ArticleComponent } from '../inventory-articles/inventory-articles-form/inventory-articles-form.component';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
+import { Router, RouterModule } from '@angular/router';
+import { TransactionComponentForm } from '../inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
+import { InventoryTransactionTableComponent } from '../inventory_transaction/inventory_transaction_table/inventory_transaction_table.component';
+import { InventoryInventoriesUpdateComponent } from './inventory-inventories-update/inventory-inventories-update.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
-import { RouterModule } from '@angular/router';
-
-
-
+import { Inventory, StatusType } from '../../../models/inventory.model';
+import { Article, ArticleCategory, ArticleCondition, ArticleType, MeasurementUnit, Status } from '../../../models/article.model';
+import { InventoryService } from '../../../services/inventory.service';
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ArticleComponent, RouterModule],
-  templateUrl: './inventory-inventories.component.html',
-  styleUrls: ['./inventory-inventories.component.css']
+  imports: [CommonModule,
+     ReactiveFormsModule,
+      ArticleFormComponent,
+       RouterModule,
+        TransactionComponentForm,
+         InventoryTransactionTableComponent,
+          InventoryInventoriesUpdateComponent,
+          FormsModule
+        ],
+  templateUrl: './inventory_inventories.component.html',
+  styleUrls: ['./inventory_inventories.component.css']
 })
-export class InventoryComponent implements OnInit {
-transactionInventory(_t17: Inventory) {
-throw new Error('Method not implemented.');
-}
-viewInventory(_t17: Inventory) {
-throw new Error('Method not implemented.');
-}
-
+export class InventoryTableComponent implements OnInit {
+  private router = inject(Router);
   private mapperService = inject(MapperService);
 
+  // Modals
+  showRegisterForm: boolean = false;
+  showRegisterTransactionForm: boolean = false;
+  showTransactions: boolean = false;
+  showInventoryUpdate: boolean = false;
+
+  currentPage: number = 1;
+  totalPages: number = 1;
+  itemsPerPage: number = 10;
+
   inventoryForm: FormGroup;
-  inventories: Inventory[] = [];
-  articles: Article[] = [];
+  inventories: Inventory[] = [
+
+  ];
+  articles: Article[] = [
+    {
+      id: 100,
+      identifier: '1234',
+      name: 'Producto 1',
+      description: 'Descripción del producto 1',
+      articleCondition: ArticleCondition.FUNCTIONAL,
+      articleCategory: ArticleCategory.DURABLES,
+      articleType: ArticleType.REGISTRABLE,
+      measurementUnit: MeasurementUnit.UNITS
+    }
+  ];
   activeArticles: Article[] = []; // Solo los ítems activos
   articleMap: { [key: number]: string } = {}; // Mapa para almacenar nombre de ítems con sus IDs
   isEditing: boolean = false;
   editingInventoryId: any | null = null; // Para guardar el ID del inventario en edición
 
+  selectedInventoryId: string | null = null;
+  selectedInventory: Inventory | null = null;
 
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
@@ -48,7 +75,6 @@ throw new Error('Method not implemented.');
 
   ngOnInit(): void {
     this.getInventories();
-    // this.getArticles();
   }
 
   getInventories(): void {
@@ -111,24 +137,26 @@ getDisplayUnit(unit: MeasurementUnit): string {
   }
 
   editInventory(inventory: Inventory): void {
-    this.isEditing = true; // Activar el modo edición
+    console.log(inventory.id);
+    this.router.navigate(['articles/article', inventory.id]);
+    /*this.isEditing = true; // Activar el modo edición
     this.editingInventoryId = inventory.id; // Guardar el ID del inventario en edición
     this.inventoryForm.patchValue({
       article_id: inventory.article_id,
       stock: inventory.stock,
       min_stock: inventory.min_stock,
       inventory_status: inventory.inventory_status
-    });
+    });*/
   }
 
 
   updateInventory(): void {
     if (this.inventoryForm.valid) {
       const updatedInventory = this.inventoryForm.value;
-      this.inventoryService.updateInventory(updatedInventory).subscribe(() => {
+      /*this.inventoryService.updateInventory(updatedInventory).subscribe(() => {
         this.getInventories();
         this.inventoryForm.reset({ stock: 1, min_stock: 1, inventory_status: Status.ACTIVE });
-      });
+      });*/
     }
   }
 
@@ -153,10 +181,10 @@ getDisplayUnit(unit: MeasurementUnit): string {
           ...inventoryData,
           id: this.editingInventoryId
         };
-        this.inventoryService.updateInventory(updatedInventory).subscribe(() => {
+        /*this.inventoryService.updateInventory(updatedInventory).subscribe(() => {
           this.getInventories(); // Recargar la lista después de actualizar
           this.resetForm(); // Resetear el formulario después de editar
-        });
+        });*/
       } else {
         // Agregar nuevo inventario
         this.inventoryService.addInventory(inventoryData).subscribe(() => {
@@ -167,4 +195,50 @@ getDisplayUnit(unit: MeasurementUnit): string {
     }
   }
 
+  onNewArticle(){
+    this.showRegisterForm = !this.showRegisterForm;
+  }
+  onRegisterClose(){
+    this.showRegisterForm = this.showRegisterForm;
+}
+
+onNewTransaction(id:any){
+  this.selectedInventoryId = id;
+  this.showRegisterTransactionForm = !this.showRegisterTransactionForm;
+}
+onTransactions(inventory:Inventory){
+  this.selectedInventory = inventory;
+  this.showTransactions = !this.showTransactions;
+}
+onInventoryUpdate(inventory: Inventory){
+  this.selectedInventory = inventory;
+  this.showInventoryUpdate = !this.showInventoryUpdate;
+}
+
+onRegisterTransactionClose(){
+  this.showRegisterTransactionForm = this.showRegisterTransactionForm;
+  this.selectedInventoryId = "";
+}
+onTransactionsClose(){
+  this.showTransactions = this.showTransactions;
+  this.selectedInventory = null;
+}
+onInventoryUpdateClose() {
+  this.showInventoryUpdate = false;
+  this.selectedInventory = null;
+  this.getInventories();
+}
+goToNextPage() {
+  if (this.currentPage < this.totalPages) {
+    this.currentPage++;
+    // Actualizar lista de empleados
+  }
+}
+
+goToPreviousPage() {
+  if (this.currentPage > 1) {
+    this.currentPage--;
+    // Actualizar lista de empleados
+  }
+}
 }

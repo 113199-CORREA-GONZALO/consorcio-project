@@ -1,21 +1,30 @@
-import { ArticleInventoryPost, ArticlePost } from './../../../../models/article.model';
-import { Component, inject, OnInit } from '@angular/core';
+import { ArticleInventoryPost, ArticlePost } from '../../../../models/article.model';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../../services/inventory.service';
 import { Article, ArticleCategory, ArticleType, ArticleCondition, MeasurementUnit,Status } from '../../../../models/article.model';
 import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Inventory } from '../../../../models/inventory.model';
 
 @Component({
   selector: 'app-article',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule], // Agrega ReactiveFormsModule aquí
-  templateUrl: './inventory-articles-form.component.html',
-  styleUrls: ['./inventory-articles-form.component.css']
+  templateUrl: './inventory_articles_form.component.html',
+  styleUrls: ['./inventory_articles_form.component.css']
 })
-export class ArticleComponent implements OnInit {
+export class ArticleFormComponent implements OnInit {
 
+  return() {
+    this.router.navigate(['inventories']);
+  }
+  @Output() showRegisterForm = new EventEmitter<void>();
+  isModalOpen : boolean = true;
   private mapperService = inject(MapperService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   articleForm: FormGroup;
   articles: Article[] = [];
@@ -38,36 +47,68 @@ export class ArticleComponent implements OnInit {
       articleCategory: [ArticleCategory.DURABLES, Validators.required],
       measurementUnit: [MeasurementUnit.UNITS, Validators.required],
       location: ['', Validators.required], // Campo ubicación del inventario
-      stock: ['', Validators.required],    // Campo stock del inventario
-      stockMin: ['', Validators.required], // Campo stock mínimo del inventario
-      price: ['', Validators.required]     // Campo precio para la transacción inicial
+      stock: [{value: '', disabled: false}, Validators.required],    // Campo stock del inventario
+      stockMin: [''], // Campo stock mínimo del inventario
+      price: ['']     // Campo precio para la transacción inicial
+
     });
   }
 
   ngOnInit(): void {
-    this.getArticles();
+    this.activatedRoute.params.subscribe((params) => {
+      const id = +params['id'];
+      if (id) {
+        this.getById(id);
+      }
+    });
     this.articleForm.get('articleType')?.valueChanges.subscribe(this.handleArticleTypeChange.bind(this));
   }
 
+  getById(id: number) {
+    this.inventoryService.getArticleInventory(id).subscribe((data) => {
+      this.currentArticleId=id;
+      data = this.mapperService.toCamelCase(data);
+      console.log(data);
+      this.articleForm.patchValue({
+        identifier: data.article.identifier,
+        name: data.article.name,
+        description:data.article.description,
+        articleType: data.article.articleType,
+        articleCondition:data.article.articleCondition,
+        measurementUnit: data.article.measurementUnit,
+        location:data.location,
+        stock:data.stock,
+        stockMin:data.minStock,
+        price:data.price
+      });
+    });
+    this.articleForm.get('id')?.disable();
+    this.articleForm.get('articleType')?.disable();
+    this.articleForm.get('articleCondition')?.disable();
+    this.articleForm.get('stock')?.disable();
+    this.articleForm.get('location')?.disable();
+    this.isEditing=true;
+  }
+
   handleArticleTypeChange(value: ArticleType): void {
+    if(this.isEditing||this.currentArticleId!=undefined){
+      return;
+    }
     if(value === ArticleType.REGISTRABLE) {
       this.articleForm.get('identifier')?.enable();
       this.articleForm.get('measurementUnit')?.disable();
+      this.articleForm.get('stock')?.disable();
+      this.articleForm.get('stock')?.setValue(1);
     } else {
       this.articleForm.get('identifier')?.disable();
       this.articleForm.get('measurementUnit')?.enable();
       this.articleForm.get('identifier')?.reset();
+      this.articleForm.get('stock')?.enable();
+      this.articleForm.get('stock')?.setValue('');
     }
   }
 
-  getArticles(): void {
-    this.inventoryService.getArticles().subscribe(articles => {
-      this.articles = articles;
-    });
-  }
-
   addArticle(): void {
-    console.log(this.articleForm.value); // Loguear el estado actual del formulario
     if (this.articleForm.valid) {
       const article: ArticlePost = {
         identifier: this.articleForm.get('identifier')?.value ?? null,
@@ -88,11 +129,21 @@ export class ArticleComponent implements OnInit {
       };
 
       const articleInventoryFormatted = this.mapperService.toSnakeCase(articleInventory);
-
-      this.inventoryService.addInventoryArticle(articleInventoryFormatted).subscribe(() => {
-        this.getArticles();
-        this.resetForm();
-      });
+      if(!this.isEditing){
+        this.inventoryService.addInventoryArticle(articleInventoryFormatted).subscribe((data) => {
+          console.log(data);
+        });
+      }
+      else if (this.currentArticleId!= undefined){
+        this.inventoryService.updateArticle(this.currentArticleId,articleInventoryFormatted.article as Article).subscribe((data)=> console.log(data));
+        let inventoryUpdate= {
+          stock: articleInventory.stock,
+          minStock: articleInventory.minStock,
+          location: articleInventory.location,
+        }
+        const inventoryUpdateFormatted = this.mapperService.toSnakeCase(inventoryUpdate);
+        this.inventoryService.updateInventory(this.currentArticleId, inventoryUpdateFormatted).subscribe((data)=> console.log(data));
+      }
     }
   }
 
@@ -109,5 +160,10 @@ export class ArticleComponent implements OnInit {
     });
     this.isEditing = false; // Cambia el estado a no edición
     this.currentArticleId = undefined; // Limpia el ID del ítem actual
+  }
+
+  onClose(){
+    this.showRegisterForm.emit();
+    this.isModalOpen = false
   }
 }
