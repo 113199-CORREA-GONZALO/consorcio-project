@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeesService } from '../../../services/employees.service';
 import { Employee } from '../../../models/employee.model';
 import { debounceTime, map, switchMap } from 'rxjs';
+import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 
 @Component({
   selector: 'app-employee-form',
@@ -16,7 +17,7 @@ import { debounceTime, map, switchMap } from 'rxjs';
 })
 export class EmployeeFormComponent implements OnInit {
   employeeForm = new FormGroup({
-    id: new FormControl(0),
+    id:new FormControl(0),
     firstName: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]),
     lastName: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]),
     employeeType: new FormControl(EmployeeType.ADMIN, Validators.required),
@@ -28,15 +29,18 @@ export class EmployeeFormComponent implements OnInit {
   });
 
   private readonly employeeService = inject(EmployeesService);
-  private readonly activatedRoute = inject(ActivatedRoute)
+  private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly mapperService = inject(MapperService);
   employeeTypes= Object.values(EmployeeType);
   documentTypes= Object.values(DocumentType);
+  private currentId = 0;
   isEdit:boolean=false;
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
       const id = +params['id'];
+      console.log(id);
       if (id) {
         this.getById(id);
       }
@@ -44,9 +48,11 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   getById(id: number) {
+    this.currentId=id;
     this.employeeService.getEmployee(id).subscribe((data) => {
+      data = this.mapperService.toCamelCase(data);
       this.employeeForm.patchValue({
-        id: data.id,
+        id:data.id,
         firstName: data.firstName,
         lastName: data.lastName,
         employeeType: data.employeeType,
@@ -62,10 +68,14 @@ export class EmployeeFormComponent implements OnInit {
 
   saveEmployee() {
     if (this.employeeForm.valid) {
-      const employeeData = this.prepareEmployeeData();
-      if (this.employeeForm.value.id) {
+      let employeeData = this.prepareEmployeeData();
+      employeeData = this.mapperService.toSnakeCase(employeeData);
+      console.log(employeeData);
+      if (this.currentId!=0) {
+        employeeData.id=this.currentId;
         this.updateEmployee(employeeData);
       } else {
+        employeeData.id
         this.createEmployee(employeeData);
       }
     }
@@ -73,20 +83,18 @@ export class EmployeeFormComponent implements OnInit {
 
   prepareEmployeeData(): Employee {
     const { id, firstName, lastName, employeeType, hiringDate, documentType, docNumber, salary, state } = this.employeeForm.value;    
-    
-    let parsedHiringDate: Date | null = null;
-    if (hiringDate) {
+    let parsedHiringDate: Date | null = new Date();
+    /*if (hiringDate) {
       parsedHiringDate = new Date(hiringDate);
-    }
+    }*/
 
     return {
-      id,
       firstName,
       lastName,
       employeeType,
       documentType: documentType,
       docNumber,
-      hiringDate: parsedHiringDate,
+      hiringDate,
       salary,
       state,
     } as Employee;
@@ -94,7 +102,7 @@ export class EmployeeFormComponent implements OnInit {
 
   createEmployee(employee: Employee) {
     this.employeeService.addEmployee(employee).subscribe((data) => {
-      console.log(data);
+      console.log('Creado',data);
       // Navigate or show success message
     });
   }

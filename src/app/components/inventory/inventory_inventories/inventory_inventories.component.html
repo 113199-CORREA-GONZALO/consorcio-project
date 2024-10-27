@@ -30,6 +30,17 @@
           <td>{{ getDisplayUnit(inventory.article.measurementUnit) }}</td>
           <td class="text-center">{{ inventory.minStock || "-" }}</td>
           <td [ngClass]="{ 'text-center': !inventory.location }">{{ inventory.location || "-" }}</td>
+          <td>
+            @if (inventory.status.toString() == "ACTIVE") {
+              <p class="mb-0">
+                <i class="bi bi-check2-circle text-success" style="font-size: 1.5rem;"></i>
+              </p>
+            } @else {
+              <p class="mb-0">
+                <i class="bi bi-x-circle text-danger" style="font-size: 1.5rem;"></i>
+              </p>
+            }
+          </td>
           <!--Clases de activo o inactivo-->
           <td>
             <div class="btn-group" role="group">
@@ -45,27 +56,30 @@
                      Ver Movimientos
                   </a>
                 </li>
-                <!-- Opción para realizar transacción -->
-                <li>
-                  <a class="dropdown-item" (click)="onNewTransaction(inventory.id)" title="Realizar Movimiento">
-                    <!-- <i class="bi bi-plus-circle"></i> -->
-                    Realizar Movimiento
-                  </a>
-                </li>
-                <!-- Opción para editar el inventario -->
-                <li>
-                  <a class="dropdown-item" (click)="onInventoryUpdate(inventory)" title="Editar">
-                    <!-- <i class="bi bi-pencil"></i> -->
-                     Editar
-                  </a>
-                </li>
-                <!-- Opción para eliminar el inventario -->
-                <li>
-                  <a class="dropdown-item text-danger" (click)="deleteInventory(inventory.id!)" title="Eliminar">
-                    <!-- <i class="bi bi-trash"></i> -->
-                     Eliminar
-                  </a>
-                </li>
+
+                @if (inventory.status.toString() == "ACTIVE") {
+                  <!-- Opción para realizar transacción -->
+                  <li>
+                    <a class="dropdown-item" (click)="onNewTransaction(inventory.id)" title="Realizar Movimiento">
+                      <!-- <i class="bi bi-plus-circle"></i> -->
+                      Realizar Movimiento
+                    </a>
+                  </li>
+                  <!-- Opción para editar el inventario -->
+                  <li>
+                    <a class="dropdown-item" (click)="onInventoryUpdate(inventory)" title="Editar">
+                      <!-- <i class="bi bi-pencil"></i> -->
+                      Editar
+                    </a>
+                  </li>
+                  <!-- Opción para eliminar el inventario -->
+                  <li>
+                    <a class="dropdown-item text-danger" (click)="deleteInventory(inventory.id!)" title="Eliminar">
+                      <!-- <i class="bi bi-trash"></i> -->
+                      Eliminar
+                    </a>
+                  </li>
+                }
               </ul>
             </div>
           </td>

@@ -33,6 +33,7 @@ export class EmployeeListComponent implements OnInit{
       employeeType: EmployeeType.ADMIN,
       documentType: DocumentType.DNI,
       docNumber: '123456789',
+      //hiringDate: new Date().toISOString().split('T')[0],
       hiringDate: new Date(),
       salary: 0,
       state: StatusType.ACTIVE,
@@ -119,8 +120,8 @@ export class EmployeeListComponent implements OnInit{
     }
   }*/
 
-  editEmployee(id: number): void {
-    this.router.navigate(['employees/form', id]);
+  editEmployee(employee: Employee): void {
+    this.router.navigate(['employees/form', employee.id]);
   }
 
   @Output() showEditModal: EventEmitter<boolean> = new EventEmitter<boolean>();
