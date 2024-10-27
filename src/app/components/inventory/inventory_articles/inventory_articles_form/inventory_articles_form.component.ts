@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../../services/inventory.service';
 import { Article, ArticleCategory, ArticleType, ArticleCondition, MeasurementUnit,Status } from '../../../../models/article.model';
 import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Inventory } from '../../../../models/inventory.model';
 
 @Component({
@@ -16,10 +16,15 @@ import { Inventory } from '../../../../models/inventory.model';
   styleUrls: ['./inventory_articles_form.component.css']
 })
 export class ArticleFormComponent implements OnInit {
+
+  return() {
+    this.router.navigate(['inventories']);
+  }
   @Output() showRegisterForm = new EventEmitter<void>();
   isModalOpen : boolean = true;
   private mapperService = inject(MapperService);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   articleForm: FormGroup;
   articles: Article[] = [];

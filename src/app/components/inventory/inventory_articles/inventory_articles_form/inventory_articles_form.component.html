@@ -95,17 +95,9 @@
       </div>
     </div>
 
-    <!-- Botones -->
-    <div class="row text-end">
-      <div class="col-md-12">
-        <button type="submit" class="btn btn-primary mt-3">
-          {{ isEditing ? 'Modificar' : 'Registrar' }}
-        </button>
-        <button type="button" class="btn btn-secondary mt-3 ml-2" (click)="resetForm()" *ngIf="isEditing">
-          Cancelar
-        </button>
-      </div>
-    </div>
-
+    <div class="d-flex justify-content-between">
+      <button type="button" class="btn btn-secondary" (click)="return()">Cancelar</button>
+      <button type="submit" class="btn btn-primary">Guardar</button>
+  </div>
   </form>
 </div>
