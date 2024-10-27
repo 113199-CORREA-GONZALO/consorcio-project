@@ -13,6 +13,7 @@ import autoTable from 'jspdf-autotable';
 import { auto } from '@popperjs/core';
 import { EmployeeEditModalComponent } from "../employee-edit-modal/employee-edit-modal.component";
 import { FormsModule } from '@angular/forms';
+import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -37,20 +38,25 @@ export class EmployeeListComponent implements OnInit{
     
   ];
   currentPage: number = 1;
-  totalPages: number = 1;
+  totalPages: number = 0;
   itemsPerPage: number = 10;
+  totalElements: number = 0;
+  selectedStatus?: StatusType;
   private employeeService = inject(EmployeesService);
   private router = inject(Router);
-
+  private mapperService = inject(MapperService);
+  
   ngOnInit(): void {
-      this.getEmployees();
+    this.totalPages=1;
+    this.loadEmployees();
   }
   getEmployees() {
     this.employeeService.getEmployees().subscribe((employeeList) => {
       this.employeeList = employeeList;
     });
   }
-  goToNextPage() {
+  
+  /*goToNextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
       // Actualizar lista de empleados
@@ -62,7 +68,8 @@ export class EmployeeListComponent implements OnInit{
       this.currentPage--;
       // Actualizar lista de empleados
     }
-  }
+  }*/
+
   editEmployee(id: number): void {
     this.router.navigate(['employees/form', id]);
   }
@@ -169,5 +176,48 @@ exportToExcel() {
   onModalClose() {
     this.showEditForm = false;
     this.getEmployees();
+  }
+
+
+  loadEmployees() {
+    this.employeeService
+      .getEmployeesPageable(this.currentPage - 1, this.itemsPerPage, this.selectedStatus)
+      .subscribe({
+        next: (response) => {
+          response = this.mapperService.toCamelCase(response);
+          this.employeeList = this.mapperService.toCamelCase(response.content);
+          console.log(response)
+          this.totalPages = this.mapperService.toCamelCase(response.totalPages);
+          this.totalElements = this.mapperService.toCamelCase(response.totalElements);
+        },
+        error: (error) => {
+          console.error('Error loading employees:', error);
+        }
+      });
+  }
+
+  goToNextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadEmployees();
+    }
+  }
+
+  goToPreviousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadEmployees();
+    }
+  }
+
+  onItemsPerPageChange() {
+    this.currentPage = 1; // Reset to first page when changing items per page
+    this.loadEmployees();
+  }
+
+  filterByStatus(status?: StatusType) {
+    this.selectedStatus = status;
+    this.currentPage = 1; // Reset to first page when filtering
+    this.loadEmployees();
   }
 }

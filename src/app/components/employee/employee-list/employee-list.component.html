@@ -87,7 +87,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (employee of employeeList; track employee.id) {
+              @for (employee of employeeList; track $index) {
                 <tr>
                   <td class="px-4 py-3">{{ employee.lastName }}, {{ employee.firstName }}</td>
                   <td class="px-4 py-3">{{ employee.employeeType }}</td>

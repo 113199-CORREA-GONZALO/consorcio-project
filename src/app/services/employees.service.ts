@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Employee, EmployeePayment } from '../models/employee.model';
+import { Employee, EmployeePayment, StatusType } from '../models/employee.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,21 @@ export class EmployeesService {
   private http = inject(HttpClient);
   private selectedEmployee = new BehaviorSubject<Employee | null>(null);
   
+  getEmployeesPageable(
+    page: number = 0,
+    size: number = 10,
+    type?: StatusType
+  ): Observable<PageResponse<Employee>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    
+    if (type) {
+      params = params.set('type', type);
+    }
+    return this.http.get<PageResponse<Employee>>(`${this.apiUrl}/pageable`, { params });
+  }
+
   // Obtener empleados
   getEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.apiUrl);
@@ -54,4 +69,12 @@ export class EmployeesService {
     return this.http.get<Employee>(this.apiUrl+"/"+id);
   }
 
+}
+
+interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }
