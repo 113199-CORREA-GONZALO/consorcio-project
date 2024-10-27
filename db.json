@@ -161,82 +161,31 @@
   ],
   "suppliers": [
     {
-      "name": "Santoro Killer 3000",
-      "cuil": "204121231",
-      "service": "xSecurityx",
-      "phoneNumber": "3518146064",
-      "addressId": 1,
-      "details": "xDxxxxxx",
-      "id": "1"
+      "name": "Agus la loquitaNieto",
+      "cuil": "13-696969-13",
+      "service": "Dios Destructor de Choripan",
+      "contact": "3113-696969-3113",
+      "address": "A la vuelta de la esquina bbe",
+      "details": "Extremadamente bueno en todo lo que fucking hace",
+      "id": 1
     },
     {
-      "name": "Ginino7",
+      "name": "SOLER GINO LEONEL",
       "cuil": "2042217681",
       "service": "Tecnico",
-      "phoneNumber": "351221231",
-      "addressId": 2,
-      "details": "123123123qseqsdqasd",
-      "id": "4"
+      "contact": "123123",
+      "address": "pascual de rogatis",
+      "details": "asdasda123123123",
+      "id": 2
     },
     {
-      "name": "Santoro",
-      "cuil": "202782177721",
-      "service": "Security",
-      "phoneNumber": "35112999",
-      "addressId": 1,
-      "details": "grita",
-      "id": "5"
-    },
-    {
-      "name": "asdasdasd",
-      "cuil": "12123123",
-      "service": "asdasdad",
-      "phoneNumber": "351985421",
-      "addressId": 2,
+      "name": "SOLER GINO LEONEL",
+      "cuil": "2042217681",
+      "service": "Tecnicoeeee",
+      "contact": "32141231231ff",
+      "address": "pascual de rogatis 3734 Barrio Los Platanos",
       "details": "asdasdasd",
-      "id": "6"
-    },
-    {
-      "name": "Agus Pussy Destroyalo papa",
-      "cuil": "31-69696969-69",
-      "service": "Pussy",
-      "phoneNumber": "3517154387",
-      "addressId": 2,
-      "details": "Se deja romper todo por un choripan a la vuelta de la UTN\n🙊🍩🍆💦",
-      "id": "69"
-    },
-    {
-      "id": "82",
-      "name": "prueba",
-      "cuil": "31-69696969-69",
-      "phoneNumber": "3517896064",
-      "service": "xSecurityx",
-      "addressId": 2,
-      "details": "xdd"
-    }
-  ],
-  "addresses": [
-    {
-      "id": "1",
-      "street_address": "Avenida Siempre Viva",
-      "number": 742,
-      "floor": 0,
-      "apartment": "A",
-      "city": "Springfield",
-      "province": "BUENOS_AIRES",
-      "country": "ARGENTINA",
-      "postal_code": 1234
-    },
-    {
-      "id": "2",
-      "street_address": "Calle Falsa",
-      "number": 123,
-      "floor": 2,
-      "apartment": "B",
-      "city": "Quilmes",
-      "province": "BUENOS_AIRES",
-      "country": "ARGENTINA",
-      "postal_code": 5678
+      "id": 3
     }
   ]
 }

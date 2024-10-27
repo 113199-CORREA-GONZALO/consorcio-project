@@ -110,14 +110,14 @@
           <!-- FormGroup con los selects y botones -->
           <form [formGroup]="filterForm" class="row g-3">
             <!-- Primera fila del form -->
-            <div class="col-md-3">
+            <!-- <div class="col-md-3">
               <select class="form-select" formControlName="addressId">
                 <option value="">Todas las direcciones</option>
                 <option *ngFor="let address of addresses" [value]="address.id">
                   {{address.street_address}}, {{address.city}}
                 </option>
               </select>
-            </div>
+            </div> -->
             <div class="col-md-3">
               <select class="form-select" formControlName="enabled">
                 <option value="">Todos los Estados</option>
@@ -167,23 +167,22 @@
         <table class="table table-hover border rounded-lg overflow-hidden">
           <thead class="bg-dark text-white">
             <tr>
-              <th class="py-3 px-4 font-semibold" (click)="sortProviders('name')">
+              <th class="py-3 px-6 font-semibold" (click)="sortProviders('name')">
                 Nombre <span [ngClass]="{'asc': sortColumn === 'name' && sortDirection === 'asc', 'desc': sortColumn === 'name' && sortDirection === 'desc'}">⇅</span>
               </th>
-              <th class="py-3 px-4 font-semibold" (click)="sortProviders('cuil')">
+              <th class="py-3 px-6 font-semibold" (click)="sortProviders('cuil')">
                 CUIL <span [ngClass]="{'asc': sortColumn === 'cuil' && sortDirection === 'asc', 'desc': sortColumn === 'cuil' && sortDirection === 'desc'}">⇅</span>
               </th>
-              <th class="py-3 px-4 font-semibold" (click)="sortProviders('service')">
+              <th class="py-3 px-6 font-semibold" (click)="sortProviders('service')">
                 Servicio <span [ngClass]="{'asc': sortColumn === 'service' && sortDirection === 'asc', 'desc': sortColumn === 'service' && sortDirection === 'desc'}">⇅</span>
               </th>
-              <th class="py-3 px-4 font-semibold" (click)="sortProviders('addressId')">
-                Dirección <span [ngClass]="{'asc': sortColumn === 'addressId' && sortDirection === 'asc', 'desc': sortColumn === 'addressId' && sortDirection === 'desc'}">⇅</span>
+              <th class="py-3 px-6 font-semibold" (click)="sortProviders('contact')">
+                Contacto <span [ngClass]="{'asc': sortColumn === 'contact' && sortDirection === 'asc', 'desc': sortColumn === 'contact' && sortDirection === 'desc'}">⇅</span>
               </th>
-              
-                <th class="py-3 px-4 font-semibold" (click)="sortProviders('phoneNumber')">
-                Numero de telefono <span [ngClass]="{'asc': sortColumn === 'phoneNumber' && sortDirection === 'asc', 'desc': sortColumn === 'phoneNumber' && sortDirection === 'desc'}">⇅</span>
+              <th class="py-3 px-6 font-semibold" (click)="sortProviders('address')">
+                Dirección <span [ngClass]="{'asc': sortColumn === 'address' && sortDirection === 'asc', 'desc': sortColumn === 'address' && sortDirection === 'desc'}">⇅</span>
               </th>
-              <th class="py-3 px-4 font-semibold" (click)="sortProviders('enabled')">
+              <th class="py-3 px-6 font-semibold" (click)="sortProviders('enabled')">
                 Estado <span [ngClass]="{'asc': sortColumn === 'enabled' && sortDirection === 'asc', 'desc': sortColumn === 'enabled' && sortDirection === 'desc'}">⇅</span>
               </th>
               
@@ -195,8 +194,8 @@
               <td class="py-3 px-4">{{ item.name }}</td>
               <td class="py-3 px-4">{{ item.cuil }}</td>
               <td class="py-3 px-4">{{ item.service }}</td>
-              <td class="py-3 px-4">{{ getAddressById(item.addressId) }}</td>
-              <td class="py-3 px-4">{{ item.phoneNumber}}</td>
+              <td class="py-3 px-4">{{ item.contact }}</td>
+              <td class="py-3 px-4">{{ item.address }}</td>
               <td class="py-3 px-4">{{ item.enabled ? 'Activo' : 'Inactivo' }}</td>
               <td class="py-3 px-4">
                 <button *ngIf="item.id !== undefined" 
