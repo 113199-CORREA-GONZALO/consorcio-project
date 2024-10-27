@@ -28,15 +28,20 @@ export class ProviderListComponent implements OnInit{
   providerList: Supplier[] = [];
   filteredProviders: Supplier[] = []; // Proveedores filtrados
   isLoading = false;
+  searchFilter = new FormControl('');
+  searchFilterAll = new FormControl('');
+
+
 
   sortedProviderList: Supplier[] = [];
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  filterForm: FormGroup;
+
   serviceTypes = Object.values(ServiceType);
   statusTypes = Object.values(StatusType);
 
+  filterForm: FormGroup;
   nameFilter = new FormControl('');
   cuilFilter = new FormControl('');
   serviceFilter = new FormControl('');
@@ -60,7 +65,19 @@ export class ProviderListComponent implements OnInit{
 
   ngOnInit(): void {
     this.getProviders();
-    this.setupFilterSubscriptions();
+    this.setupFilterSubscriptions();  
+  }
+  
+
+  openModalFilter(): void {
+    this.showModalFilter = true;
+  }
+
+  closeModalFilter(applyFilters: boolean): void {
+    this.showModalFilter = false;
+    if (applyFilters) {
+      this.applyFilters();
+    }
   }
   openModal(){
 
@@ -131,7 +148,7 @@ export class ProviderListComponent implements OnInit{
         this.getProviders();
       }
       this.providerList = this.providerList.filter(
-        x => x.phoneNumber.toLowerCase().includes(data!.toLowerCase())
+        x => x.contact.toLowerCase().includes(data!.toLowerCase())
       )
     })
     this.serviceFilter.valueChanges.subscribe( data => {
@@ -140,6 +157,18 @@ export class ProviderListComponent implements OnInit{
       }
       this.providerList = this.providerList.filter(
         x => x.service.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+
+    this.searchFilterAll.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getProviders();
+      }
+      this.providerList = this.providerList.filter(
+        x => x.name.toLowerCase().includes(data!.toLowerCase())||
+         x.cuil.toLowerCase().includes(data!.toLowerCase())||
+         x.contact.toLowerCase().includes(data!.toLowerCase())||
+         x.service.toLowerCase().includes(data!.toLowerCase())
       )
     })
     
