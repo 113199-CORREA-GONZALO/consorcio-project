@@ -1,7 +1,7 @@
 {
   "transactions": [
     {
-      "id": "1",
+      "id": 1,
       "inventory_id": 1,
       "quantity": 10,
       "price": 150.5,
@@ -13,14 +13,14 @@
       "price": 1,
       "transaction_date": "2024-10-14T01:42:36.748Z",
       "transaction_type": "ENTRY",
-      "id": "2"
+      "id": 2
     },
     {
       "quantity": 1,
       "price": 1,
       "transaction_date": "2024-10-14T01:44:46.615Z",
       "transaction_type": "ENTRY",
-      "id": "3",
+      "id": 3,
       "transaction_status": "Inactive"
     },
     {
@@ -28,7 +28,7 @@
       "quantity": 1,
       "price": 1,
       "transaction_date": "2024-10-14T01:51:43.016Z",
-      "id": "4",
+      "id": 4,
       "transaction_status": "Inactive"
     },
     {
@@ -37,7 +37,7 @@
       "price": 0,
       "transaction_type": "ENTRY",
       "transaction_date": "2024-10-14T16:20:50.254Z",
-      "id": "15",
+      "id": 15,
       "transaction_status": "Inactive"
     }
   ],
@@ -52,7 +52,7 @@
       "category": "DURABLES",
       "measurement_unit": "UNITS",
       "article_status": "ACTIVE",
-      "id": "1"
+      "id": 1
     },
     {
       "identifier": "asd123",
@@ -64,7 +64,7 @@
       "category": "DURABLES",
       "measurement_unit": "UNITS",
       "article_status": "ACTIVE",
-      "id": "2"
+      "id": 2
     },
     {
       "identifier": "696969",
@@ -76,7 +76,7 @@
       "category": "DURABLES",
       "measurement_unit": "UNITS",
       "article_status": "ACTIVE",
-      "id": "3"
+      "id": 3
     }
   ],
   "inventories": [
