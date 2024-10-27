@@ -131,7 +131,7 @@ export class ProviderListComponent implements OnInit{
         this.getProviders();
       }
       this.providerList = this.providerList.filter(
-        x => x.phoneNumber.toLowerCase().includes(data!.toLowerCase())
+        x => x.contact.toLowerCase().includes(data!.toLowerCase())
       )
     })
     this.serviceFilter.valueChanges.subscribe( data => {

@@ -50,3 +50,14 @@ export interface EmployeePayment {
   paymentAmount: number; // Monto de pago
   paymentDetail: string; // Detalle del pago
 }
+export interface EmployeeFilter {
+  firstName?: string;
+  lastName?: string;
+  employeeType?: EmployeeType;
+  docType?: DocumentType;
+  docNumber?: string;
+  hiringDate?: Date;
+  salary?: number;
+  state?: StatusType;
+  enabled?: boolean;
+}

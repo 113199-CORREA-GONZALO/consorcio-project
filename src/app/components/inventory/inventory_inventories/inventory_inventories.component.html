@@ -30,6 +30,7 @@
           <td>{{ getDisplayUnit(inventory.article.measurementUnit) }}</td>
           <td class="text-center">{{ inventory.minStock || "-" }}</td>
           <td [ngClass]="{ 'text-center': !inventory.location }">{{ inventory.location || "-" }}</td>
+          <!--Clases de activo o inactivo-->
           <td>
             @if (inventory.status.toString() == "ACTIVE") {
               <p class="mb-0">

@@ -53,7 +53,12 @@
               <div class="d-flex justify-content-between align-items-center">
                   <label for="docNumber" class="form-label">Documento:</label>
                   <input type="text" formControlName="docNumber" class="form-control" id="docNumber" placeholder="Ingrese el número de documento">
-              </div>
+                  @if (employeeForm.get('docNumber')) {
+                  <div class="text-danger">
+                    Este número de documento ya está registrado.
+                  </div>
+                }
+                </div>
           </div>
       </div>
       <div class="row mb-4">
