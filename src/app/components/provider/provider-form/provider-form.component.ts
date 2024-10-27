@@ -6,7 +6,7 @@ import { ProvidersService } from '../../../services/providers.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Address, Supplier } from '../../../models/supplier.model';
+import {  Supplier } from '../../../models/supplier.model';
 
 @Component({
   selector: 'app-provider-form',
@@ -21,8 +21,6 @@ export class ProviderFormComponent implements OnInit{
   statusTypes = Object.values(StatusType);
   isEditMode = false;
   currentProviderId: number | null = null;
-  addresses: Address[] = []; // Cargaremos las direcciones desde db.json
-
 
   private providerService = inject(ProvidersService);
   private fb = inject(FormBuilder);
@@ -34,15 +32,13 @@ export class ProviderFormComponent implements OnInit{
       name: ['', Validators.required],
       cuil: ['', Validators.required],
       service: ['', Validators.required],
-      addressId: [null, Validators.required],
-      details: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.minLength(10)]],
-      // state: ['', Validators.required],
+      contact: ['', Validators.required],
+      address: ['', Validators.required],
+      details: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
-    this.loadAddresses(); // Cargar direcciones al iniciar el componente
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -56,7 +52,11 @@ export class ProviderFormComponent implements OnInit{
   onSubmit(): void {
     if (this.providerForm.valid) {
       const formData = { ...this.providerForm.value };
-      formData.addressId = Number(formData.addressId);
+      
+      // Remover el id si existe, ya que no se debe enviar en el POST
+      if (!this.isEditMode) {
+        delete formData.id;
+      }
       
       if (this.isEditMode && this.currentProviderId !== null) {
         formData.id = this.currentProviderId; // Asignar el ID actual al proveedor en modo edición
@@ -66,6 +66,7 @@ export class ProviderFormComponent implements OnInit{
       }
     }
   }
+  
   
   
 
@@ -101,12 +102,6 @@ export class ProviderFormComponent implements OnInit{
     this.isEditMode = false;
     this.currentProviderId = null;
     this.router.navigate(['/providers/list']);
-  }
-  loadAddresses(): void {
-    // Simulamos la carga de direcciones desde el db.json
-    this.providerService.getAddresses().subscribe((addresses: Address[]) => {
-      this.addresses = addresses;
-    });
   }
 
   loadProviderData(id: number): void {
