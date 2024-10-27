@@ -50,12 +50,66 @@
         Limpiar
       </button>
       <button class="btn btn-outline-info col-lg-2 ">
+
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
           <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/>
         </svg>
         Filtros
       </button>
     
+      <!-- Modal -->
+      <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="filterModalLabel">Filtros de Búsqueda</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="filterForm" class="row g-3">
+                <div class="col-md-3">
+                  <input type="text" class="form-control" placeholder="Nombre" formControlName="firstName">
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control" placeholder="Apellido" formControlName="lastName">
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select" formControlName="employeeType">
+                    <option value="">Tipo de Empleado</option>
+                    <option *ngFor="let type of employeeTypes" [value]="type">{{type}}</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <select class="form-select" formControlName="docType">
+                    <option value="">Tipo de Documento</option>
+                    <option *ngFor="let type of documentTypes" [value]="type">{{type}}</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control" placeholder="Número de Documento" formControlName="docNumber">
+                </div>
+                <div class="col-md-3">
+                  <input type="date" class="form-control" formControlName="hiringDate">
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select" formControlName="state">
+                    <option value="">Estado</option>
+                    <option *ngFor="let status of statusTypes" [value]="status">{{status}}</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <input type="number" class="form-control" placeholder="Salario" formControlName="salary">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" (click)="applyFilter()">Aplicar Filtros</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>      
+      </div>
+        
       <div class="col-lg-4"></div> <!-- Espacio central para separación -->
     
       <button class="btn btn-outline-primary col-lg-2 mx-1">
@@ -160,7 +214,8 @@
           </div>
         </div>
       </div>
-    </div>
+
+
 
 
 

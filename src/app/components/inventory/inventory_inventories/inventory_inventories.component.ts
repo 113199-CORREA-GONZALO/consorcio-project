@@ -35,9 +35,10 @@ export class InventoryTableComponent implements OnInit {
   showTransactions: boolean = false;
   showInventoryUpdate: boolean = false;
 
-  currentPage: number = 1;
-  totalPages: number = 1;
+  currentPage: number = 0;
   itemsPerPage: number = 10;
+  totalPages: number = 1;
+  totalElements: number = 0;
 
   inventoryForm: FormGroup;
   inventories: Inventory[] = [
@@ -73,7 +74,7 @@ export class InventoryTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getInventories();
+    this.loadInventories();
   }
 
   getInventories(): void {
@@ -227,17 +228,51 @@ onInventoryUpdateClose() {
   this.selectedInventory = null;
   this.getInventories();
 }
-goToNextPage() {
-  if (this.currentPage < this.totalPages) {
+
+
+private watchPageSizeChanges(): void {
+  this.inventoryForm.get('itemsPerPage')?.valueChanges.subscribe(() => {
+    this.currentPage = 0;
+    this.loadInventories();
+  });
+}
+
+loadInventories(): void {
+  this.inventoryService.getInventoriesPageable(this.currentPage, this.itemsPerPage)
+    .subscribe({
+      next: (page) => {
+        console.log(page)
+        page = this.mapperService.toCamelCase(page);
+        console.log(page);
+        this.inventories = this.mapperService.toCamelCase(page.content) 
+        this.totalPages = page.totalPages;
+        this.totalElements = page.totalElements;
+        this.currentPage = page.number;
+      },
+      error: (error) => {
+        console.error('Error loading inventories:', error);
+        // Handle error appropriately
+      }
+    });
+}
+
+goToNextPage(): void {
+  if (this.currentPage < this.totalPages - 1) {
     this.currentPage++;
-    // Actualizar lista de empleados
+    this.loadInventories();
   }
 }
 
-goToPreviousPage() {
-  if (this.currentPage > 1) {
+goToPreviousPage(): void {
+  if (this.currentPage > 0) {
     this.currentPage--;
-    // Actualizar lista de empleados
+    this.loadInventories();
   }
+}
+
+onPageSizeChange(event: any): void {
+  this.itemsPerPage = event.target.value;
+  this.currentPage = 0; // Reset to first page
+  this.loadInventories();
 }
 }

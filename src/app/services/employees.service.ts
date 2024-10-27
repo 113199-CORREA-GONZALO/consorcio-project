@@ -1,7 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Employee, EmployeePayment, StatusType } from '../models/employee.model';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { Employee, EmployeeFilter, EmployeePayment, StatusType } from '../models/employee.model';
+import { MapperService } from './MapperCamelToSnake/mapper.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,9 @@ export class EmployeesService {
   private apiUrl = 'http://localhost:8063/employees'; // URL de la API para empleados
   private http = inject(HttpClient);
   private selectedEmployee = new BehaviorSubject<Employee | null>(null);
+  private mapperService = inject(MapperService);
   
+
   getEmployeesPageable(
     page: number = 0,
     size: number = 10,
@@ -67,6 +71,19 @@ export class EmployeesService {
 
   getEmployee(id:number):Observable<Employee>{
     return this.http.get<Employee>(this.apiUrl+"/"+id);
+  }
+  checkIfDocumentExists(docNumber: string): Observable<boolean> {
+    const filter: { docNumber: string } = { docNumber }; // Crear el filtro necesario
+    return this.http.post<Employee[]>(`${this.apiUrl}/search`, filter).pipe(
+      map(employees => employees.length > 0) // Verificar si hay empleados
+    );
+  }
+
+  searchEmployees(filter: EmployeeFilter): Observable<Employee[]> {
+    const snakeCaseFilter = this.mapperService.toSnakeCase(filter);
+    return this.http.post<any[]>(`${this.apiUrl}/search`, snakeCaseFilter).pipe(
+      map(employees => this.mapperService.toCamelCase(employees))
+    );
   }
 
 }

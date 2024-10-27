@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EmployeeType } from '../../../models/employee.model';
 import { DocumentType } from '../../../models/employee.model';
 import { StatusType } from '../../../models/employee.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeesService } from '../../../services/employees.service';
 import { Employee } from '../../../models/employee.model';
+import { debounceTime, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-employee-form',
@@ -109,4 +110,14 @@ export class EmployeeFormComponent implements OnInit {
   return() {
     this.router.navigate(['employees/list']);
   }
+
+  documentExistsValidator(control: AbstractControl) {
+    return control.valueChanges.pipe(
+      debounceTime(300), // para evitar múltiples llamadas al backend
+      switchMap((documentNumber) => 
+        this.employeeService.checkIfDocumentExists(documentNumber)
+      ),
+      map((exists: boolean) => (exists ? { documentExists: true } : null))
+    );
+}
 }
