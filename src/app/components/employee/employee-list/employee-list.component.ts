@@ -283,7 +283,7 @@ exportToExcel() {
       this.applyFilter();
     });
   }
-  applyFilter(): void {
+  /*applyFilter(): void {
     const filter: EmployeeFilter = Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
       if (value !== '' && value !== null && value !== undefined) {
         (acc as any)[key] = value;
@@ -302,8 +302,8 @@ exportToExcel() {
         Swal.fire('Error', 'Error al filtrar empleados', 'error');
       }
     );
-  }
-/*
+  }*/
+
   applyFilter(): void {
     // Crear objeto de filtro solo con los campos que tienen valor
     const filter: EmployeeFilter = Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
@@ -323,7 +323,7 @@ exportToExcel() {
         // Aquí podrías mostrar un mensaje de error al usuario
       }
     );
-  }*/
+  }
  
     // Funciones para filtrar por estado
     filterActiveEmployees(): void {
@@ -435,6 +435,27 @@ exportToExcel() {
         (error) => {
           console.error('Error filtering employees:', error);
           Swal.fire('Error', 'Error filtering employees', 'error');
+        }
+      );
+    }
+
+    applyFilterss(): void {
+      // Crear objeto de filtro solo con los campos que tienen valor
+      const filter: EmployeeFilter = Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
+        if (value !== '' && value !== null && value !== undefined) {
+          (acc as any)[key] = value;
+        }
+        return acc;
+      }, {} as EmployeeFilter);
+  
+      // Llamar al servicio con los filtros
+      this.employeeService.searchEmployees(filter).subscribe(
+        (employees) => {
+          this.employeeList = employees;
+        },
+        (error) => {
+          console.error('Error al filtrar empleados:', error);
+          // Aquí podrías mostrar un mensaje de error al usuario
         }
       );
     }
