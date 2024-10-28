@@ -1,5 +1,5 @@
 import { ArticleInventoryPost, ArticlePost } from '../../../../models/article.model';
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../../services/inventory.service';
@@ -7,6 +7,8 @@ import { Article, ArticleCategory, ArticleType, ArticleCondition, MeasurementUni
 import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Inventory } from '../../../../models/inventory.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-article',
@@ -25,6 +27,9 @@ export class ArticleFormComponent implements OnInit {
   private mapperService = inject(MapperService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private modalService = inject(NgbModal);
+
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   articleForm: FormGroup;
   articles: Article[] = [];
@@ -63,6 +68,10 @@ export class ArticleFormComponent implements OnInit {
     });
     this.articleForm.get('articleType')?.valueChanges.subscribe(this.handleArticleTypeChange.bind(this));
   }
+
+  showInfo(): void {
+    this.modalService.open(this.infoModal, { centered: true });
+  }
 
   getById(id: number) {
     this.inventoryService.getArticleInventory(id).subscribe((data) => {
@@ -142,7 +151,7 @@ export class ArticleFormComponent implements OnInit {
           location: articleInventory.location,
         }
         const inventoryUpdateFormatted = this.mapperService.toSnakeCase(inventoryUpdate);
-        this.inventoryService.updateInventory(this.currentArticleId, inventoryUpdateFormatted).subscribe((data)=> console.log(data));
+        //this.inventoryService.updateInventory(this.currentArticleId).subscribe((data)=> console.log(data));
       }
     }
   }

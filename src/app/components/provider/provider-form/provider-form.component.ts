@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ServiceType } from '../../../models/enums/service-tpye.enum';
 import { StatusType } from '../../../models/inventory.model';
@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import {  Supplier } from '../../../models/supplier.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-provider-form',
@@ -26,6 +27,7 @@ export class ProviderFormComponent implements OnInit{
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private modalService = inject(NgbModal);
 
   constructor() {
     this.providerForm = this.fb.group({
@@ -67,8 +69,7 @@ export class ProviderFormComponent implements OnInit{
     }
   }
   
-  
-  
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   addProvider(providerData: Supplier): void {
     this.providerService.addProvider(providerData).subscribe(() => {
@@ -83,6 +84,10 @@ export class ProviderFormComponent implements OnInit{
       this.router.navigate(['/providers/list']);
     });
   }
+
+  showInfo(): void {
+    this.modalService.open(this.infoModal, { centered: true });
+  }
   
   updateProvider(providerData: Supplier): void {
     this.providerService.updateProvider(providerData).subscribe(() => {

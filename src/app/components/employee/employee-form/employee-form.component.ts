@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EmployeeType } from '../../../models/employee.model';
 import { DocumentType } from '../../../models/employee.model';
@@ -9,12 +9,14 @@ import { Employee } from '../../../models/employee.model';
 import { debounceTime, map, switchMap } from 'rxjs';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
 import { ToastService } from 'ngx-dabd-grupo01';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-employee-form',
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './employee-form.component.html',
+  styleUrls: ['./employee-form.component.scss'],
 })
 export class EmployeeFormComponent implements OnInit {
   employeeForm = new FormGroup({
@@ -31,14 +33,18 @@ export class EmployeeFormComponent implements OnInit {
 
   constructor(private toastService: ToastService) {}
 
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
+
   private readonly employeeService = inject(EmployeesService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly mapperService = inject(MapperService);
+  private modalService = inject(NgbModal);
   employeeTypes= Object.values(EmployeeType);
   documentTypes= Object.values(DocumentType);
   private currentId = 0;
   isEdit:boolean=false;
+
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -103,6 +109,10 @@ export class EmployeeFormComponent implements OnInit {
       state,
     } as Employee;
   }
+
+  showInfo(): void {
+    this.modalService.open(this.infoModal, { centered: true });
+  }
 
   createEmployee(employee: Employee) {
     this.employeeService.addEmployee(employee).subscribe({

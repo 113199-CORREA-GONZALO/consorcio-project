@@ -8,13 +8,13 @@ import { Inventory, Transaction, TransactionPost } from '../models/inventory.mod
   providedIn: 'root'
 })
 export class InventoryService {
-  // private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
-  // private apiInventoriesUrl = 'http://localhost:8080/inventories'; // URL de la API para los inventarios
-  // private apiTransactionsUrl = 'http://localhost:8080/transactions'; // URL de la API para las transacciones
+   private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
+   private apiInventoriesUrl = 'http://localhost:8080/inventories'; // URL de la API para los inventarios
+   private apiTransactionsUrl = 'http://localhost:8080/transactions'; // URL de la API para las transacciones
 
-  private apiArticlesUrl = 'http://localhost:3000/articles'; // URL de la API para los ítems DEL BACK
-  private apiInventoriesUrl = 'http://localhost:3000/inventories'; // URL de la API para los inventarios
-  private apiTransactionsUrl = 'http://localhost:3000/transactions'; // URL de la API para las transacciones
+  //private apiArticlesUrl = 'http://localhost:3000/articles'; // URL de la API para los ítems DEL BACK
+  //private apiInventoriesUrl = 'http://localhost:3000/inventories'; // URL de la API para los inventarios
+ // private apiTransactionsUrl = 'http://localhost:3000/transactions'; // URL de la API para las transacciones
 
   constructor(private http: HttpClient) {}
 
@@ -79,6 +79,9 @@ export class InventoryService {
   updateInventory(id: number, updatedInventory: Partial<Inventory>): Observable<Inventory> {
     return this.http.put<Inventory>(`${this.apiInventoriesUrl}/${id}`, updatedInventory);
   }
+  //  updateInventory(inventory: Inventory): Observable<Inventory> {
+   //   return this.http.put<Inventory>(`${this.apiInventoriesUrl}/${inventory.id}`, inventory);
+   // }
 
   deleteInventory(inventoryId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiInventoriesUrl}/${inventoryId}`);
