@@ -8,7 +8,7 @@ import { Supplier } from '../models/supplier.model';
 })
 export class ProvidersService {
   //private apiUrl = 'http://localhost:3000/suppliers';
-  private apiUrl = 'http://localhost:8080/suppliers';
+  private apiUrl = 'http://localhost:8013/suppliers';
 
   constructor(private http: HttpClient) {}
 

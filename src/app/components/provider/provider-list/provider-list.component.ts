@@ -78,7 +78,7 @@ export class ProviderListComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.mockGetProviders(); //Para testear si funcionan
+    // this.mockGetProviders(); //Para testear si funcionan
     this.getProviders(); //Metodo real
     this.setupFilterSubscriptions();  
   }
