@@ -8,11 +8,16 @@ import { Inventory, Transaction, TransactionPost } from '../models/inventory.mod
   providedIn: 'root'
 })
 export class InventoryService {
-  private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
-  private apiInventoriesUrl = 'http://localhost:8080/inventories'; // URL de la API para los inventarios
-  private apiTransactionsUrl = 'http://localhost:8080/transactions'; // URL de la API para las transacciones
+  // private apiArticlesUrl = 'http://localhost:8080/articles'; // URL de la API para los ítems DEL BACK
+  // private apiInventoriesUrl = 'http://localhost:8080/inventories'; // URL de la API para los inventarios
+  // private apiTransactionsUrl = 'http://localhost:8080/transactions'; // URL de la API para las transacciones
+
+  private apiArticlesUrl = 'http://localhost:3000/articles'; // URL de la API para los ítems DEL BACK
+  private apiInventoriesUrl = 'http://localhost:3000/inventories'; // URL de la API para los inventarios
+  private apiTransactionsUrl = 'http://localhost:3000/transactions'; // URL de la API para las transacciones
 
   constructor(private http: HttpClient) {}
+
 
   // CRUD para Ítems
   getArticles(): Observable<Article[]> {
@@ -37,10 +42,31 @@ export class InventoryService {
   }
 
   // CRUD para Inventarios
-  getInventories(): Observable<Inventory[]> {
-      return this.http.get<Inventory[]>(this.apiInventoriesUrl);
+  getInventories(filters?:{
+    measure?: string;
+    location?: string;
+    articleName?: string;
+    stock?: number;
+  } 
+  ): Observable<Inventory[]> {
+    let params = new HttpParams();
+    
+    if (filters) {
+      Object.keys(filters).forEach(key => {
+        const value = filters[key as keyof typeof filters];
+        if (value !== undefined && value !== '') {
+          params = params.append(key, value.toString());
+        }
+      });
+    }
+    
+    return this.http.get<Inventory[]>(this.apiInventoriesUrl, { params });
   }
 
+  getInventoriesUnit(measure: string): Observable<Inventory[]> {
+    return this.http.get<Inventory[]>(`${this.apiInventoriesUrl}/article/${measure}`);
+  }
+  
   addInventory(inventory: Inventory): Observable<Inventory> {
     return this.http.post<Inventory>(this.apiInventoriesUrl, inventory);
   }

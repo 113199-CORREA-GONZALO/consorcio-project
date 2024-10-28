@@ -1,15 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
 import { Router, RouterModule } from '@angular/router';
 import { TransactionComponentForm } from '../inventory_transaction/inventory_transaction_form/inventory_transaction_form.component';
 import { InventoryTransactionTableComponent } from '../inventory_transaction/inventory_transaction_table/inventory_transaction_table.component';
 import { InventoryInventoriesUpdateComponent } from './inventory-inventories-update/inventory-inventories-update.component';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
-import { Inventory, StatusType } from '../../../models/inventory.model';
+import { Inventory, StatusType, Transaction, TransactionType } from '../../../models/inventory.model';
 import { Article, ArticleCategory, ArticleCondition, ArticleType, MeasurementUnit, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+
+//exportar a pdf y excel
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import autoTable from 'jspdf-autotable';
+
+
 @Component({
   selector: 'app-inventory',
   standalone: true,
@@ -40,10 +49,83 @@ export class InventoryTableComponent implements OnInit {
   totalPages: number = 1;
   totalElements: number = 0;
 
+ //Filtros
+ showFilterModal: boolean = false;
+  filteredInventories: Inventory[] = [];
+  isLoading = false;
+  originalInventories: Inventory[] = []; // Lista completa de inventarios (sin filtrar)
+  currentFilter: string = 'all';          // Filtro actual
+
+  // Filtros individuales para búsqueda en tiempo real
+  articleNameFilter = new FormControl('');
+  stockFilter = new FormControl('');
+  minStockFilter = new FormControl('');
+  locationFilter = new FormControl('');
+  measurementUnits: MeasurementUnit[] = [MeasurementUnit.LITERS, MeasurementUnit.KILOS, MeasurementUnit.UNITS];
+
+
+  // Formulario para filtros que requieren llamada al servidor
+  filterForm: FormGroup;
+  readonly MeasurementUnit = MeasurementUnit;
+
   inventoryForm: FormGroup;
   inventories: Inventory[] = [
-
+    {
+      id: 10,
+      article: {
+        id: 1,
+        identifier: "A02131",
+        name: 'puerta',
+        description: 'puerta grandota',
+        articleCondition: ArticleCondition.DEFECTIVE, // Valor ficticio; reemplázalo con el valor válido
+        articleCategory: ArticleCategory.CONSUMABLES, // Valor ficticio; reemplázalo con el valor válido
+        articleType: ArticleType.NON_REGISTRABLE,      // Valor ficticio; reemplázalo con el valor válido
+        measurementUnit: MeasurementUnit.KILOS   // Valor ficticio; reemplázalo con el valor válido
+      },
+      stock: 11,
+      minStock: 1,
+      location: 'Tumadre',
+      status: StatusType.ACTIVE,
+      transactions: [
+        {
+          id: 1,
+          inventoryId: 1,
+          transactionType: TransactionType.ENTRY, // Valor ficticio; reemplázalo con el valor válido
+          quantity: 1,
+          price: 1,
+          transactionDate: '2024-01-02'
+        }
+      ]
+    },
+    {
+      id: 10,
+      article: {
+        id: 1,
+        identifier: "A41231",
+        name: 'Auto',
+        description: 'puerta grandota',
+        articleCondition: ArticleCondition.FUNCTIONAL, // Valor ficticio; reemplázalo con el valor válido
+        articleCategory: ArticleCategory.DURABLES, // Valor ficticio; reemplázalo con el valor válido
+        articleType: ArticleType.REGISTRABLE,      // Valor ficticio; reemplázalo con el valor válido
+        measurementUnit: MeasurementUnit.UNITS  // Valor ficticio; reemplázalo con el valor válido
+      },
+      stock: 15,
+      minStock: 12,
+      location: 'Tumadre',
+      status: StatusType.INACTIVE,
+      transactions: [
+        {
+          id: 1,
+          inventoryId: 1,
+          transactionType: TransactionType.OUTPUT, // Valor ficticio; reemplázalo con el valor válido
+          quantity: 1,
+          price: 1,
+          transactionDate: '2024-01-02'
+        }
+      ]
+    }
   ];
+
   articles: Article[] = [
     {
       id: 100,
@@ -63,6 +145,12 @@ export class InventoryTableComponent implements OnInit {
 
   selectedInventoryId: string | null = null;
   selectedInventory: Inventory | null = null;
+  showModalFilter: boolean = false;
+
+  //sorts
+  sortedList: Inventory[] = [];
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
     this.inventoryForm = this.fb.group({
@@ -71,23 +159,123 @@ export class InventoryTableComponent implements OnInit {
       min_stock: [1],
       inventory_status: [StatusType.ACTIVE]
     });
+    this.filterForm = this.fb.group({
+      measure: [this.measurementUnits[2]],
+    });
   }
 
   ngOnInit(): void {
     this.loadInventories();
+    this.setupFilterSubscriptions();
+
+  }
+
+  openModalFilter(): void {
+    this.showModalFilter = true;
+  }
+  
+  closeModalFilter(): void {
+    this.showModalFilter = false;
+  }
+
+  private setupFilterSubscriptions(): void {
+    Object.keys(this.filterForm.controls).forEach(key => {
+      this.filterForm.get(key)?.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      ).subscribe(() => {
+        console.log('Aplicando filtros...', this.filterForm.value);
+        this.applyAllFilters();
+      });
+    });
+  }
+
+   applyAllFilters(): void {
+    const filters = {
+      measure: this.filterForm.get('measure')?.value
+    }
+
+    Object.keys(filters).forEach(key => {
+      if (!filters[key as keyof typeof filters]) {
+        delete filters[key as keyof typeof filters];
+      }
+    });
+
+    this.inventoryService.getInventoriesUnit(filters.measure).subscribe((inventories: Inventory[]) => {
+      this.inventories = inventories.map( inventory => ({
+        ...this.mapperService.toCamelCase(inventory),
+      }));
+      this.inventories.forEach(inventory => {
+        inventories.map(inventory.article = this.mapperService.toCamelCase(inventory.article));
+      });
+      this.inventories = inventories;
+      this.filteredInventories = inventories;
+      this.isLoading = false;
+      console.log('CHANCHA FILTRADA', this.inventories);
+    });
+  }
+  applyFilter(): void {
+    const articleName = this.filterForm.get('articleName')?.value;
+    const minStock = this.filterForm.get('minStock')?.value;
+    const status = this.filterForm.get('status')?.value;
+
+    this.inventories = this.originalInventories.filter(inventory => {
+      const matchArticleName = articleName ? inventory.article.name.toLowerCase().includes(articleName.toLowerCase()) : true;
+      const matchMinStock = minStock ? inventory.stock >= minStock : true;
+      const matchStatus = status ? inventory.status === status : true;
+
+      return matchArticleName && matchMinStock && matchStatus;
+    });
+
+    // Cerrar el modal después de aplicar los filtros
+    this.closeModalFilter();
+  }
+
+  clearFilters(): void {
+    this.articleNameFilter.reset();
+    this.stockFilter.reset();
+    this.getInventories(); // Recargar todos los inventarios
   }
 
   getInventories(): void {
-    this.inventoryService.getInventories().subscribe((inventories: any[]) => {
-      this.inventories = inventories.map(inventory => ({
-        ...this.mapperService.toCamelCase(inventory), // Convertir todo el inventario a camelCase
-        article: this.mapperService.toCamelCase(inventory.article) // Convertir el artículo a camelCase
-        //transactions: inventory.transactions.map(transaction => this.mapperService.toCamelCase(transaction)) // Convertir las transacciones a camelCase
+    this.isLoading = true;
+    this.articleNameFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getInventories();
+      }
+      this.inventories = this.inventories.filter(
+        x => x.article.name.toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    this.stockFilter.valueChanges.subscribe( data => {
+      if(data === null || data === ''){
+        this.getInventories();
+      }
+      this.inventories = this.inventories.filter(
+        x => x.stock.toString().toLowerCase().includes(data!.toLowerCase())
+      )
+    })
+    // this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
+    //   this.inventories = inventories.map(inventory => ({
+    //     ...this.mapperService.toCamelCase(inventory), // Convertir todo el inventario a camelCase
+    //     article: this.mapperService.toCamelCase(inventory.article) // Convertir el artículo a camelCase
+    //     //transactions: inventory.transactions.map(transaction => this.mapperService.toCamelCase(transaction)) // Convertir las transacciones a camelCase
+    //   }));
+    this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
+      this.inventories = inventories.map( inventory => ({
+        ...this.mapperService.toCamelCase(inventory),
       }));
+      this.inventories.forEach(inventory => {
+        inventories.map(inventory.article = this.mapperService.toCamelCase(inventory.article));
+      });
+      this.inventories = inventories;
+      this.filteredInventories = inventories;
+      this.isLoading = false;
+      console.log('CHANCHA', this.inventories);
+    });      
 
       console.log(this.inventories); // Para verificar que la conversión se realizó correctamente
-    });
-  }
+    };
 
  // Método para convertir la unidad de medida a una representación amigable
 getDisplayUnit(unit: MeasurementUnit): string {
@@ -237,24 +425,67 @@ private watchPageSizeChanges(): void {
   });
 }
 
+// loadInventories(): void {
+//   this.inventoryService.getInventoriesPageable(this.currentPage, this.itemsPerPage)
+//     .subscribe({
+//       next: (page) => {
+//         console.log(page)
+//         page = this.mapperService.toCamelCase(page);
+//         console.log(page);
+//         this.inventories = this.mapperService.toCamelCase(page.content) 
+//         this.totalPages = page.totalPages;
+//         this.totalElements = page.totalElements;
+//         this.currentPage = page.number;
+//       },
+//       error: (error) => {
+//         console.error('Error loading inventories:', error);
+//         // Handle error appropriately
+//       }
+//     });
+// }
+
 loadInventories(): void {
-  this.inventoryService.getInventoriesPageable(this.currentPage, this.itemsPerPage)
-    .subscribe({
-      next: (page) => {
-        console.log(page)
-        page = this.mapperService.toCamelCase(page);
-        console.log(page);
-        this.inventories = this.mapperService.toCamelCase(page.content) 
-        this.totalPages = page.totalPages;
-        this.totalElements = page.totalElements;
-        this.currentPage = page.number;
+  // Simulación de datos cargados
+  this.originalInventories = [
+    {
+      id: 1,
+      article: {
+        id: 1,
+        name: 'Puerta',
+        identifier: 'A001',
+        description: 'Puerta grande',
+        articleCondition: ArticleCondition.FUNCTIONAL, // Asigna el valor correspondiente
+        articleCategory: ArticleCategory.DURABLES, // Asigna el valor correspondiente
+        articleType: ArticleType.NON_REGISTRABLE, // Asigna el valor correspondiente
+        measurementUnit: MeasurementUnit.UNITS // Asigna el valor correspondiente
       },
-      error: (error) => {
-        console.error('Error loading inventories:', error);
-        // Handle error appropriately
-      }
-    });
+      stock: 10,
+      minStock: 2,
+      location: 'Almacén 1',
+      status: StatusType.ACTIVE,
+      transactions: [] // Agrega transacciones si es necesario
+    },
+    // Agrega más registros si es necesario
+  ];
+  // Copia inicial de inventarios
+  this.inventories = [...this.originalInventories];
 }
+
+filterActiveInventories(): void {
+  this.currentFilter = 'active';
+  this.inventories = this.originalInventories.filter(inventory => inventory.status === StatusType.ACTIVE);
+}
+
+filterInactiveInventories(): void {
+  this.currentFilter = 'inactive';
+  this.inventories = this.originalInventories.filter(inventory => inventory.status !== StatusType.ACTIVE);
+}
+
+showAllInventories(): void {
+  this.currentFilter = 'all';
+  this.inventories = [...this.originalInventories];
+}
+
 
 goToNextPage(): void {
   if (this.currentPage < this.totalPages - 1) {
@@ -274,5 +505,97 @@ onPageSizeChange(event: any): void {
   this.itemsPerPage = event.target.value;
   this.currentPage = 0; // Reset to first page
   this.loadInventories();
+}
+exportToPDF(): void {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  });
+  const title = 'Listado de Inventario';
+  doc.setFontSize(20);
+  doc.setTextColor(40, 40, 40);
+  doc.text(title, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+
+  const tableColumn = ['Identificador','Artículo', 'Descripcion','Stock','Medida', 'Stock Mínimo', 'Ubicación'];
+  const tableRows: any[][] = [];
+  
+  this.inventories.forEach(inventory => {
+    const inventoryData = [
+      inventory.article.identifier,
+      inventory.article.name,
+      inventory.article.description,
+      inventory.stock,
+      this.getDisplayUnit(inventory.article.measurementUnit),
+      inventory.minStock,
+      inventory.location
+    ];
+    tableRows.push(inventoryData);
+  });
+
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 25,
+  });
+
+  doc.save('inventario.pdf');
+}
+
+exportToExcel(): void {
+  try{
+    let element = document.getElementById('inventoryTable');
+    if(!element){
+      console.warn('No se encontró el elemento con el ID "inventoryTable"');
+      element = this.createTableFromData();
+    }
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+    XLSX.writeFile(wb, 'inventario.xlsx');
+  } catch( error ){
+    console.error('Error al exportar a Excel:', error);
+  }
+}
+
+private createTableFromData(): HTMLTableElement {
+  const table = document.createElement('table');
+  const thead = table.createTHead();
+  const tbody = table.createTBody();
+
+  const headerRow = thead.insertRow();
+  const headers = ['Identificador','Artículo', 'Descripcion','Stock','Medida', 'Stock Mínimo', 'Ubicación'].forEach(text => {
+    const th = document.createElement('th');
+    th.textContent = text;
+    headerRow.appendChild(th);
+  });
+
+  this.inventories.forEach(inventory => {
+    const unid = this.getDisplayUnit(inventory.article.measurementUnit);
+    const row = tbody.insertRow();
+    [inventory.article.identifier, inventory.article.name, inventory.article.description, inventory.stock, unid, inventory.minStock, inventory.location].forEach(text => {
+      const cell = row.insertCell();
+      cell.textContent = text !== undefined && text !== null ? text.toString() : null;
+    });
+  });
+
+  return table;
+}
+
+sort(column: string): void {
+  this.sortDirection = this.sortColumn === column ? (this.sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+    this.sortColumn = column;
+  
+    // Ordena la lista
+    this.inventories = [...this.inventories].sort((a, b) => {
+      /*const valueA = a[];
+      const valueB = b[];
+  
+      if (valueA == null || valueB == null) return 0; // Evita ordenamiento si es null o undefined
+  
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;*/
+      return 0;
+    });
 }
 }

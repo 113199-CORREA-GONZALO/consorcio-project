@@ -89,6 +89,7 @@ export class EmployeeFormComponent implements OnInit {
     }*/
 
     return {
+      id,
       firstName,
       lastName,
       employeeType,
