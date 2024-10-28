@@ -13,8 +13,10 @@
     </button>
         <input 
             type="text" 
-            placeholder="Buscar empleado"
-            class="form-control w-50 col-lg-4">
+            placeholder="Buscar Articulos"
+            class="form-control w-50 col-lg-4" 
+            [formControl]="searchInput"
+            >
     </div>  
 
     <!-- Espaciador para la separación -->
@@ -130,12 +132,12 @@
       Todos
     </button>
   </div>
-  <!-- Indicador de carga -->
+  <!-- Indicador de carga 
   <div *ngIf="isLoading" class="text-center my-3">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Cargando...</span>
     </div>
-  </div>
+  </div>-->
 
   <!-- Mensaje de no hay resultados -->
   <div *ngIf="!isLoading && inventories.length === 0" class="alert alert-info">

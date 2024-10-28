@@ -39,6 +39,7 @@ export class InventoryTableComponent implements OnInit {
   private router = inject(Router);
   private mapperService = inject(MapperService);
   Status = Status;
+  searchInput = new FormControl('');
 
 
   // Modals
@@ -78,8 +79,20 @@ export class InventoryTableComponent implements OnInit {
   ngOnInit(): void {
     this.getInventories();
   }
-
+/*
   getInventories(): void {
+    this.searchInput.valueChanges.subscribe(data => {
+      if (data === null || data === '') {
+        this.getInventories();
+        console.log(this.inventories);
+      }
+      this.inventories == this.inventories.filter(
+        x => x.article.name.toLowerCase().includes(data!.toLowerCase())
+        
+      )
+      console.log(this.inventories, "Primero");
+    })
+    console.log(this.inventories);
     this.inventoryService.getInventories().subscribe((inventories: any[]) => {
       this.inventories = inventories.map(inventory => ({
         ...this.mapperService.toCamelCase(inventory), // Convertir todo el inventario a camelCase
@@ -90,7 +103,45 @@ export class InventoryTableComponent implements OnInit {
       console.log(this.inventories); // Para verificar que la conversión se realizó correctamente
     });
   }
+*/
+getInventories(): void {
+  this.isLoading = true;
+  this.searchInput.valueChanges.subscribe( data => {
+    if(data === null || data === ''){
+      this.getInventories();
+    }
+    this.inventories = this.inventories.filter(
+      x => x.article.name.toLowerCase().includes(data!.toLowerCase())
+    )
+  })
+ 
+  // this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
+  //   this.inventories = inventories.map(inventory => ({
+  //     ...this.mapperService.toCamelCase(inventory), // Convertir todo el inventario a camelCase
+  //     article: this.mapperService.toCamelCase(inventory.article) // Convertir el artículo a camelCase
+  //     //transactions: inventory.transactions.map(transaction => this.mapperService.toCamelCase(transaction)) // Convertir las transacciones a camelCase
+  //   }));
+  this.inventoryService.getInventories().subscribe((inventories: Inventory[]) => {
+    this.inventories = inventories.map( inventory => ({
+      ...this.mapperService.toCamelCase(inventory),
+    }));
+    this.inventories.forEach(inventory => {
+      inventories.map(inventory.article = this.mapperService.toCamelCase(inventory.article));
+    });
+    this.inventories = inventories;
+    this.filteredInventories = inventories;
+    this.isLoading = false;
+    console.log('CHANCHA', this.inventories);
+    this.inventoryService.getInventories().subscribe((inventories: any[]) => {
+      this.inventories = inventories.map(inventory => ({
+        ...this.mapperService.toCamelCase(inventory), // Convertir todo el inventario a camelCase
+        article: this.mapperService.toCamelCase(inventory.article) // Convertir el artículo a camelCase
+        //transactions: inventory.transactions.map(transaction => this.mapperService.toCamelCase(transaction)) // Convertir las transacciones a camelCase
+      }));
+  });     
 
+    console.log(this.inventories); // Para verificar que la conversión se realizó correctamente
+  })};
  // Método para convertir la unidad de medida a una representación amigable
 getDisplayUnit(unit: MeasurementUnit): string {
   switch (unit) {
