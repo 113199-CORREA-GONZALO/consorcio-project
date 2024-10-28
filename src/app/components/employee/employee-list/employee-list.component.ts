@@ -1,9 +1,10 @@
-import { Component, EventEmitter, inject, ModelSignal, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, ModelSignal, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { DocumentType, Employee, EmployeeFilter, EmployeeType, StatusType } from '../../../models/employee.model';
 import { EmployeesService } from '../../../services/employees.service';
 import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 //exportar a pdf y excel
 import jsPDF from 'jspdf';
@@ -25,6 +26,7 @@ import { state } from '@angular/animations';
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css'
 })
+
 export class EmployeeListComponent implements OnInit{
   employeeList: Employee[] = [
     {
@@ -52,6 +54,9 @@ export class EmployeeListComponent implements OnInit{
     }
     
   ];
+
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
+
   private originalEmployeeList: Employee[] = [];
   currentFilter: 'all' | 'active' | 'inactive' = 'all';
   filteredEmployeeList: Employee[] = [];
@@ -72,6 +77,7 @@ export class EmployeeListComponent implements OnInit{
   private employeeService = inject(EmployeesService);
   private router = inject(Router);
   private mapperService = inject(MapperService);
+  private modalService = inject(NgbModal);
   showModalFilters: boolean = false;
 
   searchFilter = new FormControl('');

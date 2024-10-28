@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ArticleFormComponent } from '../inventory_articles/inventory_articles_form/inventory_articles_form.component';
 import { Router, RouterModule } from '@angular/router';
@@ -11,6 +11,7 @@ import { Inventory, StatusType, Transaction, TransactionType } from '../../../mo
 import { Article, ArticleCategory, ArticleCondition, ArticleType, MeasurementUnit, Status } from '../../../models/article.model';
 import { InventoryService } from '../../../services/inventory.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 //exportar a pdf y excel
 import jsPDF from 'jspdf';

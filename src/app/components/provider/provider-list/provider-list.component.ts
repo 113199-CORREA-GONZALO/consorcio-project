@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import {  Supplier } from '../../../models/supplier.model';
 import { ProvidersService } from '../../../services/providers.service';
 import Swal from 'sweetalert2';
@@ -7,6 +7,7 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule }
 import { ServiceType } from '../../../models/enums/service-tpye.enum';
 import { CommonModule } from '@angular/common';
 import { StatusType } from '../../../models/inventory.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 //exportar a pdf y excel
 import jsPDF from 'jspdf';
@@ -40,7 +41,7 @@ export class ProviderListComponent implements OnInit{
   searchFilter = new FormControl('');
   searchFilterAll = new FormControl('');
 
-
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   sortedProviderList: Supplier[] = [];
   sortColumn: string = '';
@@ -68,6 +69,7 @@ export class ProviderListComponent implements OnInit{
   private providerService = inject(ProvidersService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private modalService = inject(NgbModal);
 
   constructor() {
     this.filterForm = this.fb.group({
@@ -93,6 +95,10 @@ export class ProviderListComponent implements OnInit{
   }
   openModal(){
 
+  }
+
+  showInfo(): void {
+    this.modalService.open(this.infoModal, { centered: true });
   }
 
   private setupFilterSubscriptions(): void {
