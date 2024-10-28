@@ -5,15 +5,16 @@ import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../../services/inventory.service';
 import { Article, ArticleCategory, ArticleType, ArticleCondition, MeasurementUnit,Status } from '../../../../models/article.model';
 import { MapperService } from '../../../../services/MapperCamelToSnake/mapper.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Inventory } from '../../../../models/inventory.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 
 @Component({
   selector: 'app-article',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], // Agrega ReactiveFormsModule aquí
+  imports: [CommonModule, ReactiveFormsModule,RouterModule], // Agrega ReactiveFormsModule aquí
   templateUrl: './inventory_articles_form.component.html',
   styleUrls: ['./inventory_articles_form.component.css']
 })
@@ -42,7 +43,9 @@ export class ArticleFormComponent implements OnInit {
   ArticleCategory = ArticleCategory; // Asignamos el enum ArticleCategory a una propiedad del componente
   MeasurementUnit = MeasurementUnit; // Asignamos el enum MeasurementUnit a una propiedad del componente
 
-  constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
+  
+
+  constructor(private fb: FormBuilder, private inventoryService: InventoryService, private toast : ToastService) {
     this.articleForm = this.fb.group({
       identifier: [{value:'', disabled: true}],
       name: ['', Validators.required],
@@ -141,9 +144,15 @@ export class ArticleFormComponent implements OnInit {
       if(!this.isEditing){
         this.inventoryService.addInventoryArticle(articleInventoryFormatted).subscribe((data) => {
           console.log(data);
-        });
+          this.resetForm(); // Limpia el formulario después de crear exitosamente
+          this.router.navigate(['/inventories']);
+          this.toast.sendSuccess('Articulo creado exitosamente');
+        }) 
       }
-      else if (this.currentArticleId!= undefined){
+      else {
+        this.toast.sendError('Articulo no creado');
+      }
+       if (this.currentArticleId!= undefined){
         this.inventoryService.updateArticle(this.currentArticleId,articleInventoryFormatted.article as Article).subscribe((data)=> console.log(data));
         let inventoryUpdate= {
           stock: articleInventory.stock,
@@ -175,4 +184,6 @@ export class ArticleFormComponent implements OnInit {
     this.showRegisterForm.emit();
     this.isModalOpen = false
   }
+
+ 
 }

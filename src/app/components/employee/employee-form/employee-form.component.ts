@@ -86,9 +86,23 @@ export class EmployeeFormComponent implements OnInit {
       } else {
         employeeData.id
         this.createEmployee(employeeData);
+        this.router.navigate(['/employee-list']); // Redirect to employee list       
       }
     }
   }
+    resetForm() : void {
+      this.employeeForm.reset({
+        id:0,
+        firstName: '',
+        lastName: '',
+        employeeType: EmployeeType.ADMIN,
+        hiringDate: new Date().toISOString().split('T')[0],
+        documentType: DocumentType.DNI,
+        docNumber: '',
+        state: StatusType.ACTIVE,
+        salary: 0
+      })
+    }
 
   prepareEmployeeData(): Employee {
     const { id, firstName, lastName, employeeType, hiringDate, documentType, docNumber, salary, state } = this.employeeForm.value;    
@@ -118,6 +132,7 @@ export class EmployeeFormComponent implements OnInit {
     this.employeeService.addEmployee(employee).subscribe({
       next: (response) => {
         this.toastService.sendSuccess("El Empleado ha sido creado con éxito.");
+        this.resetForm(); // Limpia el formulario
       },
       error: (error) => {
         this.toastService.sendError("Hubo un error en la creación del empleado.");

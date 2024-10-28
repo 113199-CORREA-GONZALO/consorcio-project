@@ -59,59 +59,75 @@
     </button>
   
     <!-- Modal -->
-      <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true"> 
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content" >
-            <div class="modal-header">
-              <h5>MODAL DE inventario</h5>
-              <div class="modal-body">
-               <div class="card mb-4">
-                 <div class="card-body">
-                    <div class="row">
-                    <!-- <div class="col-md-3 mb-3">
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        [formControl]="identifierFilter"
-                        placeholder="Buscar por identificador">
-                    </div> -->
-                    <div class="col-md-3 mb-3">
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        [formControl]="articleNameFilter"
-                        placeholder="Buscar por artículo">
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        [formControl]="stockFilter"
-                        placeholder="Stock">
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        [formControl]="locationFilter"
-                        placeholder="Locacion">
-                    </div>
-                    <div>
-                      <select class="form-select" formControlName="measure">
-                        <option [value]="MeasurementUnit.UNITS">UNITS</option>
-                        <option [value]="MeasurementUnit.LITERS">Litros</option>
-                        <option [value]="MeasurementUnit.KILOS">Kilogramos</option>
-                      </select>
-                    
-                    </div>
+    <!-- Modal de Filtros -->
+      <div
+      class="modal fade"
+      id="filterModal"
+      tabindex="-1"
+      aria-labelledby="filterModalLabel"
+      aria-hidden="true"
+      >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="filterModalLabel">Modal de Inventario</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="card mb-4">
+              <div class="card-body">
+                <div class="row">
+                  <!-- Filtro por Artículo -->
+                  <div class="col-md-3 mb-3">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [formControl]="articleNameFilter"
+                      placeholder="Buscar por artículo"
+                    />
+                  </div>
+
+                  <!-- Filtro por Stock -->
+                  <div class="col-md-3 mb-3">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [formControl]="stockFilter"
+                      placeholder="Stock"
+                    />
+                  </div>
+
+                  <!-- Filtro por Locación -->
+                  <div class="col-md-3 mb-3">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [formControl]="locationFilter"
+                      placeholder="Locación"
+                    />
+                  </div>
+
+                  <!-- Filtro por Unidad de Medida -->
+                  <div class="col-md-3 mb-3">
+                    <select class="form-select" formControlName="measure">
+                      <option [value]="MeasurementUnit.UNITS">Unidades</option>
+                      <option [value]="MeasurementUnit.LITERS">Litros</option>
+                      <option [value]="MeasurementUnit.KILOS">Kilogramos</option>
+                    </select>
                   </div>
                 </div>
               </div>
             </div>
-            </div>
           </div>
         </div>
-      </div> 
+      </div>
+      </div>
+
 
     <div class="col-lg-4"></div> <!-- Espacio central para separación -->
   
@@ -150,19 +166,19 @@
         <table class="table table-striped border rounded-lg-overflow-hidden">
           <thead class="bg-dark text-white">
             <tr>
-              <th (click)="sort('identifier')">
+              <th (click)="sort('article')">
                 Identificador <span [ngClass]="{'asc': sortColumn === 'identifier' && sortDirection === 'asc', 'desc': sortColumn === 'identifier' && sortDirection === 'desc'}">⇅</span>
               </th>
-              <th (click)="sort('article')">
+              <th >
                  Artículo <span [ngClass]="{'asc': sortColumn === 'article' && sortDirection === 'asc', 'desc': sortColumn === 'article' && sortDirection === 'desc'}">⇅</span>
                 </th>
-              <th (click)="sort('description')">
+              <th >
                 Descripción <span [ngClass]="{'asc': sortColumn === 'description' && sortDirection === 'asc', 'desc': sortColumn === 'description' && sortDirection === 'desc'}">⇅</span>
               </th>
               <th (click)="sort('stock')">
                 Stock <span [ngClass]="{'asc': sortColumn === 'stock' && sortDirection === 'asc', 'desc': sortColumn === 'stock' && sortDirection === 'desc'}">⇅</span>
               </th>
-              <th (click)="sort('measurementUnit')">
+              <th >
                 Medida <span [ngClass]="{'asc': sortColumn === 'measurementUnit' && sortDirection === 'asc', 'desc': sortColumn === 'measurementUnit' && sortDirection === 'desc'}">⇅</span>
               </th>
               <th (click)="sort('minStock')">

@@ -34,6 +34,7 @@ import autoTable from 'jspdf-autotable';
         ],
   templateUrl: './inventory_inventories.component.html',
   styleUrls: ['./inventory_inventories.component.css']
+  
 })
 export class InventoryTableComponent implements OnInit {
  
@@ -901,19 +902,19 @@ private createTableFromData(): HTMLTableElement {
   return table;
 }
 
-sort(column: string): void {
+sort(column: string) : void {
   this.sortDirection = this.sortColumn === column ? (this.sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
     this.sortColumn = column;
   
     // Ordena la lista
     this.inventories = [...this.inventories].sort((a, b) => {
-      /*const valueA = a[];
-      const valueB = b[];
+      // const valueA = a[column];
+      //   const valueB = b[column];
   
-      if (valueA == null || valueB == null) return 0; // Evita ordenamiento si es null o undefined
+      // if (valueA == null || valueB == null) return 0; // Evita ordenamiento si es null o undefined
   
-      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
-      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;*/
+      // if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      // if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
       return 0;
     });
 }
