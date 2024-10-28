@@ -12,9 +12,10 @@ import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
 import { EmployeeEditModalComponent } from "../employee-edit-modal/employee-edit-modal.component";
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { state } from '@angular/animations';
 
 
 @Component({
@@ -73,6 +74,7 @@ export class EmployeeListComponent implements OnInit{
   private mapperService = inject(MapperService);
   showModalFilters: boolean = false;
 
+  searchFilter = new FormControl('');
 
   constructor() {
     this.filterForm = this.fb.group({
@@ -90,6 +92,9 @@ export class EmployeeListComponent implements OnInit{
 
   
   ngOnInit(): void {
+    this.getEmployees();
+    this.setupFilterSubscription();
+    this.applyFilters();
     this.totalPages=1;
     // this.loadEmployees(); // Use this for API integration
     this.mockGetEmployees(); // Use this for mock data
@@ -100,12 +105,76 @@ export class EmployeeListComponent implements OnInit{
     }
 
   }
+
   getEmployees() {
-    this.employeeService.getEmployees().subscribe((employeeList) => {
+    // Ya no manejamos la suscripción del searchFilter aquí
+
+    this.employeeService.getEmployees().subscribe(employeeList => {
+      employeeList = this.mapperService.toCamelCase(employeeList);
+      this.originalEmployeeList = employeeList;
       this.employeeList = employeeList;
+      this.filteredEmployeeList = employeeList;
+      this.applyCurrentFilter(); // Aplicar el filtro actual después de cargar los datos
     });
   }
-  
+
+  private setupFilterSubscription(): void {
+    this.searchFilter.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe(searchTerm => {
+        if (!searchTerm || searchTerm.trim() === '') {
+          // Si el término de búsqueda está vacío, restaurar la lista original
+          this.employeeList = [...this.originalEmployeeList];
+          this.applyCurrentFilter(); // Mantener el filtro actual (activo/inactivo/todos)
+        } else {
+          // Filtrar la lista original
+          this.employeeList = this.originalEmployeeList.filter(employee =>
+            employee.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            employee.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            employee.docNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            employee.salary.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+        this.filteredEmployeeList = [...this.employeeList];
+      });
+  }
+
+  applyFilter(): void {
+    const filter: EmployeeFilter = Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
+      if (value !== '' && value !== null && value !== undefined) {
+        (acc as any)[key] =  value;
+      }
+      return acc;
+    }, {} as EmployeeFilter);
+    Object.keys(filter).forEach(key => {
+      if (!filter[key as keyof typeof filter]) {
+        delete filter[key as keyof typeof filter];
+      }
+    });
+    this.employeeService.searchEmployees(filter).subscribe(employees => {
+        this.employeeList = employees;
+        this.filteredEmployeeList = employees
+      },
+      (error) => {
+        console.error('Error al filtrar empleados:', error);
+        Swal.fire('Error', 'Error al filtrar empleados', 'error');
+      }
+    );
+  }
+
+  clearFilters(){
+    this.searchFilter.reset();
+    this.applyFilters();
+    this.filterForm.reset({
+      employeeType: '',
+      docType: '',
+      state: '',
+    });
+  }
+
   /*goToNextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
@@ -151,7 +220,7 @@ export class EmployeeListComponent implements OnInit{
           'success'
         );
       });
-    };
+    }
   });
 }
 
@@ -167,15 +236,25 @@ exportToPDF() {
   doc.setFontSize(20);
   doc.setTextColor(40, 40, 40);
   doc.text(title, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
-  const tableColumn = ['Nombre', 'Apellido', 'Tipo', 'Turnos', 'Estado'];
+  const tableColumn = ['Empleado', 'Tipo', 'Documento', 'Fecha de contratación', 'Estado'];
   const tableRows: any[][] = [];
-  
+
+  function formatDateArg(dateString: string): string {
+    const [day, month, year] = dateString.split('/');
+    return `${day}/${month}/${year}`;
+  }
+
   // Preparar los datos para la tabla
   this.employeeList.forEach(employee => {
+    const hiringDate = new Date(employee.hiringDate).toISOString().split('T')[0];
+      const [year, month, day] = hiringDate.split('-');
+      const formattedDate = `${day}/${month}/${year}`;
+
     const employeeData = [
-      employee.firstName,
-      employee.lastName,
+      employee.lastName + ' ' + employee.firstName,
       employee.employeeType,
+      employee.documentType + ': ' + employee.docNumber,
+      formattedDate,
       employee.state
     ];
     tableRows.push(employeeData);
@@ -195,12 +274,19 @@ exportToPDF() {
 
 exportToExcel() {
   // Preparar los datos para Excel
-  const data = this.employeeList.map(employee => ({
-    Nombre: employee.firstName,
-    Apellido: employee.lastName,
-    Tipo: employee.employeeType,
-    Estado: employee.state
-  }));
+  const data = this.employeeList.map(employee => {
+    const hiringDate = new Date(employee.hiringDate).toISOString().split('T')[0];
+    const [year, month, day] = hiringDate.split('-');
+    const formattedDate = `${day}/${month}/${year}`;
+
+    return {
+      Empleado: `${employee.lastName} ${employee.firstName}`,
+      Tipo: employee.employeeType,
+      Documento: `${employee.documentType}: ${employee.docNumber}`,
+      'Fecha de contratación': formattedDate,
+      Estado: employee.state
+    };
+  });
 
   // Crear una hoja de trabajo
   const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
@@ -211,10 +297,10 @@ exportToExcel() {
 
   // Ajustar el ancho de las columnas
   const columnsWidth = [
-    { wch: 15 }, // Nombre
-    { wch: 15 }, // Apellido
+    { wch: 25 }, // Empleado
     { wch: 15 }, // Tipo
-    { wch: 15 }, // Turnos
+    { wch: 25 }, // Documento
+    { wch: 20 }, // Fecha de contratación
     { wch: 15 }  // Estado
   ];
   ws['!cols'] = columnsWidth;
@@ -275,6 +361,7 @@ exportToExcel() {
     this.showModalFilters = !this.showModalFilters; 
   }
 
+<<<<<<< HEAD
   private setupFilterSubscription(): void {
     this.filterForm.valueChanges.pipe(
       debounceTime(300), // Esperar 300ms después del último cambio
@@ -304,6 +391,9 @@ exportToExcel() {
     );
   }*/
 
+=======
+/*
+>>>>>>> 009e0a8fe80301b7a3d122e5325e6b1e6155a411
   applyFilter(): void {
     // Crear objeto de filtro solo con los campos que tienen valor
     const filter: EmployeeFilter = Object.entries(this.filterForm.value).reduce((acc, [key, value]) => {
