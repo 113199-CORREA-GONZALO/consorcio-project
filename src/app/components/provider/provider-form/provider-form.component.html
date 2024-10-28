@@ -92,9 +92,68 @@
             </div>
           </div>
         </form>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-secondary ms-3 custom-button" (click)="showInfo()">
+              <i class="bi bi-info-circle"></i>
+          </button>
+      </div>
       </div>
     </div>
   </div>
-</div>
-</div>  
   
+  <ng-template #infoModal let-modal>
+    <div class="modal-header fs-6 py-1">
+        <h4 class="modal-title">Formulario de Proveedores</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+      </div>
+      <div class="modal-body fs-6 py-2">
+        <div class="container-fluid">
+          <!-- Introducción -->
+          <div class="alert alert-info mb-2 py-2">
+            <h5 class="alert-heading">¿Qué es esta pantalla?</h5>
+            <p class="mb-0 small">Esta pantalla te permite registrar un proveedor.</p>
+          </div>
+      
+          <!-- Campos Principales -->
+          <div class="card mb-2">
+            <div class="card-header py-1">
+              <h5 class="mb-0">Datos de Proveedores</h5>
+            </div>
+            <div class="card-body py-2">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item py-1">
+                  <strong>Campos a ingresar:</strong> Se solicitarán: Nombre, CUIL, Servicio, Contacto, Dirección y Detalles.
+                </li>
+                <li class="list-group-item py-1">
+                    <strong>ATENCIÓN:</strong> La opción de GUARDAR solo se habilitará si todos los campos se encuentran correctamente completados.
+                  </li>
+              </ul>
+            </div>
+          </div>
+      
+          <!-- Acciones -->
+          <div class="card mb-2">
+            <div class="card-header py-1">
+              <h5 class="mb-0">Acciones Disponibles</h5>
+            </div>
+            <div class="card-body py-2">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item py-1">
+                  <strong>Guardar:</strong> En caso de que todos los campos se encuentren correctamente completados se guardará el nuevo proveedor.
+                </li>
+              </ul>
+            </div>
+          </div>
+      
+          <!-- Nota (OPCIONAL) -->
+          <div class="alert alert-warning py-2 mb-0">
+            <h5 class="alert-heading">Nota:</h5>
+            <p class="mb-0 small">Asegúrate de verificar la información antes de dar el alta de un proveedor.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-2">
+        <button type="button" class="btn btn-primary" (click)="modal.close()">Entendido</button>
+      </div>
+      
+  </ng-template>
