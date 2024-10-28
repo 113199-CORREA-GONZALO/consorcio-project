@@ -15,6 +15,7 @@ import { MapperService } from '../../../services/MapperCamelToSnake/mapper.servi
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 
 @Component({
@@ -74,7 +75,7 @@ export class EmployeeListComponent implements OnInit{
   showModalFilters: boolean = false;
 
 
-  constructor() {
+  constructor(private toastService: ToastService) {
     this.filterForm = this.fb.group({
       firstName: [''],
       lastName: [''],
@@ -91,8 +92,8 @@ export class EmployeeListComponent implements OnInit{
   
   ngOnInit(): void {
     this.totalPages=1;
-    // this.loadEmployees(); // Use this for API integration
-    this.mockGetEmployees(); // Use this for mock data
+    this.loadEmployees(); // Use this for API integration
+    //this.mockGetEmployees(); // Use this for mock data
 
     const modalElement = document.getElementById('filterModal');
     if (modalElement) {
@@ -150,6 +151,7 @@ export class EmployeeListComponent implements OnInit{
           'El empleado ha sido eliminado.',
           'success'
         );
+        this.toastService.sendSuccess("El Empleado ha sido eliminado con éxito.")
       });
     };
   });
@@ -241,6 +243,7 @@ exportToExcel() {
           this.totalElements = this.mapperService.toCamelCase(response.totalElements);
         },
         error: (error) => {
+          this.toastService.sendError("Error al cargar listado de empleados.");
           console.error('Error loading employees:', error);
         }
       });

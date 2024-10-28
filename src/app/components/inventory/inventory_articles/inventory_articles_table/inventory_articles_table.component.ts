@@ -2,6 +2,7 @@ import { InventoryService } from '../../../../services/inventory.service';
 import { Component, inject, OnInit } from '@angular/core';
 import { Article, ArticleCategory, ArticleCondition, ArticleType, MeasurementUnit } from '../../../../models/article.model';
 import { CommonModule } from '@angular/common';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 
 @Component({
@@ -25,7 +26,7 @@ export class InventoryArticleTableComponent {
   ArticleCategory = ArticleCategory; // Asignamos el enum ArticleCategory a una propiedad del componente
   MeasurementUnit = MeasurementUnit; // Asignamos el enum MeasurementUnit a una propiedad del componente
 
-  constructor() { }
+  constructor(private toastService: ToastService) { }
 
   ngOnInit(): void {
     this.getArticles();
@@ -47,8 +48,15 @@ export class InventoryArticleTableComponent {
   updateArticle(article: Article): void {
     if (this.currentArticleId) {
       // Actualiza el ítem con el ID actual
-      this.inventoryService.updateArticle(this.currentArticleId, article).subscribe(() => {
-        this.getArticles(); // Recarga la lista de ítems
+      this.inventoryService.updateArticle(this.currentArticleId, article).subscribe({
+        next: (response) => {
+          this.toastService.sendSuccess("El artículo ha sido modificado con éxito.");
+          this.getArticles(); // Recarga la lista de ítems
+        },
+        error: (error) => {
+          this.toastService.sendError("Hubo un error en la modificación del artículo.");
+          this.getArticles(); // Recarga la lista de ítems
+        }
       });
     }
   }

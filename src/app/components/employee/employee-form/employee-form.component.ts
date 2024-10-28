@@ -8,6 +8,7 @@ import { EmployeesService } from '../../../services/employees.service';
 import { Employee } from '../../../models/employee.model';
 import { debounceTime, map, switchMap } from 'rxjs';
 import { MapperService } from '../../../services/MapperCamelToSnake/mapper.service';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-employee-form',
@@ -27,6 +28,8 @@ export class EmployeeFormComponent implements OnInit {
     salary: new FormControl(0, [Validators.required, Validators.min(0)]),
     state: new FormControl(StatusType.ACTIVE),
   });
+
+  constructor(private toastService: ToastService) {}
 
   private readonly employeeService = inject(EmployeesService);
   private readonly activatedRoute = inject(ActivatedRoute);
@@ -102,17 +105,25 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   createEmployee(employee: Employee) {
-    this.employeeService.addEmployee(employee).subscribe((data) => {
-      console.log('Creado',data);
-      // Navigate or show success message
+    this.employeeService.addEmployee(employee).subscribe({
+      next: (response) => {
+        this.toastService.sendSuccess("El Empleado ha sido creado con éxito.");
+      },
+      error: (error) => {
+        this.toastService.sendError("Hubo un error en la creación del empleado.");
+      } 
     });
   }
 
   updateEmployee(employee: Employee) {
     console.log(employee);
-    this.employeeService.updateEmployee(employee).subscribe((data) => {
-      console.log(data);
-      // Navigate or show success message
+    this.employeeService.updateEmployee(employee).subscribe({
+      next: (response) => {
+        this.toastService.sendSuccess("El Empleado ha sido modificado con éxito.");
+      },
+      error: (error) => {
+        this.toastService.sendError("Hubo un error en la modificación del empleado.");
+      }
     });
   }
 
