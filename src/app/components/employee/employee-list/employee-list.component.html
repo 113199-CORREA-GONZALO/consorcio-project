@@ -2,8 +2,8 @@
   <div class="mb-4">
     <!-- Header with title -->
     <h3 class="text-xl font-semibold mb-4">Lista de Empleados</h3>
-    
-
+    <div class="card">
+    <div class="card-body">
    <!-- Search and Actions Bar -->    
     <div class="row align-items-center">
       <div class="col-lg-8 d-flex">
@@ -68,37 +68,57 @@
             <div class="modal-body">
               <form [formGroup]="filterForm" class="row g-3">
                 <div class="col-md-3">
-                  <input type="text" class="form-control" placeholder="Nombre" formControlName="firstName">
+                  <input type="text" 
+                         class="form-control" 
+                         placeholder="Nombre"
+                         formControlName="firstName">
                 </div>
                 <div class="col-md-3">
-                  <input type="text" class="form-control" placeholder="Apellido" formControlName="lastName">
+                  <input type="text" 
+                         class="form-control" 
+                         placeholder="Apellido"
+                         formControlName="lastName">
                 </div>
                 <div class="col-md-3">
                   <select class="form-select" formControlName="employeeType">
                     <option value="">Tipo de Empleado</option>
-                    <option *ngFor="let type of employeeTypes" [value]="type">{{type}}</option>
+                    @for(type of employeeTypes; track type) {
+                      <option [value]="type">{{type}}</option>
+                    }
                   </select>
                 </div>
                 <div class="col-md-2">
                   <select class="form-select" formControlName="docType">
                     <option value="">Tipo de Documento</option>
-                    <option *ngFor="let type of documentTypes" [value]="type">{{type}}</option>
+                    @for(type of documentTypes; track type) {
+                      <option [value]="type">{{type}}</option>
+                    }
                   </select>
+                </div> 
+                <div class="col-md-3">
+                  <input type="text" 
+                         class="form-control" 
+                         placeholder="Número de Documento"
+                         formControlName="docNumber">
                 </div>
                 <div class="col-md-3">
-                  <input type="text" class="form-control" placeholder="Número de Documento" formControlName="docNumber">
-                </div>
-                <div class="col-md-3">
-                  <input type="date" class="form-control" formControlName="hiringDate">
+                  <input type="date" 
+                         class="form-control" 
+                         formControlName="hiringDate">
                 </div>
                 <div class="col-md-3">
                   <select class="form-select" formControlName="state">
                     <option value="">Estado</option>
-                    <option *ngFor="let status of statusTypes" [value]="status">{{status}}</option>
+                    @for(status of statusTypes; track status) {
+                      <option [value]="status">{{status}}</option>
+                    }
                   </select>
                 </div>
                 <div class="col-md-2">
-                  <input type="number" class="form-control" placeholder="Salario" formControlName="salary">
+                  <input type="number" 
+                         class="form-control" 
+                         placeholder="Salario"
+                         formControlName="salary">
                 </div>
               </form>
             </div>
@@ -130,17 +150,39 @@
       </button>
     </div>
     
+    <!-- Indicador de carga -->
+    <div *ngIf="isLoading" class="text-center my-3">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Mensaje de no hay resultados -->
+    <div *ngIf="!isLoading && employeeList.length === 0" class="alert alert-info">
+      No se encontraron empleados con los filtros seleccionados.
+    </div>
       <!-- Table Section -->
       <div class="bg-white rounded-lg shadow">
-        <div class="table-responsive">
-          <table class="table table-striped table-hover">
+        <div class="table-responsive mt-3">
+          <table class="table table-striped table-hover border rounded-lg-overflow-hidden">
             <thead class="bg-light">
               <tr>
-                <th class="px-4 py-3">Empleado</th>
-                <th class="px-4 py-3">Tipo</th>
-                <th class="px-4 py-3">Documento</th>
-                <th class="px-4 py-3">Fecha Contratación</th>
-                <th class="px-4 py-3">Estado</th>
+                <th class="px-4 py-3" (click)="sort('firstName')">
+                  Empleado <span [ngClass]="{'asc': sortColumn === 'firstName' && sortDirection === 'asc', 'desc': sortColumn === 'firstName' && sortDirection === 'desc'}">⇅</span>
+                </th>
+                <th class="px-4 py-3" (click)="sort('employeeType')">
+                  Tipo <span [ngClass]="{'asc': sortColumn === 'employeeType' && sortDirection === 'asc', 'desc': sortColumn === 'employeeType' && sortDirection === 'desc'}">⇅</span>
+                </th>
+                <th class="px-4 py-3" (click)="sort('documentType')">
+                  Documento <span [ngClass]="{'asc': sortColumn === 'documentType' && sortDirection === 'asc', 'desc': sortColumn === 'documentType' && sortDirection === 'desc'}">⇅</span>
+                </th>
+                <th class="px-4 py-3" (click)="sort('hiringDate')">
+                  Fecha Contratación <span [ngClass]="{'asc': sortColumn === 'hiringDate' && sortDirection === 'asc', 'desc': sortColumn === 'hiringDate' && sortDirection === 'desc'}">⇅</span>
+                 </th>
+                <th class="px-4 py-3" (click)="sort('state')">
+                  
+                  Estado <span [ngClass]="{'asc': sortColumn === 'state' && sortDirection === 'asc', 'desc': sortColumn === 'state' && sortDirection === 'desc'}">⇅</span>
+                </th>
                 <th class="px-4 py-3 text-center">Acciones</th>
               </tr>
             </thead>
@@ -151,7 +193,16 @@
                   <td class="px-4 py-3">{{ employee.employeeType }}</td>
                   <td class="px-4 py-3">{{ employee.documentType }}: {{ employee.docNumber }}</td>
                   <td class="px-4 py-3">{{ employee.hiringDate | date:'dd/MM/yyyy' }}</td>
-                  <td class="px-4 py-3">{{ employee.state }}</td>
+                  <td class="px-4 py-3">
+                    @if (employee.state.toString() == "IN_SERVICE") {
+                    <p class="mb-0">
+                      <i class="bi bi-check2-circle text-success" style="font-size: 1.5rem;"></i>
+                    </p>
+                  } @else {
+                    <p class="mb-0">
+                      <i class="bi bi-x-circle text-danger" style="font-size: 1.5rem;"></i>
+                    </p>
+                  }</td>
                   <td class="px-4 py-3">
                     <div class="flex justify-center gap-2">
                       <button (click)="editEmployee(employee)" 
@@ -182,6 +233,8 @@
           </table>
         </div>
       </div>
+    </div>
+  </div>
 
       <!-- Pagination Section -->
       <div class="d-flex justify-content-between align-items-center p-3 border-top">

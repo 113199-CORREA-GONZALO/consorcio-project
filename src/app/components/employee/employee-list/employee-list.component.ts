@@ -438,4 +438,27 @@ exportToExcel() {
         }
       );
     }
+
+    isLoading = false;
+  sortedProviderList: Employee[] = [];
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
+    sort(column: keyof Employee): void {
+      // Cambia la dirección de orden si la columna ya está seleccionada, sino reinicia a 'asc'
+      this.sortDirection = this.sortColumn === column ? (this.sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+      this.sortColumn = column;
+    
+      // Ordena la lista
+      this.employeeList = [...this.employeeList].sort((a, b) => {
+        const valueA = a[column];
+        const valueB = b[column];
+    
+        if (valueA == null || valueB == null) return 0; // Evita ordenamiento si es null o undefined
+    
+        if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+        if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
 }

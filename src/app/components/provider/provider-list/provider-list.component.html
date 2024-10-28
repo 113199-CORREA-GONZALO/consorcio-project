@@ -1,3 +1,4 @@
+
 <div class="container mt-5">
   <div class="">
       <h3>Lista de Proveedores</h3>
@@ -132,8 +133,8 @@
       <div *ngIf="!isLoading && filteredProviders.length === 0" class="alert alert-info">
         No se encontraron proveedores con los filtros seleccionados.
       </div>
-      
-      <div class="table-responsive" *ngIf="!isLoading && filteredProviders.length > 0">
+      <div class="bg-white rounded-lg shadow">
+      <div class="table-responsive mt-3 "  *ngIf="!isLoading && filteredProviders.length > 0">
         <table class="table table-hover border rounded-lg overflow-hidden">
           <thead class="bg-dark text-white">
             <tr>
@@ -166,7 +167,16 @@
               <td class="py-3 px-4">{{ item.service }}</td>
               <td class="py-3 px-4">{{ item.contact }}</td>
               <td class="py-3 px-4">{{ item.address }}</td>
-              <td class="py-3 px-4">{{ item.enabled ? 'Activo' : 'Inactivo' }}</td>
+              <td class="px-4 py-3">
+                @if (item.enabled.toString() == "true") {
+                <p class="mb-0">
+                  <i class="bi bi-check2-circle text-success" style="font-size: 1.5rem;"></i>
+                </p>
+              } @else {
+                <p class="mb-0">
+                  <i class="bi bi-x-circle text-danger" style="font-size: 1.5rem;"></i>
+                </p>
+              }</td>
               <td class="py-3 px-4">
                 <button *ngIf="item.id !== undefined" 
                         (click)="editProvider(item.id!)" 
@@ -195,6 +205,8 @@
           </tbody>
         </table>
       </div>
+    </div>
+      
       <!-- Pagination Section -->
       <div class="d-flex justify-content-between align-items-center p-3 border-top">
         <!-- Left side - Page number -->

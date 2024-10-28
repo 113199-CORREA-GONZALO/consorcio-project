@@ -147,6 +147,10 @@ export class InventoryTableComponent implements OnInit {
   selectedInventory: Inventory | null = null;
   showModalFilter: boolean = false;
 
+  //sorts
+  sortedList: Inventory[] = [];
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(private fb: FormBuilder, private inventoryService: InventoryService) {
     this.inventoryForm = this.fb.group({
@@ -576,5 +580,22 @@ private createTableFromData(): HTMLTableElement {
   });
 
   return table;
+}
+
+sort(column: string): void {
+  this.sortDirection = this.sortColumn === column ? (this.sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+    this.sortColumn = column;
+  
+    // Ordena la lista
+    this.inventories = [...this.inventories].sort((a, b) => {
+      /*const valueA = a[];
+      const valueB = b[];
+  
+      if (valueA == null || valueB == null) return 0; // Evita ordenamiento si es null o undefined
+  
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;*/
+      return 0;
+    });
 }
 }
