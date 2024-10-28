@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import {  Supplier } from '../../../models/supplier.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-provider-form',
@@ -29,7 +30,7 @@ export class ProviderFormComponent implements OnInit{
   private router = inject(Router);
   private modalService = inject(NgbModal);
 
-  constructor() {
+  constructor(private toastService: ToastService) {
     this.providerForm = this.fb.group({
       name: ['', Validators.required],
       cuil: ['', Validators.required],
@@ -72,16 +73,15 @@ export class ProviderFormComponent implements OnInit{
   @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   addProvider(providerData: Supplier): void {
-    this.providerService.addProvider(providerData).subscribe(() => {
-      Swal.fire({
-        title: 'Proveedor agregado!',
-        text: 'El proveedor ha sido agregado.',
-        icon: 'success',
-        timer: 2000,
-        showConfirmButton: false
-      });
-      this.resetForm();
-      this.router.navigate(['/providers/list']);
+    this.providerService.addProvider(providerData).subscribe({
+      next: (response) => {
+        this.toastService.sendSuccess("El proveedor ha sido creado con éxito.");
+        this.resetForm();
+        this.router.navigate(['/providers/list']);
+      },
+      error: (error) => {
+        this.toastService.sendError("Hubo un error en la creación del proveedor.");
+      }
     });
   }
 
@@ -90,15 +90,15 @@ export class ProviderFormComponent implements OnInit{
   }
   
   updateProvider(providerData: Supplier): void {
-    this.providerService.updateProvider(providerData).subscribe(() => {
-      Swal.fire({
-        title: 'Proveedor actualizado!',
-        text: 'El proveedor ha sido actualizado.',
-        icon: 'success',
-        timer: 2000,
-        showConfirmButton: false
-      });
-      this.router.navigate(['/providers/list']);
+    this.providerService.updateProvider(providerData).subscribe({
+      next: (response) => {
+        this.toastService.sendSuccess("El proveedor ha sido modificado con éxito.");
+        this.resetForm();
+        this.router.navigate(['/providers/list']);
+      },
+      error: (error) => {
+        this.toastService.sendError("Hubo un error en la modificación del proveedor.");
+      }
     });
   }
 

@@ -15,6 +15,7 @@ import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import autoTable from 'jspdf-autotable';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-provider-list',
@@ -71,7 +72,7 @@ export class ProviderListComponent implements OnInit{
   private fb = inject(FormBuilder);
   private modalService = inject(NgbModal);
 
-  constructor() {
+  constructor(private toastService: ToastService) {
     this.filterForm = this.fb.group({
       enabled: ['']
     });
@@ -262,14 +263,15 @@ export class ProviderListComponent implements OnInit{
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if(result.isConfirmed){
-        this.providerService.deleteProvider(id).subscribe(() => {
-          this.getProviders();
-          Swal.fire(
-            'Eliminado!',
-            'El proveedor ha sido eliminado.',
-            'success'
-          )
-        })
+        this.providerService.deleteProvider(id).subscribe({
+          next: (response) => {
+            this.toastService.sendSuccess("El proveedor ha sido eliminado con éxito.");
+            this.getProviders();
+          },
+          error: (error) => {
+            this.toastService.sendError("Hubo un error en la eliminación del proveedor.");
+          }
+        });
       }
     })
   }
