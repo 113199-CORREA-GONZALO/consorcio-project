@@ -151,7 +151,7 @@ export class ArticleFormComponent implements OnInit {
           location: articleInventory.location,
         }
         const inventoryUpdateFormatted = this.mapperService.toSnakeCase(inventoryUpdate);
-        this.inventoryService.updateInventory(this.currentArticleId, inventoryUpdateFormatted).subscribe((data)=> console.log(data));
+        //this.inventoryService.updateInventory(this.currentArticleId).subscribe((data)=> console.log(data));
       }
     }
   }
